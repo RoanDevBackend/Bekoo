@@ -1,4 +1,4 @@
-package com.example.bookingservercommand.config;
+package com.example.bookingserver.infrastructure.config;
 
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -31,7 +31,6 @@ public class KafkaConfig {
         configProps.put(
                 ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
                 JsonSerializer.class);
-
         return new DefaultKafkaProducerFactory<>(configProps);
     }
 

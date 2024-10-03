@@ -1,4 +1,4 @@
-package com.example.bookingservercommand;
+package com.example.bookingserver;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
