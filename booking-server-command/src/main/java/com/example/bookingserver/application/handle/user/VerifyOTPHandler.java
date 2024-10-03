@@ -1,0 +1,25 @@
+package com.example.bookingserver.application.handle.user;
+
+import com.example.bookingserver.application.command.user.VerifyOTPCommand;
+import com.example.bookingserver.application.handle.Handler;
+import com.example.bookingserver.application.handle.exception.BookingCareException;
+import com.example.bookingserver.application.handle.exception.ErrorDetail;
+import com.example.bookingserver.infrastructure.persistence.repository.RedisRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import org.springframework.stereotype.Component;
+
+@RequiredArgsConstructor
+@Component
+public class VerifyOTPHandler implements Handler<VerifyOTPCommand> {
+
+    final RedisRepository redisRepository;
+    @Override
+    @SneakyThrows
+    public void execute(VerifyOTPCommand command) {
+        int codeForOncePerson=redisRepository.get(command.getPhoneNumber());
+        if(codeForOncePerson != command.getCode()){
+            throw new BookingCareException(ErrorDetail.ERR_USER_UN_AUTHENTICATE);
+        }
+    }
+}
