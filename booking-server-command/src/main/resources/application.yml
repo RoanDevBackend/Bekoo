@@ -1,42 +1,16 @@
 spring:
   application:
     name: BookingCare
-  data:
-    redis:
-      host: ${redis.host}
-      password: ${redis.password}
-      port: ${redis.port}
   datasource:
-    url: jdbc:mysql://localhost:3306/booking_care?createDatabaseIfNotExist=true
+    url: jdbc:mysql://localhost:3306/booking_care_command?createDatabaseIfNotExist=true
     username: ${db.user}
     password: ${db.password}
-  elasticsearch:
-    uris: ${elastic.uris}
-    username: ${elastic.uername}
-    password: ${elastic.password}
   jpa:
     show-sql: true
     properties:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.MySQLDialect
-        search:
-          backend:
-            analysis:
-              configurer: com.example.bookingcare.config.ElasticSearchConfig
-            schema_management:
-              strategy: create-or-update
     hibernate:
       ddl-auto: update
-  mail:
-    port: 587
-    host: smtp.gmail.com
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-    username: ${mail.user}
-    password: ${mail.password}
 

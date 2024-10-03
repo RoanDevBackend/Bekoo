@@ -29,8 +29,9 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
+
 ### VS Code ###
 .vscode/
 
 
-booking-server-command/src/main/resources/application.properties
+**/application.properties
