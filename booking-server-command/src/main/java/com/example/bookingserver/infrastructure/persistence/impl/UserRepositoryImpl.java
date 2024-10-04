@@ -31,10 +31,16 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
 
-    @Override
-    public Optional<User> signIn(String phoneNumber, String password) {
 
-        return userJpaRepository.findUserByPhoneNumberAndPassword(phoneNumber, password);
+
+    @Override
+    public Optional<User> signIn(String email, String password) {
+        return userJpaRepository.findUserByEmailAndPassword(email, password);
+    }
+
+    @Override
+    public Optional<User> findByEmail(String email) {
+        return userJpaRepository.findUserByEmail(email);
     }
 
     @Override
@@ -45,5 +51,10 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public boolean isPhoneNumberExisted(String phoneNumber) {
        return userJpaRepository.existsByPhoneNumber(phoneNumber);
+    }
+
+    @Override
+    public boolean isEmailExisted(String email) {
+        return userJpaRepository.existsByEmail(email);
     }
 }

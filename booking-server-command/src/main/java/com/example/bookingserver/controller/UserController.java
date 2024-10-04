@@ -53,7 +53,7 @@ public class UserController {
     @PutMapping("/password/otp")
     public ApiResponse changePasswordOTP(@RequestBody @Valid ChangePasswordOTPCommand command){
         changePasswordOTPCommandHandler.execute(command);
-        log.info("Change password from OTP: {}", command.getPhoneNumber());
+        log.info("Change password from OTP: {}", command.getEmail());
         return ApiResponse.success(200, "Thay đổi mật khẩu thành công");
     }
 
@@ -70,7 +70,7 @@ public class UserController {
     @PostMapping("/forgot-password/send-otp")
     public ApiResponse forgotPassword(@RequestBody @Valid ForgotPasswordCommand command){
         forgotPasswordCommandHandler.execute(command);
-        log.info("Send OTP for phone number: {}", command.getPhoneNumber());
+        log.info("Send OTP for phone number: {}", command.getEmail());
         return ApiResponse.success(200, "Gửi mã xác thực thành công, mã xác thực gồm 6 số");
     }
 
@@ -79,12 +79,9 @@ public class UserController {
     @PostMapping("/forgot-password/verify")
     public ApiResponse verifyOTP(@RequestBody @Valid VerifyOTPCommand command){
         verifyOTPCommandHandler.execute(command);
-        log.info("Verify User: {}", command.getPhoneNumber());
+        log.info("Verify User: {}", command.getEmail());
         return ApiResponse.success(200, "Xác thực thành công");
     }
-
-
-
 
 
     @DeleteMapping()

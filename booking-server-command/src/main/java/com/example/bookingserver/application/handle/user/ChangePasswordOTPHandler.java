@@ -24,7 +24,7 @@ public class ChangePasswordOTPHandler implements Handler<ChangePasswordOTPComman
         if(!command.getNewPassword().equals(command.getConfirmPassword())){
             throw new BookingCareException(ErrorDetail.ERR_PASSWORD_NOT_CONFIRM);
         }
-        User user= userRepository.findByPhoneNumber(command.getPhoneNumber())
+        User user= userRepository.findByEmail(command.getEmail())
                 .orElseThrow(() -> new BookingCareException(ErrorDetail.ERR_USER_NOT_EXISTED));
         passwordService.encode(command.getNewPassword());
         user.setPassword(command.getNewPassword());

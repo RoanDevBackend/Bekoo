@@ -24,7 +24,7 @@ public class SignInServiceImpl implements SignInService {
     @SneakyThrows
     public UserResponse execute(SignInCommand command) {
         passwordService.encode(command.getPassword());
-        User user= userRepository.signIn(command.getPhoneNumber(), command.getPassword())
+        User user= userRepository.signIn(command.getEmail(), command.getPassword())
                 .orElseThrow(()-> new BookingCareException(ErrorDetail.ERR_USER_UN_AUTHENTICATE));
 
         return userMapper.toResponse(user);
