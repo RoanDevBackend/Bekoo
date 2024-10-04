@@ -17,8 +17,8 @@ public class VerifyOTPHandler implements Handler<VerifyOTPCommand> {
     @Override
     @SneakyThrows
     public void execute(VerifyOTPCommand command) {
-        int codeForOncePerson=redisRepository.get(command.getPhoneNumber());
-        if(codeForOncePerson != command.getCode()){
+        Integer codeForOncePerson=redisRepository.get(command.getEmail());
+        if(codeForOncePerson == null || !codeForOncePerson.equals(command.getCode())){
             throw new BookingCareException(ErrorDetail.ERR_USER_UN_AUTHENTICATE);
         }
     }

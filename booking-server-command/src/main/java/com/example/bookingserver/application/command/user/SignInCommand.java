@@ -11,8 +11,8 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class SignInCommand {
-    @NotBlank(message = "Số điện thoại không được bỏ trống")
-    String phoneNumber;
+    @NotBlank(message = "Email không được bỏ trống")
+    String email;
     @NotBlank(message = "Mật khẩu không được bỏ trống")
     String password;
 }

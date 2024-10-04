@@ -10,6 +10,6 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ForgotPasswordCommand {
-    @NotBlank
-    String phoneNumber;
+    @NotBlank(message = "Email không được bỏ trống")
+    String email;
 }

@@ -22,10 +22,10 @@ public class User extends EntityBase{
     @Column(columnDefinition = "varchar(50)", nullable = false)
     String name;
 
-    @Column(columnDefinition = "varchar(15)", nullable = false, unique = true)
+    @Column(columnDefinition = "varchar(15)", nullable = false)
     String phoneNumber;
 
-    @Column(columnDefinition = "varchar(75)", nullable = false)
+    @Column(columnDefinition = "varchar(75)", nullable = false, unique = true)
     String email;
 
     @Column(columnDefinition = "varchar(20)", nullable = false)
