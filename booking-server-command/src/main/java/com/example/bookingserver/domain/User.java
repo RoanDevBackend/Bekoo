@@ -5,8 +5,12 @@ import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
+import java.util.*;
 
 @Entity
 @Getter
@@ -15,7 +19,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @SuperBuilder
-public class User extends EntityBase{
+public class User extends EntityBase implements UserDetails {
     @Id @GeneratedValue(strategy = GenerationType.UUID)
     String id;
 
@@ -51,6 +55,10 @@ public class User extends EntityBase{
     String gender;
     String linkAvatar;
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    private Set<Role> roles=new HashSet<>();
+
+
     public static abstract class UserBuilder<C extends User, B extends UserBuilder<C, B>> extends EntityBaseBuilder<C,B>{
         public B email(String email) {
             if (!email.matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
@@ -66,5 +74,19 @@ public class User extends EntityBase{
             this.phoneNumber= phoneNumber;
             return self();
         }
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        List<SimpleGrantedAuthority> role=  new ArrayList<>();
+        for(Role x : roles){
+            role.add(new SimpleGrantedAuthority(x.getName()));
+        }
+        return role;
+    }
+
+    @Override
+    public String getUsername() {
+        return getEmail();
     }
 }

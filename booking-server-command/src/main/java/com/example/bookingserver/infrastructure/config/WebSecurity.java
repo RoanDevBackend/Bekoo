@@ -1,5 +1,6 @@
 package com.example.bookingserver.infrastructure.config;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -17,8 +19,17 @@ import org.springframework.web.filter.CorsFilter;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-@Slf4j
+@RequiredArgsConstructor
 public class WebSecurity {
+
+    final AuthenticationProvider authenticationProvider;
+    final JwtAuthenticationFilter jwtAuthenticationFilter;
+    final String[] listUnAuthenticate={
+            "/user/sign-in"
+            , "/user/forgot-password/send-otp"
+            , "/user/forgot-password/verify"
+            , "/user/password/otp"
+    };
 
 
     @Bean
@@ -30,10 +41,14 @@ public class WebSecurity {
                 .authorizeHttpRequests(
                         configure ->
                                 configure
-                                        .requestMatchers("/**")
+                                        .requestMatchers(listUnAuthenticate)
                                             .permitAll()
+                                        .anyRequest()
+                                            .authenticated()
                 )
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authenticationProvider(authenticationProvider)
+                .addFilterBefore(jwtAuthenticationFilter , UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 

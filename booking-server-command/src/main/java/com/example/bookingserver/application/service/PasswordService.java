@@ -4,5 +4,5 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface PasswordService {
-    void encode(String password);
+    String encode(String password);
 }

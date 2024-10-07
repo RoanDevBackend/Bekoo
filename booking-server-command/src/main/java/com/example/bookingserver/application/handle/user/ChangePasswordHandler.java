@@ -9,6 +9,8 @@ import com.example.bookingserver.domain.User;
 import com.example.bookingserver.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Component;
 public class ChangePasswordHandler implements Handler<ChangePasswordCommand> {
     private final UserRepository userRepository;
     private final PasswordService passwordService;
+    private final AuthenticationManager authenticationManager;
 
     @Override
     @SneakyThrows
@@ -24,9 +27,9 @@ public class ChangePasswordHandler implements Handler<ChangePasswordCommand> {
                 () -> new BookingCareException(ErrorDetail.ERR_USER_NOT_EXISTED)
         );
 
-        passwordService.encode(command.getOldPassword());
-
-        if(!command.getOldPassword().equals(user.getPassword())){
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), command.getOldPassword()));
+        }catch (Exception e){
             throw new BookingCareException(ErrorDetail.ERR_PASSWORD_NOT_CORRECT);
         }
 
@@ -34,8 +37,8 @@ public class ChangePasswordHandler implements Handler<ChangePasswordCommand> {
             throw new BookingCareException(ErrorDetail.ERR_PASSWORD_NOT_CONFIRM);
         }
 
-        passwordService.encode(command.getNewPassword());
-        user.setPassword(command.getNewPassword());
+        String newPassword= passwordService.encode(command.getNewPassword());
+        user.setPassword(newPassword);
         userRepository.save(user);
     }
 

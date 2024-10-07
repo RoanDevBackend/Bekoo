@@ -16,8 +16,8 @@ import org.springframework.stereotype.Component;
 public class ChangePasswordOTPHandler implements Handler<ChangePasswordOTPCommand> {
 
     final UserRepository userRepository;
-
     final PasswordService passwordService;
+
     @Override
     @SneakyThrows
     public void execute(ChangePasswordOTPCommand command) {
@@ -26,8 +26,8 @@ public class ChangePasswordOTPHandler implements Handler<ChangePasswordOTPComman
         }
         User user= userRepository.findByEmail(command.getEmail())
                 .orElseThrow(() -> new BookingCareException(ErrorDetail.ERR_USER_NOT_EXISTED));
-        passwordService.encode(command.getNewPassword());
-        user.setPassword(command.getNewPassword());
+        String newPassword= passwordService.encode(command.getNewPassword());
+        user.setPassword(newPassword);
         userRepository.save(user);
     }
 }

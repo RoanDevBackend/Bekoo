@@ -30,8 +30,10 @@ public class UserRepositoryImpl implements UserRepository {
         return userJpaRepository.findUserByPhoneNumber(phoneNumber);
     }
 
-
-
+    @Override
+    public User findByUserName(String userName) {
+        return userJpaRepository.findUserByEmail(userName).orElseThrow(null);
+    }
 
     @Override
     public Optional<User> signIn(String email, String password) {
