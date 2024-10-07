@@ -1,11 +1,11 @@
 package com.example.bookingserver.application.handle.user;
 
 import com.example.bookingserver.application.command.user.UpdateInfoUserCommand;
-import com.example.bookingserver.application.event.UpdateInfoUserEvent;
+import com.example.bookingserver.application.event.user.UpdateInfoUserEvent;
 import com.example.bookingserver.application.handle.Handler;
 import com.example.bookingserver.application.handle.exception.BookingCareException;
 import com.example.bookingserver.application.handle.exception.ErrorDetail;
-import com.example.bookingserver.application.mapper.UserMapper;
+import com.example.bookingserver.infrastructure.mapper.UserMapper;
 import com.example.bookingserver.domain.User;
 import com.example.bookingserver.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

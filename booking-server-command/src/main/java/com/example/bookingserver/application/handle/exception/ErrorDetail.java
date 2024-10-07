@@ -13,10 +13,10 @@ public enum ErrorDetail {
     ;
 
     private final int code;
-    private final String massage;
+    private final String message;
 
-    ErrorDetail(int code, String massage) {
+    ErrorDetail(int code, String message) {
         this.code = code;
-        this.massage = massage;
+        this.message = message;
     }
 }

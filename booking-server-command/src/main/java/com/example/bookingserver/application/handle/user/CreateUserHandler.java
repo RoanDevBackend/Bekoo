@@ -4,13 +4,13 @@ import com.example.bookingserver.application.event.user.CreateUserEvent;
 import com.example.bookingserver.application.handle.Handler;
 import com.example.bookingserver.application.handle.exception.BookingCareException;
 import com.example.bookingserver.application.handle.exception.ErrorDetail;
+import com.example.bookingserver.infrastructure.mapper.UserMapper;
 import com.example.bookingserver.application.service.PasswordService;
 import com.example.bookingserver.domain.ERole;
 import com.example.bookingserver.domain.OutboxEvent;
 import com.example.bookingserver.domain.Role;
 import com.example.bookingserver.domain.repository.OutboxEventRepository;
 import com.example.bookingserver.infrastructure.constant.ApplicationConstant;
-import com.example.bookingserver.infrastructure.mapper.UserMapper;
 import com.example.bookingserver.domain.User;
 import com.example.bookingserver.domain.repository.UserRepository;
 import com.example.bookingserver.application.command.user.CreateUserCommand;
@@ -21,10 +21,8 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor

@@ -3,13 +3,10 @@ package com.example.bookingserver.application.handle.exception;
 
 import com.example.bookingserver.application.reponse.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import java.io.IOException;
 
 @RestControllerAdvice
 @Slf4j
@@ -39,7 +36,7 @@ public class GlobalException {
     @ExceptionHandler(BookingCareException.class)
     public ResponseEntity<ApiResponse> bookingCareAppException(BookingCareException e){
         ErrorDetail errorDetail= e.getErrorDetail();
-        log.error(errorDetail.getMassage());
-        return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage()));
+        log.error(errorDetail.getMessage());
+        return ResponseEntity.badRequest().body(ApiResponse.error(errorDetail.getMessage()));
     }
 }
