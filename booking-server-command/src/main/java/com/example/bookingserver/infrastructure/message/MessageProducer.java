@@ -10,9 +10,9 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class MessageProducer {
 
-    private final KafkaTemplate<String, Object> kafkaTemplate;
-    public void sendMessage(String topic, Object value){
+    private final KafkaTemplate<String, String> kafkaTemplate;
+    public void sendMessage(String topic, String value){
         kafkaTemplate.send(topic, value);
-        log.info("Message Producer: Send " + topic + " Success");
+        log.info("Message Producer: Send '" + topic + "' success");
     }
 }
