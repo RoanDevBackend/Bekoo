@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: booking-server-query
+  elasticsearch:
+    username: ${elastic.username}
+    password: ${elastic.password}
+    uris: ${elastic.uris}
+  data:
+    elasticsearch:
+      repositories:
+        enabled: true
+server:
+  port: 8081
