@@ -37,7 +37,9 @@ public class SignInServiceImpl implements SignInService {
     @Override
     @SneakyThrows
     public TokenResponse execute(SignInCommand command) {
+
         User user = userRepository.findByUserName(command.getEmail());
+
 
         if (user == null)
         {

@@ -5,6 +5,10 @@ import lombok.experimental.FieldDefaults;
 
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class UpdateInfoUserEvent {
     String id;
     String name;

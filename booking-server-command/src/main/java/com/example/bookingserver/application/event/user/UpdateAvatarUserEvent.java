@@ -14,5 +14,5 @@ import org.springframework.web.multipart.MultipartFile;
 public class UpdateAvatarUserEvent {
     @NotBlank
     String id;
-    String linkImage;
+    String linkAvatar;
 }

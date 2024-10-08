@@ -10,5 +10,5 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UpdateAvatarUserEvent {
     String id;
-    String linkImage;
+    String linkAvatar;
 }

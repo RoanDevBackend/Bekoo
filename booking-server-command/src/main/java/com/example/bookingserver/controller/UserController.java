@@ -25,7 +25,6 @@ public class UserController {
     final Handler<UpdateAvatarUserCommand> updateAvatarUserCommandHandler;
 
 
-
     @PostMapping()
     public ApiResponse createUser(@RequestBody @Valid CreateUserCommand command){
         createUserHandler.execute(command);

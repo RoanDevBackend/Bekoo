@@ -32,7 +32,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User findByUserName(String userName) {
-        return userJpaRepository.findUserByEmail(userName).orElseThrow(null);
+        return userJpaRepository.findUserByEmail(userName).orElse(null);
     }
 
     @Override

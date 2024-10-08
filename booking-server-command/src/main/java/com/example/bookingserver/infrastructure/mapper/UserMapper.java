@@ -5,6 +5,7 @@ import com.example.bookingserver.application.command.user.DeleteUserCommand;
 import com.example.bookingserver.application.command.user.UpdateInfoUserCommand;
 import com.example.bookingserver.application.event.user.CreateUserEvent;
 import com.example.bookingserver.application.event.user.DeleteUserEvent;
+import com.example.bookingserver.application.event.user.UpdateAvatarUserEvent;
 import com.example.bookingserver.application.event.user.UpdateInfoUserEvent;
 import com.example.bookingserver.application.reponse.UserResponse;
 import com.example.bookingserver.domain.User;
@@ -33,6 +34,7 @@ public interface UserMapper {
     UserResponse toResponse(User user);
 
     CreateUserEvent fromUserToCreateUserEvent(User user);
+    UpdateAvatarUserEvent fromUserToUpdateAvatarEvent(User user);
     UpdateInfoUserEvent fromUserToUpdateUserEvent(User user);
     DeleteUserEvent fromCommandToEvent(DeleteUserCommand command);
 }
