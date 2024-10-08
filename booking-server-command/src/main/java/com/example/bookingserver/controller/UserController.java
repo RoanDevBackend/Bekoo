@@ -23,7 +23,7 @@ public class UserController {
     final Handler<ForgotPasswordCommand> forgotPasswordCommandHandler;
     final Handler<VerifyOTPCommand> verifyOTPCommandHandler;
     final Handler<UpdateAvatarUserCommand> updateAvatarUserCommandHandler;
-    final SignInService signInService;
+
 
 
     @PostMapping()
@@ -89,14 +89,5 @@ public class UserController {
         deleteUserCommandHandler.execute(command);
         log.info("Delete User: {}", command.toString() );
         return ApiResponse.success(200, "Xoá tài khoản thành công");
-    }
-
-
-
-    @PostMapping("/sign-in")
-    public ApiResponse signIn(@RequestBody @Valid SignInCommand command){
-        var response= signInService.execute(command);
-        log.info("Sign-In");
-        return ApiResponse.success(200, "Đăng nhập thành công", response);
     }
 }

@@ -26,14 +26,13 @@ public class WebSecurity {
     final AuthenticationProvider authenticationProvider;
     final JwtAuthenticationFilter jwtAuthenticationFilter;
     final String[] listUnAuthenticate={
-            "/user/sign-in"
+            "/sign-in"
             , "/user/forgot-password/send-otp"
             , "/user/forgot-password/verify"
             , "/user/password/otp"
             , "/v3/api-docs/**"
             , "/swagger-ui/**"
             , "/swagger-ui.html"
-
     };
 
 

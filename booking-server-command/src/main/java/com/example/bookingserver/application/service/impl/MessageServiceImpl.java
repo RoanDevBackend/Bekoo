@@ -24,11 +24,10 @@ public class MessageServiceImpl implements MessageService {
 
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
-        helper.setFrom("roan.dev.backend@gmail.com");
+        helper.setFrom("roan.dev.backend@gmail.com", "Bekoo- Sức khoẻ tận tay");
         helper.setTo(email);
-        helper.setSubject("Mã xác thực");
+        helper.setSubject("Mã xác thực tài khoản của bạn tại Bekoo");
         helper.setText(content, isHtml);
-
         javaMailSender.send(message);
 
     }
