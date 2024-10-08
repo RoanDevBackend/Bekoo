@@ -17,39 +17,23 @@ import java.util.List;
 @SuperBuilder
 public class FindByNameResponse extends FindByNameQuery {
     int totalPage;
-    List<Value> content;
+    List<UserResponse> content;
 
-    public static abstract class FindByNameResponseBuilder<C extends FindByNameResponse, B extends FindByNameResponseBuilder<C, B>> extends FindByNameQueryBuilder<C,B> {
-        public B content(List<User> users) {
-            List<Value> values= new ArrayList<>();
-            for(User user: users){
-                Value value= Value.builder()
-                        .id(user.getId())
-                        .name(user.getName())
-                        .email(user.getEmail())
-                        .phoneNumber(user.getPhoneNumber())
-                        .linkAvatar(user.getLinkAvatar())
-                        .gender(user.getGender())
-                        .build();
-                values.add(value);
-            }
-            this.content= values;
-            return self();
-        }
-    }
-
-
-
-}
-@Getter
-@Setter
-@FieldDefaults(level = AccessLevel.PRIVATE)
-@Builder
-class Value{
-    String id;
-    String name;
-    String email;
-    String phoneNumber;
-    String linkAvatar;
-    String gender;
+//    public static abstract class FindByNameResponseBuilder<C extends FindByNameResponse, B extends FindByNameResponseBuilder<C, B>> extends FindByNameQueryBuilder<C,B> {
+//        public B content(List<User> users) {
+//            List<UserResponse> values= new ArrayList<>();
+//            for(User user: users){
+//                UserResponse value= new UserResponse();
+//                        value.setId(user.getId());
+//                        value.setName(user.getName());
+//                        value.setEmail(user.getEmail());
+//                        value.setPhoneNumber(user.getPhoneNumber());
+//                        value.setLinkAvatar(user.getLinkAvatar());
+//                        value.setGender(user.getGender());
+//                values.add(value);
+//            }
+//            this.content= values;
+//            return self();
+//        }
+//    }
 }
