@@ -30,6 +30,10 @@ public class WebSecurity {
             , "/user/forgot-password/send-otp"
             , "/user/forgot-password/verify"
             , "/user/password/otp"
+            , "/v3/api-docs/**"
+            , "/swagger-ui/**"
+            , "/swagger-ui.html"
+
     };
 
 
