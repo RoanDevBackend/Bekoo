@@ -1,4 +1,4 @@
-package com.example.bookingserver.application.event;
+package com.example.bookingserver.application.event.user;
 
 import lombok.AccessLevel;
 import lombok.Builder;
