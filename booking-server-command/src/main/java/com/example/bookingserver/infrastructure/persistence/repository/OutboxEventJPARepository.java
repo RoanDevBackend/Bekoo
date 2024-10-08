@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface OutboxEventJPARepository extends JpaRepository<OutboxEvent, String> {
+public interface OutboxEventJPARepository extends JpaRepository<OutboxEvent, Integer> {
     List<OutboxEvent> findAllByStatus(String status);
 }
