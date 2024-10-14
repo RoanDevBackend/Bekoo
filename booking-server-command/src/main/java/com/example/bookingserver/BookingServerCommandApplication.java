@@ -19,21 +19,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@OpenAPIDefinition(
-		info =  @Info(
-				title = "Bekoo" ,
-				version = "1.0" ,
-				description = "RestApi for front-end developer" ,
-				contact = @Contact(
-						name = "Roãn Văn Quyền"
-						, email = "roan.dev.backend@gmail.com"
-				)
-		),
-		servers =@Server(
-				url = "http://localhost:8080",
-				description = "Bekoo"
-		)
-)
 public class BookingServerCommandApplication implements ApplicationRunner {
 
 	public static void main(String[] args) {
