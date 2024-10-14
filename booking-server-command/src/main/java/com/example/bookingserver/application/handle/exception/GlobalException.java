@@ -37,6 +37,6 @@ public class GlobalException {
     public ResponseEntity<ApiResponse> bookingCareAppException(BookingCareException e){
         ErrorDetail errorDetail= e.getErrorDetail();
         log.error(errorDetail.getMessage());
-        return ResponseEntity.badRequest().body(ApiResponse.error(errorDetail.getMessage()));
+        return ResponseEntity.badRequest().body(ApiResponse.error(errorDetail.getCode(), errorDetail.getMessage()));
     }
 }

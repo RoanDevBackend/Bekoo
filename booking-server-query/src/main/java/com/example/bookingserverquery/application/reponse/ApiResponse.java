@@ -25,4 +25,7 @@ public class ApiResponse {
     public static ApiResponse error(String message){
         return new ApiResponse(400, message, null);
     }
+    public static ApiResponse error(int code, String message){
+        return new ApiResponse(code, message, null);
+    }
 }

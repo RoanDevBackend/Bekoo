@@ -1,13 +1,10 @@
-package com.example.bookingserverquery.application.reponse.user;
+package com.example.bookingserverquery.application.reponse;
 
-import com.example.bookingserverquery.application.query.QueryBase;
-import com.example.bookingserverquery.application.query.user.FindByNameQuery;
-import com.example.bookingserverquery.domain.User;
+import com.example.bookingserverquery.application.query.FindByNameQuery;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -15,9 +12,9 @@ import java.util.List;
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @SuperBuilder
-public class FindByNameResponse extends FindByNameQuery {
+public class FindByNameResponse<T> extends FindByNameQuery<T> {
     int totalPage;
-    List<UserResponse> content;
+    List<T> content;
 
 //    public static abstract class FindByNameResponseBuilder<C extends FindByNameResponse, B extends FindByNameResponseBuilder<C, B>> extends FindByNameQueryBuilder<C,B> {
 //        public B content(List<User> users) {

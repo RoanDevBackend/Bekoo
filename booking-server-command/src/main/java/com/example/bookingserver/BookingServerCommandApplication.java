@@ -1,13 +1,18 @@
 package com.example.bookingserver;
 
+import com.example.bookingserver.domain.Doctor;
 import com.example.bookingserver.domain.ERole;
 import com.example.bookingserver.domain.Role;
+import com.example.bookingserver.domain.repository.DoctorRepository;
+import com.example.bookingserver.infrastructure.persistence.repository.DoctorJpaRepository;
+import com.example.bookingserver.infrastructure.persistence.repository.RedisRepository;
 import com.example.bookingserver.infrastructure.persistence.repository.RoleJpaRepository;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.servers.Server;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
@@ -39,6 +44,8 @@ public class BookingServerCommandApplication implements ApplicationRunner {
 
 	@Autowired
 	RoleJpaRepository roleJpaRepository;
+	@Autowired
+	DoctorRepository doctorRepository;
 
 	@Override
 	public void run(ApplicationArguments args){

@@ -3,7 +3,7 @@ spring:
     name: BookingCare
 
   datasource:
-    url: jdbc:mysql://localhost:3306/booking_care_command?createDatabaseIfNotExist=true
+    url: ${db.url}
     username: ${db.user}
     password: ${db.password}
   jpa:

@@ -10,6 +10,8 @@ public enum ErrorDetail {
     , ERR_PASSWORD_NOT_CONFIRM(400, "Mật khẩu xác nhận chưa đúng")
     , ERR_PASSWORD_NOT_CORRECT(400, "Mật khẩu cũ chưa chính xác")
     , ERR_FILE(400, "File ảnh đang có lỗi, chưa thể lưu")
+
+    , ERR_DOCTOR_EXISTED(400, "Thông tin bác sĩ cho người dùng này đã tồn tại")
     ;
 
     private final int code;

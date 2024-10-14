@@ -1,0 +1,42 @@
+#version: '3.8'
+
+services:
+  kafka:
+    image: bitnami/kafka:latest
+    platform: linux/amd64
+    ports:
+      - "9092:9092"
+      - "9093:9093"
+    environment:
+      - KAFKA_CFG_NODE_ID=0
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@localhost:9093
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092, PLAINTEXT://localhost:9092
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - ALLOW_PLAINTEXT_LISTENER=yes
+    volumes:
+      - kafka_data:/var/lib/kafka
+
+
+  #    build:
+  #      context: .
+  #      dockerfile: Dockerfile
+  #    image: roanvanquyen/booking-care-command:1.0.0
+  #    platform: linux/arm64/v8
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: booking-care-query
+    depends_on:
+      - kafka
+    restart: on-failure
+    ports:
+      - "8082:8080"
+    environment:
+      SPRING_KAFKA_PORT: kafka:9092
+volumes:
+  kafka_data:

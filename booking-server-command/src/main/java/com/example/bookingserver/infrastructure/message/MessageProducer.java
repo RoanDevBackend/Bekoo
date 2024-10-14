@@ -13,6 +13,6 @@ public class MessageProducer {
     private final KafkaTemplate<String, String> kafkaTemplate;
     public void sendMessage(String topic, String value){
         kafkaTemplate.send(topic, value);
-        log.info("Message Producer: Send '" + topic + "' success");
+        log.info("VALUE: {}", value);
     }
 }

@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.servers.Server;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
@@ -41,7 +42,16 @@ public class BookingServerQueryApplication implements ApplicationRunner {
     UserELRepository userELRepository;
 
 
+    @Value("${elastic.uris}")
+    String uris;
+    @Value("${elastic.username}")
+    String username;
+    @Value("${kafka.server}")
+    String kafkaPort;
     @Override
     public void run(ApplicationArguments args) throws Exception {
+        System.out.println(kafkaPort);
+//        System.out.println("Uris: " + uris);
+//        System.out.println("Username: " + username);
     }
 }

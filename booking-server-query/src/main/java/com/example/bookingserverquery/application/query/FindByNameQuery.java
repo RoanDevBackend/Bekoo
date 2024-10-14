@@ -1,4 +1,4 @@
-package com.example.bookingserverquery.application.query.user;
+package com.example.bookingserverquery.application.query;
 
 import com.example.bookingserverquery.application.query.QueryBase;
 import lombok.*;
@@ -11,6 +11,6 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-public class FindByNameQuery extends QueryBase {
+public class FindByNameQuery<T> extends QueryBase<T> {
     String name;
 }

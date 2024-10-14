@@ -1,4 +1,4 @@
-package com.example.bookingserverquery.application.handler;
+package com.example.bookingserverquery.application.handler.user;
 
 import com.example.bookingserverquery.application.handler.exception.BookingCareException;
 import com.example.bookingserverquery.application.handler.exception.ErrorDetail;

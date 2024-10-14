@@ -1,6 +1,7 @@
 package com.example.bookingserverquery.application.query;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -17,11 +18,13 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-public class QueryBase {
+public class QueryBase<T> {
     @Builder.Default
             @Min(value = 1, message = "Số trang không được nhỏ hơn 1")
     int pageIndex = 1;
     @Builder.Default
+            @Min(value = 1, message = "Số lượng phần tử một trang không được nhỏ hơn 1")
+            @Max(value = 10000, message = "Số lượng phần tử một trang không được lớn hơn 10000")
     int pageSize = 10000;
 
     @Builder.Default

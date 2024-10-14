@@ -1,5 +1,6 @@
 package com.example.bookingserver.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
@@ -54,6 +55,7 @@ public class User extends EntityBase implements UserDetails {
     LocalDate dob;
     String gender;
     String linkAvatar;
+
 
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Role> roles=new HashSet<>();
