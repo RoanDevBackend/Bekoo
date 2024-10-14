@@ -84,7 +84,7 @@ services:
     ports:
       - "8082:8080"
     environment:
-      HelloByDocker: hello_by_docker
+      SPRING_URL: http:localhost:8083
       SPRING_KAFKA_PORT: kafka:9092
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/booking_care_command?createDatabaseIfNotExist=true
       SPRING_DATASOURCE_USERNAME: root

@@ -12,6 +12,8 @@ public enum ErrorDetail {
     , ERR_FILE(400, "File ảnh đang có lỗi, chưa thể lưu")
 
     , ERR_DOCTOR_EXISTED(400, "Thông tin bác sĩ cho người dùng này đã tồn tại")
+
+    , ERR_DEPARTMENT_NOT_EXISTED(404, "Không tồn tại chuyên khoa này")
     ;
 
     private final int code;

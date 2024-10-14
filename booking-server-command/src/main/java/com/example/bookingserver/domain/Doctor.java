@@ -5,6 +5,8 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -30,4 +32,6 @@ public class Doctor extends EntityBase{
     @OneToOne()
             @JoinColumn(name = "user_id", unique = true)
     User user;
+    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL)
+    List<DoctorDepartment> doctorDepartments;
 }
