@@ -29,7 +29,7 @@ public class GetAllHandler {
             userResponses.add(userResponse);
         }
         return GetAllResponse.<UserResponse>builder()
-                .userResponses(userResponses)
+                .contentResponse(userResponses)
                 .pageIndex(page.getNumber() + 1)
                 .pageSize(page.getSize())
                 .orders(query.getOrders())

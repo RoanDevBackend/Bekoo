@@ -3,9 +3,7 @@ package com.example.bookingserverquery.application.handler.doctor;
 import com.example.bookingserverquery.application.query.QueryBase;
 import com.example.bookingserverquery.application.reponse.GetAllResponse;
 import com.example.bookingserverquery.application.reponse.doctor.DoctorResponse;
-import com.example.bookingserverquery.application.reponse.user.UserResponse;
 import com.example.bookingserverquery.domain.Doctor;
-import com.example.bookingserverquery.domain.User;
 import com.example.bookingserverquery.domain.repository.DoctorRepository;
 import com.example.bookingserverquery.infrastructure.mapper.DoctorMapper;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +28,7 @@ public class GetAllDoctorHandler {
             doctorResponses.add(doctorResponse);
         }
         return GetAllResponse.<DoctorResponse>builder()
-                .userResponses(doctorResponses)
+                .contentResponse(doctorResponses)
                 .pageIndex(page.getNumber() + 1)
                 .pageSize(page.getSize())
                 .orders(query.getOrders())

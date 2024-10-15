@@ -3,12 +3,9 @@ package com.example.bookingserverquery.application.handler.doctor;
 import com.example.bookingserverquery.application.query.FindByNameQuery;
 import com.example.bookingserverquery.application.reponse.FindByNameResponse;
 import com.example.bookingserverquery.application.reponse.doctor.DoctorResponse;
-import com.example.bookingserverquery.application.reponse.user.UserResponse;
 import com.example.bookingserverquery.domain.Doctor;
-import com.example.bookingserverquery.domain.User;
 import com.example.bookingserverquery.domain.repository.DoctorRepository;
 import com.example.bookingserverquery.infrastructure.mapper.DoctorMapper;
-import com.example.bookingserverquery.infrastructure.repository.DoctorELRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -41,7 +38,7 @@ public class FindByDoctorNameHandler {
                 .pageSize(page.getSize())
                 .pageIndex(page.getNumber()+1)
                 .orders(query.getOrders())
-                .content(doctorResponses)
+                .contentResponse(doctorResponses)
                 .build();
     }
 }

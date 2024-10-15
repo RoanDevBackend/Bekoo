@@ -10,6 +10,7 @@ public enum ErrorDetail {
     , ERR_PASSWORD_NOT_CONFIRM(400, "Mật khẩu xác nhận chưa đúng")
     , ERR_PASSWORD_NOT_CORRECT(400, "Mật khẩu cũ chưa chính xác")
     , ERR_FILE(400, "File ảnh đang có lỗi, chưa thể lưu")
+    , ERR_DEPARTMENT_NOT_EXISTED(404, "Không tồn tại chuyên khoa này")
     ;
 
     private final int code;
