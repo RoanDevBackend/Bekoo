@@ -1,7 +1,9 @@
 package com.example.bookingserver.application.handle.doctor_department;
 
 import com.example.bookingserver.application.command.doctor_department.DeleteDoctorDepartmentCommand;
+import com.example.bookingserver.application.event.doctor_department.DoctorDepartmentEvent;
 import com.example.bookingserver.application.handle.Handler;
+import com.example.bookingserver.domain.DoctorDepartment;
 import com.example.bookingserver.domain.OutboxEvent;
 import com.example.bookingserver.domain.repository.DepartmentRepository;
 import com.example.bookingserver.domain.repository.DoctorDepartmentRepository;
@@ -39,7 +41,8 @@ public class DeleteDoctorDepartmentHandler implements Handler<DeleteDoctorDepart
             var doctorDepartment= doctorDepartmentRepository.findById(x.getDoctorId(), x.getDepartmentId());
 
             if(doctorDepartment.isPresent()) {
-                String content = objectMapper.writeValueAsString(x);
+                DoctorDepartmentEvent doctorDepartmentEvent= new DoctorDepartmentEvent(x.getDoctorId(), x.getDepartmentId());
+                String content = objectMapper.writeValueAsString(doctorDepartmentEvent);
                 doctorDepartmentRepository.delete(doctorDepartment.get());
                 OutboxEvent outboxEvent = OutboxEvent.builder()
                         .topic(TOPIC)

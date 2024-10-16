@@ -1,8 +1,7 @@
 package com.example.bookingserverquery.application.handler.department;
 
 import com.example.bookingserverquery.application.query.QueryBase;
-import com.example.bookingserverquery.application.reponse.FindByNameResponse;
-import com.example.bookingserverquery.application.reponse.GetAllResponse;
+import com.example.bookingserverquery.application.reponse.PageResponse;
 import com.example.bookingserverquery.application.reponse.department.DepartmentResponse;
 import com.example.bookingserverquery.domain.Department;
 import com.example.bookingserverquery.infrastructure.mapper.DepartmentMapper;
@@ -21,13 +20,13 @@ public class GetAllDepartmentHandler {
     final DepartmentELRepository departmentELRepository;
 
 
-    public GetAllResponse<DepartmentResponse> execute(QueryBase<DepartmentResponse> query){
+    public PageResponse<DepartmentResponse> execute(QueryBase<DepartmentResponse> query){
         Page<Department> page= departmentELRepository.findAll(query.getPageable());
         List<DepartmentResponse> departmentResponses= new ArrayList<>();
         for(Department x: page.getContent()){
             departmentResponses.add(departmentMapper.toResponse(x));
         }
-        return GetAllResponse.<DepartmentResponse>builder()
+        return PageResponse.<DepartmentResponse>builder()
                 .totalPage(page.getTotalPages())
                 .pageSize(page.getSize())
                 .pageIndex(page.getNumber() + 1)

@@ -6,7 +6,7 @@ import com.example.bookingserverquery.application.handler.doctor.GetAllDoctorHan
 import com.example.bookingserverquery.application.query.FindByNameQuery;
 import com.example.bookingserverquery.application.query.QueryBase;
 import com.example.bookingserverquery.application.reponse.ApiResponse;
-import com.example.bookingserverquery.application.reponse.GetAllResponse;
+import com.example.bookingserverquery.application.reponse.PageResponse;
 import com.example.bookingserverquery.application.reponse.doctor.DoctorResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +32,7 @@ public class DoctorController {
         if(query == null){
             query= QueryBase.<DoctorResponse>builder().build();
         }
-        GetAllResponse<DoctorResponse> response= getAllDoctorHandler.getAll(query);
+        PageResponse<DoctorResponse> response= getAllDoctorHandler.getAll(query);
         return ApiResponse.success(200, "Tìm kiếm tất cả giá trị", response);
     }
 

@@ -10,7 +10,7 @@ import java.util.List;
 @SuperBuilder
 @Getter
 @Setter
-public class GetAllResponse<T> extends QueryBase<T> {
+public class PageResponse<T> extends QueryBase<T> {
 
     int totalPage;
     List<T> contentResponse;
