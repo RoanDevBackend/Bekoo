@@ -21,7 +21,7 @@ services:
 
   mysql:
     image: mysql:8.0
-    container_name: mysql
+    container_name: mysql_docker
     platform: linux/amd64
     environment:
       MYSQL_DATABASE: root
@@ -66,11 +66,7 @@ services:
     networks:
       - es_network
 
-  #    build:
-  #      context: .
-  #      dockerfile: Dockerfile
-  #    image: roanvanquyen/booking-care-command:1.0.0
-  #    platform: linux/arm64/v8
+
   booking-care-command:
     image: roanvanquyen/booking-care-command:latest
     platform: linux/arm64/v8
@@ -83,6 +79,7 @@ services:
     ports:
       - "8083:8080"
     environment:
+      SPRING_URL: http://localhost:8083
       SPRING_KAFKA_PORT: kafka:9092
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/booking_care_command?createDatabaseIfNotExist=true
       SPRING_DATASOURCE_USERNAME: root
@@ -100,6 +97,7 @@ services:
     ports:
       - "8084:8081"
     environment:
+      SPRING_URL: http://localhost:8084
       SPRING_KAFKA_PORT: kafka:9092
 volumes:
   mysql_data:

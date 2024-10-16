@@ -35,4 +35,10 @@ public class UserResponse {
     LocalDate dob;
     String gender;
     String linkAvatar;
+
+//    String role;
+//
+//    public String getRole() {
+//       return  "USER";
+//    }
 }

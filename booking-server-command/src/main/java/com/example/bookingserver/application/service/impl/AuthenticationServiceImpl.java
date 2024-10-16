@@ -3,13 +3,14 @@ package com.example.bookingserver.application.service.impl;
 import com.example.bookingserver.application.command.user.SignInCommand;
 import com.example.bookingserver.application.handle.exception.BookingCareException;
 import com.example.bookingserver.application.handle.exception.ErrorDetail;
+import com.example.bookingserver.application.reponse.UserResponse;
 import com.example.bookingserver.infrastructure.mapper.UserMapper;
 
 import com.example.bookingserver.application.reponse.TokenResponse;
 import com.example.bookingserver.application.service.JwtService;
 import com.example.bookingserver.domain.Role;
 import com.example.bookingserver.application.service.PasswordService;
-import com.example.bookingserver.application.service.SignInService;
+import com.example.bookingserver.application.service.AuthenticationService;
 import com.example.bookingserver.domain.User;
 import com.example.bookingserver.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,7 @@ import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
-public class SignInServiceImpl implements SignInService {
+public class AuthenticationServiceImpl implements AuthenticationService {
 
     final UserRepository userRepository;
     final UserMapper userMapper;
@@ -36,7 +37,7 @@ public class SignInServiceImpl implements SignInService {
     private final Long TIME_REFRESH_TOKEN=100*60*60*24*2L;//2 ngay
     @Override
     @SneakyThrows
-    public TokenResponse execute(SignInCommand command) {
+    public TokenResponse signIn(SignInCommand command) {
 
         User user = userRepository.findByUserName(command.getEmail());
 
@@ -70,5 +71,15 @@ public class SignInServiceImpl implements SignInService {
                 .expToken(new Timestamp(System.currentTimeMillis() + TIME_TOKEN))
                 .expRefreshToken(new Timestamp(System.currentTimeMillis() + TIME_REFRESH_TOKEN))
                 .build();
+    }
+
+    @Override
+    @SneakyThrows
+    public UserResponse getIdByToken(String token) {
+        token= token.substring(7);
+        String username= jwtService.extractUsername(token);
+        User user= userRepository.findByUserName(username);
+        if(user == null) throw new BookingCareException(ErrorDetail.ERR_USER_NOT_EXISTED);
+        return userMapper.toResponse(user);
     }
 }

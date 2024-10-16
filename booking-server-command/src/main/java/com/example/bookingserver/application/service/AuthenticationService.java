@@ -4,6 +4,7 @@ import com.example.bookingserver.application.command.user.SignInCommand;
 import com.example.bookingserver.application.reponse.TokenResponse;
 import com.example.bookingserver.application.reponse.UserResponse;
 
-public interface SignInService {
-    TokenResponse execute(SignInCommand command);
+public interface AuthenticationService {
+    TokenResponse signIn(SignInCommand command);
+    UserResponse getIdByToken(String token);
 }

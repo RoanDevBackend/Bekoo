@@ -3,7 +3,10 @@ package com.example.bookingserver.controller;
 import com.example.bookingserver.application.command.user.*;
 import com.example.bookingserver.application.handle.Handler;
 import com.example.bookingserver.application.reponse.ApiResponse;
-import com.example.bookingserver.application.service.SignInService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +44,7 @@ public class UserController {
     }
 
 
+    @Operation(summary = "Thay đổi mật khẩu người dùng, có yêu cầu nhập mật khẩu cũ")
     @PutMapping("/password")
     public ApiResponse changePassword(@RequestBody @Valid ChangePasswordCommand command){
         changePasswordCommandHandler.execute(command);
@@ -50,6 +54,7 @@ public class UserController {
 
 
     @PutMapping("/password/otp")
+    @Operation(summary = "Thay đổi mật khẩu người dùng, không yêu cầu nhập mật khẩu cũ")
     public ApiResponse changePasswordOTP(@RequestBody @Valid ChangePasswordOTPCommand command){
         changePasswordOTPCommandHandler.execute(command);
         log.info("Change password from OTP: {}", command.getEmail());

@@ -37,6 +37,7 @@ services:
     ports:
       - "8082:8080"
     environment:
+      SPRING_URL: http://localhost:8082
       SPRING_KAFKA_PORT: kafka:9092
 volumes:
   kafka_data:
