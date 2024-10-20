@@ -36,14 +36,14 @@ public class DepartmentController {
         return ApiResponse.success(200, "Tìm kiếm thành công", response);
     }
 
-    @GetMapping("/name")
+    @PostMapping("/name")
     public ApiResponse getDepartmentByName(@RequestBody @Valid FindByNameQuery<DepartmentResponse> query) {
 
         var response= findByDepartmentNameHandler.execute(query);
         return ApiResponse.success(200, "Tìm kiếm thành công", response);
     }
 
-    @GetMapping
+    @PostMapping
     public ApiResponse getAllDepartments(@RequestBody(required = false) @Valid QueryBase<DepartmentResponse> query) {
         if(query == null){
             query= FindByNameQuery.<DepartmentResponse>builder().build();
@@ -53,7 +53,7 @@ public class DepartmentController {
     }
 
     @Operation(summary = "Lấy danh sách bác sĩ của phòng ban bệnh viện")
-    @GetMapping("doctor/{id}")
+    @PostMapping("doctor/{id}")
     public ApiResponse findDoctorByDepartment(@PathVariable String id, @RequestBody(required = false) @Valid QueryBase<DoctorResponse> query){
         if(query == null){
             query= QueryBase.<DoctorResponse>builder().build();

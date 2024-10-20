@@ -8,6 +8,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,9 @@ public class QueryBase<T> {
 
     @JsonIgnore
     public Pageable getPageable() {
+        if(orders.isEmpty()){
+            orders.add(new OrderDTO("createdAt", Sort.Direction.DESC));
+        }
         List<Sort.Order> sortOrder = new ArrayList<>();
         for (OrderDTO x : orders) {
             sortOrder.add(new Sort.Order(x.getDirection(), x.getProperties()));

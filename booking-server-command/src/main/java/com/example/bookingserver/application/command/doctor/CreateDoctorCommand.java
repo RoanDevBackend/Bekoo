@@ -1,5 +1,7 @@
 package com.example.bookingserver.application.command.doctor;
 
+import com.example.bookingserver.application.command.user.CreateUserCommand;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -10,8 +12,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CreateDoctorCommand {
+public class CreateDoctorCommand  {
     String trainingBy;
     String description;
-    String user_id;
+    @NotNull(message = "Không bỏ trống người dùng")
+    CreateUserCommand user;
 }

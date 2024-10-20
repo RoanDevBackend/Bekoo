@@ -2,8 +2,10 @@ package com.example.bookingserver.application.handle.user;
 
 import com.example.bookingserver.application.event.user.CreateUserEvent;
 import com.example.bookingserver.application.handle.Handler;
+import com.example.bookingserver.application.handle.Handler_DTO;
 import com.example.bookingserver.application.handle.exception.BookingCareException;
 import com.example.bookingserver.application.handle.exception.ErrorDetail;
+import com.example.bookingserver.application.reponse.UserResponse;
 import com.example.bookingserver.infrastructure.mapper.UserMapper;
 import com.example.bookingserver.application.service.PasswordService;
 import com.example.bookingserver.domain.ERole;
@@ -27,7 +29,7 @@ import java.util.Set;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class CreateUserHandler implements Handler<CreateUserCommand> {
+public class CreateUserHandler{
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final MessageProducer messageProducer;
@@ -36,9 +38,8 @@ public class CreateUserHandler implements Handler<CreateUserCommand> {
     private final PasswordService passwordService;
     private final String TOPIC="create-user-event";
 
-    @Override
     @SneakyThrows
-    public void execute(CreateUserCommand command){
+    public UserResponse execute(CreateUserCommand command, Set<Role> roles){
 
         if(userRepository.isEmailExisted(command.getEmail())){
             throw new BookingCareException(ErrorDetail.ERR_USER_EMAIL_EXISTED);
@@ -51,8 +52,6 @@ public class CreateUserHandler implements Handler<CreateUserCommand> {
 
         User user= userMapper.toUserFromCreateCommand(command);
         user.setPassword(passwordService.encode(user.getPassword()));
-        Set<Role> roles= new HashSet<>();
-        roles.add(new Role(ERole.USER));
 
         user.setRoles(roles);
 
@@ -60,6 +59,7 @@ public class CreateUserHandler implements Handler<CreateUserCommand> {
         user= userRepository.save(user);
 
         CreateUserEvent event= userMapper.fromUserToCreateUserEvent(user);
+
         String content= objectMapper.writeValueAsString(event);
         OutboxEvent outboxEvent= OutboxEvent.builder()
                 .topic(TOPIC)
@@ -78,5 +78,6 @@ public class CreateUserHandler implements Handler<CreateUserCommand> {
             log.error("SEND EVENT FAILED: {}", TOPIC );
         }
         outboxEventRepository.save(outboxEvent);
+        return userMapper.toResponse(user);
     }
 }

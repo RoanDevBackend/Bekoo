@@ -7,7 +7,6 @@ import com.example.bookingserver.application.event.doctor.SetMaximumPeoplePerDay
 import com.example.bookingserver.application.event.doctor.UpdateInfoDoctorEvent;
 import com.example.bookingserver.application.reponse.DoctorResponse;
 import com.example.bookingserver.domain.Doctor;
-import com.example.bookingserver.domain.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -17,11 +16,10 @@ public interface DoctorMapper {
     Doctor toDoctorFromCreateCommand(CreateDoctorCommand command);
     void updateInfo(@MappingTarget Doctor doctor, UpdateInfoDoctorCommand command);
 
-    @Mapping(source = "doctor.id", target = "id")
-    DoctorResponse toResponse(Doctor doctor, User user);
+
+    DoctorResponse toResponse(Doctor doctor);
     @Mapping(source = "doctor.user.id", target = "user_id")
     CreateDoctorEvent fromDoctorToCreateDoctorEvent(Doctor doctor);
     UpdateInfoDoctorEvent fromDoctorToUpdateInfoEvent(Doctor doctor);
     SetMaximumPeoplePerDayEvent fromDoctorToSerMaximumEvent(Doctor doctor);
-
 }

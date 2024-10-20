@@ -12,11 +12,8 @@ import lombok.experimental.FieldDefaults;
 public class UpdateInfoUserEvent {
     String id;
     String name;
-    String cccd;
     String province;
     String district;
     String commune;
     String aboutAddress;
-    String dob;
-    String gender;
 }

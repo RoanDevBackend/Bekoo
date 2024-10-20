@@ -1,29 +1,35 @@
 package com.example.bookingserver.controller;
 
 import com.example.bookingserver.application.command.department.CreateDepartmentCommand;
-import com.example.bookingserver.application.command.department.DeleteDepartmentCommand;
 import com.example.bookingserver.application.command.department.UpdateInfoDepartmentCommand;
 import com.example.bookingserver.application.command.doctor_department.AddNewOneCommand;
 import com.example.bookingserver.application.command.doctor_department.DeleteDoctorDepartmentCommand;
 import com.example.bookingserver.application.handle.Handler;
 import com.example.bookingserver.application.handle.Handler_DTO;
+import com.example.bookingserver.application.handle.department.DeleteDepartmentHandler;
 import com.example.bookingserver.application.reponse.ApiResponse;
 import com.example.bookingserver.application.reponse.DepartmentResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RequestMapping(value = "/department")
 @RestController
+@FieldDefaults(makeFinal = true)
 @RequiredArgsConstructor
 public class DepartmentController {
 
-    final Handler_DTO<CreateDepartmentCommand, DepartmentResponse> createDepartmentCommandDepartmentResponseHandler;
-    final Handler_DTO<UpdateInfoDepartmentCommand, DepartmentResponse> updateInfoDepartmentCommandDepartmentResponseHandler;
-    final Handler<DeleteDepartmentCommand> deleteDepartmentCommandHandler;
-    final Handler<AddNewOneCommand> addNewOneCommandHandler;
-    final Handler<DeleteDoctorDepartmentCommand> deleteDoctorDepartmentCommandHandler;
+    Handler_DTO<CreateDepartmentCommand, DepartmentResponse> createDepartmentCommandDepartmentResponseHandler;
+    Handler_DTO<UpdateInfoDepartmentCommand, DepartmentResponse> updateInfoDepartmentCommandDepartmentResponseHandler;
+    DeleteDepartmentHandler deleteDepartmentHandler;
+    Handler<AddNewOneCommand> addNewOneCommandHandler;
+    Handler<DeleteDoctorDepartmentCommand> deleteDoctorDepartmentCommandHandler;
 
     @PostMapping
     public ApiResponse create(@RequestBody @Valid CreateDepartmentCommand command){
@@ -31,7 +37,7 @@ public class DepartmentController {
         return ApiResponse.success(201, "Tạo chuyên khoa thành công", response, HttpStatus.CREATED);
     }
 
-    @PostMapping("/doctor")
+    @PostMapping("/doctor/new-one")
     public ApiResponse addNewOne(@RequestBody AddNewOneCommand addNewOneCommand){
         addNewOneCommandHandler.execute(addNewOneCommand);
         return ApiResponse.success(200, "Thêm thành công");
@@ -43,13 +49,13 @@ public class DepartmentController {
         return ApiResponse.success(200, "Cập nhập thành công", response, HttpStatus.ACCEPTED);
     }
 
-    @DeleteMapping
-    public ApiResponse delete(@RequestBody DeleteDepartmentCommand command){
-        deleteDepartmentCommandHandler.execute(command);
+    @DeleteMapping(value = "/{ids}")
+    public ApiResponse delete(@PathVariable List<String> ids){
+        deleteDepartmentHandler.execute(ids);
         return ApiResponse.success(200, "Xoá thành công");
     }
 
-    @DeleteMapping("/doctor")
+    @PostMapping("/doctor/delete")
     public ApiResponse delete(@RequestBody DeleteDoctorDepartmentCommand command){
         deleteDoctorDepartmentCommandHandler.execute(command);
         return ApiResponse.success(200, "Xoá thành công");

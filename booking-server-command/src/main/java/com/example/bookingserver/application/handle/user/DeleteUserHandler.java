@@ -1,6 +1,5 @@
 package com.example.bookingserver.application.handle.user;
 
-import com.example.bookingserver.application.command.user.DeleteUserCommand;
 import com.example.bookingserver.application.event.user.DeleteUserEvent;
 import com.example.bookingserver.application.handle.Handler;
 import com.example.bookingserver.domain.OutboxEvent;
@@ -20,7 +19,7 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class DeleteUserHandler implements Handler<DeleteUserCommand> {
+public class DeleteUserHandler implements Handler<List<String>> {
 
     final UserRepository userRepository;
     final UserMapper userMapper;
@@ -31,8 +30,8 @@ public class DeleteUserHandler implements Handler<DeleteUserCommand> {
 
     @SneakyThrows
     @Override
-    public void execute(DeleteUserCommand command) {
-        List<String> ids= command.getIds();
+    public void execute(List<String> ids) {
+
         for(String id: ids){
             userRepository.delete(id);
         }

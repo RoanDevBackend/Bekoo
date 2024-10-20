@@ -63,6 +63,6 @@ public class UpdateInfoDoctorHandler implements Handler_DTO<UpdateInfoDoctorComm
         }
         outboxEventRepository.save(outboxEvent);
 
-        return doctorMapper.toResponse(doctor, doctor.getUser());
+        return doctorMapper.toResponse(doctor);
     }
 }

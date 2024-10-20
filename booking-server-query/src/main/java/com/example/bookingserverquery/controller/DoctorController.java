@@ -21,13 +21,13 @@ public class DoctorController {
     final GetAllDoctorHandler getAllDoctorHandler;
     final FindByDoctorIdHandler findByDoctorIdHandler;
 
-    @GetMapping("/name")
+    @PostMapping("/name")
     public ApiResponse findByName(@RequestBody @Valid FindByNameQuery<DoctorResponse> query){
         var response= findByDoctorNameHandler.findByName(query);
         return ApiResponse.success(200, "Tìm kiếm thành công", response);
     }
 
-    @GetMapping
+    @PostMapping
     public ApiResponse getAll(@RequestBody(required = false)@Valid QueryBase<DoctorResponse> query){
         if(query == null){
             query= QueryBase.<DoctorResponse>builder().build();

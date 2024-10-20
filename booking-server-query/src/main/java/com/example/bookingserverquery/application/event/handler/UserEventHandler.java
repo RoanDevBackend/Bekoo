@@ -32,10 +32,15 @@ public class UserEventHandler {
     @KafkaListener(topics = "create-user-event")
     @SneakyThrows
     void createUserEvent(String event){
-        log.info("create-user-event: " + event);
-        CreateUserEvent createUserEvent= objectMapper.readValue(event, CreateUserEvent.class);
-        User user= userMapper.toUserFromCreateUserEvent(createUserEvent);
-        userELRepository.save(user);
+        try {
+            CreateUserEvent createUserEvent = objectMapper.readValue(event, CreateUserEvent.class);
+            log.info(createUserEvent.toString());
+            User user = userMapper.toUserFromCreateUserEvent(createUserEvent);
+            userELRepository.save(user);
+            log.info("CREATE-USER-EVENT SUCCESS: {}", event);
+        }catch (Exception e){
+            log.error("CREATE-USER-EVENT ERROR: {}", e.getMessage());
+        }
     }
 
 

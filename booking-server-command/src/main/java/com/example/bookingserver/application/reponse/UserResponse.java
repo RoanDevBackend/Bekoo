@@ -1,5 +1,6 @@
 package com.example.bookingserver.application.reponse;
 
+import com.example.bookingserver.domain.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -8,6 +9,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -35,10 +37,4 @@ public class UserResponse {
     LocalDate dob;
     String gender;
     String linkAvatar;
-
-//    String role;
-//
-//    public String getRole() {
-//       return  "USER";
-//    }
 }

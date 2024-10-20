@@ -9,6 +9,7 @@ import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Builder
 @ToString
@@ -27,6 +28,7 @@ public class CreateUserEvent {
     String password;
     LocalDate dob;
     String gender;
+    Set<String> roles;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
 }

@@ -28,7 +28,7 @@ public class FindByDoctorNameHandler {
 
         List<DoctorResponse> doctorResponses= new ArrayList<>();
         for(Doctor x: page.getContent()){
-            DoctorResponse doctorResponse= doctorMapper.toResponse(x, x.getUser());
+            DoctorResponse doctorResponse= doctorMapper.toResponse(x);
             doctorResponses.add(doctorResponse);
         }
 

@@ -21,13 +21,13 @@ public class UserController {
     final GetAllHandler getAllHandler;
     final FindByIdHandler findByIdHandler;
 
-    @GetMapping("/name")
+    @PostMapping("/name")
     public ApiResponse findByName(@RequestBody @Valid FindByNameQuery<UserResponse> query){
         var response= findByNameHandler.findByName(query);
         return ApiResponse.success(200, "Tìm kiếm thành công", response);
     }
 
-    @GetMapping
+    @PostMapping
     public ApiResponse getAll(@RequestBody(required = false)@Valid QueryBase<UserResponse> query){
         if(query == null){
             query= QueryBase.<UserResponse>builder().build();

@@ -1,12 +1,8 @@
 package com.example.bookingserver.application.command.user;
 
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -14,28 +10,27 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CreateUserCommand {
-    @NotBlank
+    @NotBlank(message = "Tên không được để trống")
     String name;
-    @NotBlank
+    @NotBlank(message = "Số điện thoại không được để trống")
     String phoneNumber;
-    @NotBlank
+    @NotBlank(message = "Email không được để trống")
     String email;
-    @NotBlank
+    @NotBlank(message = "CCCD không được để trống")
     String cccd;
-    @NotBlank
+    @NotBlank(message = "Tỉnh không được để trống")
     String province;
-    @NotBlank
+    @NotBlank(message = "Quận/huyện không được để trống")
     String district;
-    @NotBlank
+    @NotBlank(message = "Phường/xã không được để trống")
     String commune;
-
     String aboutAddress;
-    @NotBlank
+    @NotBlank(message = "Mật khẩu không được để trống")
     String password;
-    @NotBlank
+    @NotBlank(message = "Xác nhận mật khẩu không được để trống")
     String confirmPassword;
-    @NotBlank
+    @NotBlank(message = "Ngày sinh không được để trống")
     String dob;
-    @NotBlank
+    @NotBlank(message = "Giới tính không được để trống")
     String gender;
 }

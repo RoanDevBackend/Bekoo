@@ -29,7 +29,7 @@ public class FindDoctorByDepartmentHandler {
         List<DoctorResponse> doctorResponses= new ArrayList<>();
         for(DoctorDepartment x: page.getContent()){
             Optional<Doctor> doctorOptional= doctorELRepository.findById(x.getDoctorId());
-            doctorOptional.ifPresent(doctor -> doctorResponses.add(doctorMapper.toResponse(doctor, doctor.getUser())));
+            doctorOptional.ifPresent(doctor -> doctorResponses.add(doctorMapper.toResponse(doctor)));
         }
         return PageResponse.<DoctorResponse>builder()
                 .totalPage(page.getTotalPages())

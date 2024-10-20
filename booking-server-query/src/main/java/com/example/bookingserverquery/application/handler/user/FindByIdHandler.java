@@ -2,7 +2,7 @@ package com.example.bookingserverquery.application.handler.user;
 
 import com.example.bookingserverquery.application.handler.exception.BookingCareException;
 import com.example.bookingserverquery.application.handler.exception.ErrorDetail;
-import com.example.bookingserverquery.application.reponse.user.FindByIdResponse;
+import com.example.bookingserverquery.application.reponse.user.FindByUserIdResponse;
 import com.example.bookingserverquery.domain.User;
 import com.example.bookingserverquery.domain.repository.UserRepository;
 import com.example.bookingserverquery.infrastructure.mapper.UserMapper;
@@ -20,7 +20,7 @@ public class FindByIdHandler {
     final UserMapper userMapper;
 
     @SneakyThrows
-    public FindByIdResponse execute(String id){
+    public FindByUserIdResponse execute(String id){
         Optional<User> userOptional= userRepository.findById(id);
         User user= userOptional.orElseThrow(
                 () -> new BookingCareException(ErrorDetail.ERR_USER_NOT_EXISTED)

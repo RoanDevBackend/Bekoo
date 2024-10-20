@@ -15,16 +15,10 @@ public class UpdateInfoUserCommand {
     @NotBlank
     String name;
     @NotBlank
-    String cccd;
-    @NotBlank
     String province;
     @NotBlank
     String district;
     @NotBlank
     String commune;
     String aboutAddress;
-    @NotBlank
-    String dob;
-    @NotBlank
-    String gender;
 }

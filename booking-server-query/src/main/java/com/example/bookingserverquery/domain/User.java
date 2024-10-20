@@ -10,6 +10,7 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -57,6 +58,9 @@ public class User extends EntityBase {
 
     @Field(type = FieldType.Keyword)
     String linkAvatar;
+
+    @Field(type = FieldType.Keyword)
+    Set<String> roles;
 
     public static abstract class UserBuilder<C extends User, B extends UserBuilder<C, B>> extends EntityBaseBuilder<C,B>{
         public B email(String email) {

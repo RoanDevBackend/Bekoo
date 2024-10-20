@@ -1,7 +1,6 @@
 package com.example.bookingserver.application.handle.department;
 
 
-import com.example.bookingserver.application.command.department.DeleteDepartmentCommand;
 import com.example.bookingserver.application.handle.Handler;
 import com.example.bookingserver.domain.OutboxEvent;
 import com.example.bookingserver.domain.repository.DepartmentRepository;
@@ -20,19 +19,17 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class DeleteDepartmentHandler implements Handler<DeleteDepartmentCommand> {
+public class DeleteDepartmentHandler implements Handler<List<String>> {
 
     final DepartmentRepository departmentRepository;
     final OutboxEventRepository outboxEventRepository;
-    final DepartmentMapper departmentMapper;
     final ObjectMapper objectMapper;
     final MessageProducer messageProducer;
     final String TOPIC= "delete-department-event";
 
     @Override
     @SneakyThrows
-    public void execute(DeleteDepartmentCommand command) {
-        List<String> ids= command.getIds();
+    public void execute(List<String> ids) {
 
         for(String x: ids){
             log.info("DELETE DEPARTMENT: {}", x);

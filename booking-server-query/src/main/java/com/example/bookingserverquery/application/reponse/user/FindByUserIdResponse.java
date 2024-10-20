@@ -2,13 +2,10 @@ package com.example.bookingserverquery.application.reponse.user;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import lombok.experimental.SuperBuilder;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.Field;
-import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -16,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
-public class FindByIdResponse {
+public class FindByUserIdResponse {
     String id;
 
     String name;
@@ -38,6 +35,8 @@ public class FindByIdResponse {
     LocalDate dob;
 
     String gender;
+
+    Set<String> roles;
 
     String linkAvatar;
     LocalDateTime createdAt;

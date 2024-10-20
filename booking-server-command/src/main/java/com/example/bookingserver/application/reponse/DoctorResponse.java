@@ -10,27 +10,9 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class DoctorResponse {
+public class DoctorResponse{
     String id;
-
-    String name;
-
-    String phoneNumber;
-
-    String email;
-
-    String cccd;
-
-    String province;
-
-    String district;
-
-    String commune ;
-
-    String aboutAddress;
-    LocalDate dob;
-    String gender;
-    String linkAvatar;
     String description;
     String trainingBy;
+    UserResponse user;
 }

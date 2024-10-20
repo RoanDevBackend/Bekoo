@@ -2,37 +2,47 @@ package com.example.bookingserver.controller;
 
 import com.example.bookingserver.application.command.user.*;
 import com.example.bookingserver.application.handle.Handler;
+import com.example.bookingserver.application.handle.user.CreateUserHandler;
+import com.example.bookingserver.application.handle.user.DeleteUserHandler;
 import com.example.bookingserver.application.reponse.ApiResponse;
+import com.example.bookingserver.domain.ERole;
+import com.example.bookingserver.domain.Role;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/user")
 @Slf4j
+@FieldDefaults(makeFinal = true)
+@RequiredArgsConstructor
 public class UserController {
 
-    final Handler<CreateUserCommand> createUserHandler;
-    final Handler<UpdateInfoUserCommand> updateInfoUserCommandHandler;
-    final Handler<DeleteUserCommand> deleteUserCommandHandler;
-    final Handler<ChangePasswordCommand> changePasswordCommandHandler;
-    final Handler<ChangePasswordOTPCommand> changePasswordOTPCommandHandler;
-    final Handler<ForgotPasswordCommand> forgotPasswordCommandHandler;
-    final Handler<VerifyOTPCommand> verifyOTPCommandHandler;
-    final Handler<UpdateAvatarUserCommand> updateAvatarUserCommandHandler;
-
+    CreateUserHandler createUserHandler;
+    Handler<UpdateInfoUserCommand> updateInfoUserCommandHandler;
+    DeleteUserHandler deleteUserHandler;
+    Handler<ChangePasswordCommand> changePasswordCommandHandler;
+    Handler<ChangePasswordOTPCommand> changePasswordOTPCommandHandler;
+    Handler<ForgotPasswordCommand> forgotPasswordCommandHandler;
+    Handler<VerifyOTPCommand> verifyOTPCommandHandler;
+    Handler<UpdateAvatarUserCommand> updateAvatarUserCommandHandler;
 
     @PostMapping()
     public ApiResponse createUser(@RequestBody @Valid CreateUserCommand command){
-        createUserHandler.execute(command);
+        Set<Role> roles= new HashSet<>();
+        roles.add(new Role(ERole.USER));
+        var response= createUserHandler.execute(command, roles);
         log.info("Create User: " + command.getName());
-        return ApiResponse.success(201, "Tạo tài khoản thành công");
+        return ApiResponse.success(201, "Tạo tài khoản thành công", response);
     }
 
 
@@ -88,10 +98,10 @@ public class UserController {
     }
 
 
-    @DeleteMapping()
-    public ApiResponse deleteUser(@RequestBody DeleteUserCommand command){
-        deleteUserCommandHandler.execute(command);
-        log.info("Delete User: {}", command.toString() );
+    @DeleteMapping("/{ids}")
+    public ApiResponse deleteUser(@PathVariable("ids") List<String> ids){
+        deleteUserHandler.execute(ids);
+        log.info("Delete User: {}", ids);
         return ApiResponse.success(200, "Xoá tài khoản thành công");
     }
 }

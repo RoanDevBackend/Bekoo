@@ -14,6 +14,5 @@ public interface DoctorMapper {
 
     Doctor toDoctorFromCreateEvent(CreateDoctorEvent command);
     void updateInfo(@MappingTarget Doctor doctor, UpdateInfoDoctorEvent event);
-    @Mapping(source = "doctor.id", target = "id")
-    DoctorResponse toResponse(Doctor doctor, User user);
+    DoctorResponse toResponse(Doctor doctor);
 }
