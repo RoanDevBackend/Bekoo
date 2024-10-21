@@ -25,6 +25,7 @@ public class WebSecurity {
 
     final AuthenticationProvider authenticationProvider;
     final JwtAuthenticationFilter jwtAuthenticationFilter;
+
     final String[] listUnAuthenticate={
             "/sign-in"
             , "/user/forgot-password/send-otp"
@@ -33,12 +34,16 @@ public class WebSecurity {
             , "/v3/api-docs/**"
             , "/swagger-ui/**"
             , "/swagger-ui.html"
+            , "specialize/department/**"
+    };
+
+    final String[] getMappings={
+            "/specialize/**"
     };
 
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
         http
                 .cors(httpSecurityCorsConfigurer -> corsFilter())
                 .csrf(AbstractHttpConfigurer::disable)
@@ -48,6 +53,8 @@ public class WebSecurity {
                                         .requestMatchers(HttpMethod.POST, "/user")
                                             .permitAll()
                                         .requestMatchers(listUnAuthenticate)
+                                            .permitAll()
+                                        .requestMatchers(HttpMethod.GET ,getMappings)
                                             .permitAll()
                                         .anyRequest()
                                             .authenticated()

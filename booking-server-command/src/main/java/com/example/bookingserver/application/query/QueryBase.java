@@ -1,4 +1,4 @@
-package com.example.bookingserverquery.application.query;
+package com.example.bookingserver.application.query;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.Max;
