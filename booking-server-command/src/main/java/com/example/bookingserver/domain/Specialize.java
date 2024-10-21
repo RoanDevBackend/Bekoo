@@ -21,6 +21,7 @@ public class Specialize extends EntityBase{
     String name;
     @Column(columnDefinition = "text")
     String description;
+    Integer price;
     @ManyToOne
             @JoinColumn(name = "department_id")
     Department department;

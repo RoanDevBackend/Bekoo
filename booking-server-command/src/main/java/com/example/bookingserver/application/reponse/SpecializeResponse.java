@@ -14,5 +14,6 @@ public class SpecializeResponse {
     String id;
     String name;
     String description;
+    Integer price;
     DepartmentResponse department;
 }
