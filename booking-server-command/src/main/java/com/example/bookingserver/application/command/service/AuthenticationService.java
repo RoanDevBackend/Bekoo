@@ -7,4 +7,5 @@ import com.example.bookingserver.application.command.reponse.UserResponse;
 public interface AuthenticationService {
     TokenResponse signIn(SignInCommand command);
     UserResponse getIdByToken(String token);
+    TokenResponse refreshToken(String token);
 }

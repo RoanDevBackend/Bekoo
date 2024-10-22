@@ -16,9 +16,13 @@ import io.swagger.v3.oas.models.annotations.OpenAPI31;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 
+
+@Slf4j
 @RestController
 @RequestMapping("/department")
 @FieldDefaults(makeFinal = true)
@@ -31,20 +35,23 @@ public class DepartmentController {
     private FindDoctorByDepartmentHandler findDoctorByDepartmentHandler;
 
     @GetMapping("/id/{id}")
+    @Operation(summary = "Tìm kiếm Chuyên khoa theo ID")
     public ApiResponse getDepartmentById(@PathVariable String id) {
         var response= findByDepartmentIdHandler.execute(id);
         return ApiResponse.success(200, "Tìm kiếm thành công", response);
     }
 
     @PostMapping("/name")
+    @Operation(summary = "Tìm kiếm theo tên")
     public ApiResponse getDepartmentByName(@RequestBody @Valid FindByNameQuery<DepartmentResponse> query) {
-
         var response= findByDepartmentNameHandler.execute(query);
         return ApiResponse.success(200, "Tìm kiếm thành công", response);
     }
 
     @PostMapping
+    @Operation(summary = "Lấy ra danh sách tất cả Chuyên khoa")
     public ApiResponse getAllDepartments(@RequestBody(required = false) @Valid QueryBase<DepartmentResponse> query) {
+        log.info("API: Get all departments ");
         if(query == null){
             query= FindByNameQuery.<DepartmentResponse>builder().build();
         }

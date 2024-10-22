@@ -39,6 +39,7 @@ public class FindByDoctorNameHandler {
                 .pageIndex(page.getNumber()+1)
                 .orders(query.getOrders())
                 .contentResponse(doctorResponses)
+                .totalElements(page.getTotalElements())
                 .build();
     }
 }

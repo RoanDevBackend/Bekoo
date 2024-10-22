@@ -41,6 +41,7 @@ public class WebSecurity {
             "/specialize/**"
     };
     final String[] postMappings={
+            "/token/refresh/**"
     };
 
 
@@ -57,6 +58,8 @@ public class WebSecurity {
                                         .requestMatchers(listUnAuthenticate)
                                             .permitAll()
                                         .requestMatchers(HttpMethod.GET ,getMappings)
+                                            .permitAll()
+                                        .requestMatchers(HttpMethod.POST ,postMappings)
                                             .permitAll()
                                         .anyRequest()
                                             .authenticated()

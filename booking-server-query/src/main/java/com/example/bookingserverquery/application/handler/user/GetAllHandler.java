@@ -34,6 +34,7 @@ public class GetAllHandler {
                 .pageSize(page.getSize())
                 .orders(query.getOrders())
                 .totalPage(page.getTotalPages())
+                .totalElements(page.getTotalElements())
                 .build();
     }
 

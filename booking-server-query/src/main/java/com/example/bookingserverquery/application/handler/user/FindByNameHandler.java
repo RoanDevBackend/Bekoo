@@ -39,6 +39,7 @@ public class FindByNameHandler {
                 .pageIndex(page.getNumber() + 1)
                 .orders(query.getOrders())
                 .contentResponse(userResponses)
+                .totalElements(page.getTotalElements())
                 .build();
     }
 }

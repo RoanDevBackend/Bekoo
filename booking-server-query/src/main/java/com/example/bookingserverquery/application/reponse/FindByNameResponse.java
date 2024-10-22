@@ -14,6 +14,7 @@ import java.util.List;
 @SuperBuilder
 public class FindByNameResponse<T> extends FindByNameQuery<T> {
     int totalPage;
+    long totalElements;
     List<T> contentResponse;
 
 //    public static abstract class FindByNameResponseBuilder<C extends FindByNameResponse, B extends FindByNameResponseBuilder<C, B>> extends FindByNameQueryBuilder<C,B> {

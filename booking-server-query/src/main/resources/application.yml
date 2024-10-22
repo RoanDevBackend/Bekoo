@@ -9,5 +9,8 @@ spring:
     elasticsearch:
       repositories:
         enabled: true
+
 server:
   port: 8081
+  error:
+    include-message: always

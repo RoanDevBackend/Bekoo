@@ -12,6 +12,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Getter
 @Setter
+@EqualsAndHashCode
 public class DoctorDepartmentId implements Serializable {
     Doctor doctor;
     Department department;

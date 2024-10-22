@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,14 +23,22 @@ public class AuthenticationController {
 
     @PostMapping("/sign-in")
     public ApiResponse signIn(@RequestBody @Valid SignInCommand command){
+        log.info("API: Sign in");
         var response= authenticationService.signIn(command);
-        log.info("Sign-In");
         return ApiResponse.success(200, "Đăng nhập thành công", response);
+    }
+
+    @PostMapping("/token/refresh/{token}")
+    public ApiResponse refreshToken(@PathVariable String token){
+        log.info("API: Refresh token");
+        var response= authenticationService.refreshToken(token);
+        return ApiResponse.success(200, "Refresh token", response);
     }
 
     @Operation(summary = "Lấy ra user từ token", description = "Cần token ở header")
     @PostMapping("/token")
     public ApiResponse getUserByToken(HttpServletRequest request){
+        log.info("API: Get user by token");
         var token= request.getHeader(HttpHeaders.AUTHORIZATION);
         var response= authenticationService.getIdByToken(token);
         return ApiResponse.success(200, "Thành công", response);

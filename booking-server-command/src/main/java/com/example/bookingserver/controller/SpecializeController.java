@@ -29,12 +29,14 @@ public class SpecializeController {
     FindByDepartmentHandler findByDepartmentHandler;
 
     @PostMapping
+    @Operation(summary = "Thêm chuyên khoa")
     public ApiResponse create(@RequestBody @Valid CreateSpecializeCommand command){
         var response= createSpecializeHandler.execute(command);
         return ApiResponse.success(201, "Thêm thành công", response, HttpStatus.CREATED);
     }
 
     @PutMapping
+    @Operation(summary = "Sửa chuyên khoa")
     public ApiResponse update(@RequestBody @Valid UpdateSpecializeCommand command){
         var response= updateSpecializeHandler.execute(command);
         return ApiResponse.success(200, "Sửa thành công", response);
@@ -42,6 +44,7 @@ public class SpecializeController {
 
 
     @DeleteMapping(value = "/{ids}")
+    @Operation(summary = "Xoá chuyên khoa")
     public ApiResponse delete(@PathVariable("ids") List<String> ids){
         deleteSpecializeHandler.execute(ids);
         return ApiResponse.success(200, "Xoá thành công");

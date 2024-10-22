@@ -7,6 +7,7 @@ import com.example.bookingserver.application.command.handle.Handler;
 import com.example.bookingserver.application.command.handle.Handler_DTO;
 import com.example.bookingserver.application.command.reponse.ApiResponse;
 import com.example.bookingserver.application.command.reponse.DoctorResponse;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -37,7 +38,9 @@ public class DoctorController {
         return ApiResponse.success(200, "Sửa thông tin thành công", response);
     }
 
+
     @PutMapping(value = "/day")
+    @Operation(summary = "Đặt số người khám tối đa theo ngày cho bác sĩ")
     public ApiResponse setMaximumPeoplePerDay(@RequestBody SetMaximumPeoplePerDayCommand command){
         setMaximumPeoplePerDayCommandHandler.execute(command);
         return ApiResponse.success(200, "Thay đổi thành công");

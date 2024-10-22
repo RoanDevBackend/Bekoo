@@ -8,6 +8,7 @@ import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -26,4 +27,5 @@ public class Department {
     String name;
     @Field(type = FieldType.Text)
     String description;
+    LocalDateTime createdAt;
 }

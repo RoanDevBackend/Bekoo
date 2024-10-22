@@ -8,10 +8,10 @@ spring:
     password: ${db.password}
   jpa:
     show-sql: false
+    open-in-view: false
     properties:
       hibernate:
         format_sql: true
-        dialect: org.hibernate.dialect.MySQLDialect
     hibernate:
       ddl-auto: update
   mail:
@@ -25,3 +25,6 @@ spring:
           auth: true
           starttls:
             enable: true
+logging:
+  level:
+    root: Warn

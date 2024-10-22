@@ -13,6 +13,7 @@ import com.example.bookingserver.application.command.service.PasswordService;
 import com.example.bookingserver.application.command.service.AuthenticationService;
 import com.example.bookingserver.domain.User;
 import com.example.bookingserver.domain.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -82,4 +83,34 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if(user == null) throw new BookingCareException(ErrorDetail.ERR_USER_NOT_EXISTED);
         return userMapper.toResponse(user);
     }
+
+    @Transactional
+    @Override
+    @SneakyThrows
+    public TokenResponse refreshToken(String refreshToken) {
+        if(jwtService.isTokenExpired(refreshToken)){
+            throw new BookingCareException(ErrorDetail.ERR_USER_UN_AUTHENTICATE);
+        }
+        String username= jwtService.extractUsername(refreshToken);
+        User user= userRepository.findByUserName(username);
+        if(user == null) throw new BookingCareException(ErrorDetail.ERR_USER_NOT_EXISTED);
+
+        var tokenContent = jwtService.generateToken(user, TIME_TOKEN);
+        refreshToken = jwtService.generateToken(user, TIME_REFRESH_TOKEN);
+        Set<String> roles= new HashSet<>() ;
+        for(Role x : user.getRoles()){
+            roles.add(x.getName()) ;
+        }
+        return TokenResponse.builder()
+                .tokenContent(tokenContent)
+                .refreshToken(refreshToken)
+                .userId(user.getId())
+                .userName(username)
+                .roleName(roles)
+                .expToken(new Timestamp(System.currentTimeMillis() + TIME_TOKEN))
+                .expRefreshToken(new Timestamp(System.currentTimeMillis() + TIME_REFRESH_TOKEN))
+                .build();
+    }
+
+
 }

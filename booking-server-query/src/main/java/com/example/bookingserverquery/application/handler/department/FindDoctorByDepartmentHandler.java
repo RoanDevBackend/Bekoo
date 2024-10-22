@@ -8,9 +8,10 @@ import com.example.bookingserverquery.domain.DoctorDepartment;
 import com.example.bookingserverquery.infrastructure.mapper.DoctorMapper;
 import com.example.bookingserverquery.infrastructure.repository.DoctorDepartmentELRepository;
 import com.example.bookingserverquery.infrastructure.repository.DoctorELRepository;
-import com.example.bookingserverquery.infrastructure.repository.UserELRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -22,10 +23,10 @@ import java.util.Optional;
 public class FindDoctorByDepartmentHandler {
     final DoctorDepartmentELRepository doctorDepartmentELRepository;
     final DoctorELRepository doctorELRepository;
-    final UserELRepository userELRepository;
     final DoctorMapper doctorMapper;
     public PageResponse<DoctorResponse> execute(String id, QueryBase<DoctorResponse> queryBase){
-        Page<DoctorDepartment> page= doctorDepartmentELRepository.findByDepartmentId(id, queryBase.getPageable());
+        Pageable pageable= PageRequest.of(queryBase.getPageIndex()-1 , queryBase.getPageSize());
+        Page<DoctorDepartment> page= doctorDepartmentELRepository.findByDepartmentId(id, pageable);
         List<DoctorResponse> doctorResponses= new ArrayList<>();
         for(DoctorDepartment x: page.getContent()){
             Optional<Doctor> doctorOptional= doctorELRepository.findById(x.getDoctorId());
@@ -37,6 +38,7 @@ public class FindDoctorByDepartmentHandler {
                 .pageSize(queryBase.getPageSize())
                 .orders(queryBase.getOrders())
                 .contentResponse(doctorResponses)
+                .totalElements(page.getTotalElements())
                 .build();
     }
 }

@@ -13,6 +13,7 @@ import java.util.List;
 public class PageResponse<T> extends QueryBase<T> {
 
     int totalPage;
+    long totalElements;
     List<T> contentResponse;
 
 }
