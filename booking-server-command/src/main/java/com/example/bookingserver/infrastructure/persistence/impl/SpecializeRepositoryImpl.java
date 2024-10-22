@@ -42,4 +42,9 @@ public class SpecializeRepositoryImpl implements SpecializeRepository {
     public Page<Specialize> findByDepartment(String departmentId, Pageable pageable) {
         return specializeJpaRepository.findByDepartmentId(departmentId, pageable);
     }
+
+    @Override
+    public Page<Specialize> findAll(Pageable pageable) {
+        return specializeJpaRepository.findAll(pageable);
+    }
 }

@@ -14,4 +14,5 @@ public interface SpecializeRepository {
     void delete(Specialize specialize);
     Optional<Specialize> findById(String id);
     Page<Specialize> findByDepartment(String departmentId, Pageable pageable);
+    Page<Specialize> findAll(Pageable pageable);
 }

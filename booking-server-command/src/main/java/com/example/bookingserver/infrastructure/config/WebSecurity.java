@@ -42,6 +42,7 @@ public class WebSecurity {
     };
     final String[] postMappings={
             "/token/refresh/**"
+            ,"/specialize/query-all"
     };
 
 
