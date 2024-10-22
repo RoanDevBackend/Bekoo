@@ -1,11 +1,11 @@
 package com.example.bookingserver.infrastructure.mapper;
 
-import com.example.bookingserver.application.command.user.CreateUserCommand;
-import com.example.bookingserver.application.command.user.UpdateInfoUserCommand;
-import com.example.bookingserver.application.event.user.CreateUserEvent;
-import com.example.bookingserver.application.event.user.UpdateAvatarUserEvent;
-import com.example.bookingserver.application.event.user.UpdateInfoUserEvent;
-import com.example.bookingserver.application.reponse.UserResponse;
+import com.example.bookingserver.application.command.command.user.CreateUserCommand;
+import com.example.bookingserver.application.command.command.user.UpdateInfoUserCommand;
+import com.example.bookingserver.application.command.event.user.CreateUserEvent;
+import com.example.bookingserver.application.command.event.user.UpdateAvatarUserEvent;
+import com.example.bookingserver.application.command.event.user.UpdateInfoUserEvent;
+import com.example.bookingserver.application.command.reponse.UserResponse;
 import com.example.bookingserver.domain.Role;
 import com.example.bookingserver.domain.User;
 import org.mapstruct.Mapper;

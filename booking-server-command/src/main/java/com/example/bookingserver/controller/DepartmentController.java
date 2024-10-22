@@ -1,19 +1,17 @@
 package com.example.bookingserver.controller;
 
-import com.example.bookingserver.application.command.department.CreateDepartmentCommand;
-import com.example.bookingserver.application.command.department.UpdateInfoDepartmentCommand;
-import com.example.bookingserver.application.command.doctor_department.AddNewOneCommand;
-import com.example.bookingserver.application.command.doctor_department.DeleteDoctorDepartmentCommand;
-import com.example.bookingserver.application.handle.Handler;
-import com.example.bookingserver.application.handle.Handler_DTO;
-import com.example.bookingserver.application.handle.department.DeleteDepartmentHandler;
-import com.example.bookingserver.application.reponse.ApiResponse;
-import com.example.bookingserver.application.reponse.DepartmentResponse;
+import com.example.bookingserver.application.command.command.department.CreateDepartmentCommand;
+import com.example.bookingserver.application.command.command.department.UpdateInfoDepartmentCommand;
+import com.example.bookingserver.application.command.command.doctor_department.AddNewOneCommand;
+import com.example.bookingserver.application.command.command.doctor_department.DeleteDoctorDepartmentCommand;
+import com.example.bookingserver.application.command.handle.Handler;
+import com.example.bookingserver.application.command.handle.Handler_DTO;
+import com.example.bookingserver.application.command.handle.department.DeleteDepartmentHandler;
+import com.example.bookingserver.application.command.reponse.ApiResponse;
+import com.example.bookingserver.application.command.reponse.DepartmentResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 

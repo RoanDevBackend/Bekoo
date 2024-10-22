@@ -27,11 +27,14 @@ public class Doctor extends EntityBase{
 
     Integer price;
 
-    Integer maximumPeoplePerDay;
+    @Builder.Default
+    Integer maximumPeoplePerDay=0;
 
     @OneToOne()
             @JoinColumn(name = "user_id", unique = true)
     User user;
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL)
     List<DoctorDepartment> doctorDepartments;
+    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL)
+    List<Schedule> schedules;
 }

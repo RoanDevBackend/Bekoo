@@ -1,11 +1,11 @@
 package com.example.bookingserver.controller;
 
-import com.example.bookingserver.application.command.specialize.CreateSpecializeCommand;
-import com.example.bookingserver.application.command.specialize.UpdateSpecializeCommand;
-import com.example.bookingserver.application.handle.specialize.*;
+import com.example.bookingserver.application.command.command.specialize.CreateSpecializeCommand;
+import com.example.bookingserver.application.command.command.specialize.UpdateSpecializeCommand;
+import com.example.bookingserver.application.command.handle.specialize.*;
 import com.example.bookingserver.application.query.QueryBase;
-import com.example.bookingserver.application.reponse.ApiResponse;
-import com.example.bookingserver.application.reponse.SpecializeResponse;
+import com.example.bookingserver.application.command.reponse.ApiResponse;
+import com.example.bookingserver.application.command.reponse.SpecializeResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -40,12 +40,14 @@ public class SpecializeController {
         return ApiResponse.success(200, "Sửa thành công", response);
     }
 
+
     @DeleteMapping(value = "/{ids}")
     public ApiResponse delete(@PathVariable("ids") List<String> ids){
         deleteSpecializeHandler.execute(ids);
         return ApiResponse.success(200, "Xoá thành công");
     }
 
+    @Operation(summary = "Tìm kiếm theo ID")
     @GetMapping(value = "/{id}")
     public ApiResponse get(@PathVariable("id") String id){
         var response= findBySpecializeIdHandler.execute(id);

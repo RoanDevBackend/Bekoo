@@ -1,6 +1,6 @@
 package com.example.bookingserver.infrastructure.config;
 
-import com.example.bookingserver.application.service.JwtService;
+import com.example.bookingserver.application.command.service.JwtService;
 import com.example.bookingserver.infrastructure.persistence.repository.RedisRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

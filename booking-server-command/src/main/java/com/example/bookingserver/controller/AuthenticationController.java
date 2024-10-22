@@ -1,8 +1,8 @@
 package com.example.bookingserver.controller;
 
-import com.example.bookingserver.application.command.user.SignInCommand;
-import com.example.bookingserver.application.reponse.ApiResponse;
-import com.example.bookingserver.application.service.AuthenticationService;
+import com.example.bookingserver.application.command.command.user.SignInCommand;
+import com.example.bookingserver.application.command.reponse.ApiResponse;
+import com.example.bookingserver.application.command.service.AuthenticationService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;

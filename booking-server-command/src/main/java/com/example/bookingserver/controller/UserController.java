@@ -1,10 +1,10 @@
 package com.example.bookingserver.controller;
 
-import com.example.bookingserver.application.command.user.*;
-import com.example.bookingserver.application.handle.Handler;
-import com.example.bookingserver.application.handle.user.CreateUserHandler;
-import com.example.bookingserver.application.handle.user.DeleteUserHandler;
-import com.example.bookingserver.application.reponse.ApiResponse;
+import com.example.bookingserver.application.command.command.user.*;
+import com.example.bookingserver.application.command.handle.Handler;
+import com.example.bookingserver.application.command.handle.user.CreateUserHandler;
+import com.example.bookingserver.application.command.handle.user.DeleteUserHandler;
+import com.example.bookingserver.application.command.reponse.ApiResponse;
 import com.example.bookingserver.domain.ERole;
 import com.example.bookingserver.domain.Role;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,8 +12,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;

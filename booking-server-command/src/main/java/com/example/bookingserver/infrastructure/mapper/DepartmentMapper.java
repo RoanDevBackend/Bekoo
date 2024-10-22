@@ -1,14 +1,13 @@
 package com.example.bookingserver.infrastructure.mapper;
 
-import com.example.bookingserver.application.command.department.CreateDepartmentCommand;
-import com.example.bookingserver.application.command.department.UpdateInfoDepartmentCommand;
-import com.example.bookingserver.application.event.department.CreateDepartmentEvent;
-import com.example.bookingserver.application.event.department.UpdateInfoDepartmentEvent;
-import com.example.bookingserver.application.reponse.DepartmentResponse;
+import com.example.bookingserver.application.command.command.department.CreateDepartmentCommand;
+import com.example.bookingserver.application.command.command.department.UpdateInfoDepartmentCommand;
+import com.example.bookingserver.application.command.event.department.CreateDepartmentEvent;
+import com.example.bookingserver.application.command.event.department.UpdateInfoDepartmentEvent;
+import com.example.bookingserver.application.command.reponse.DepartmentResponse;
 import com.example.bookingserver.domain.Department;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
-import org.springframework.stereotype.Component;
 
 @Mapper(componentModel = "spring")
 public interface DepartmentMapper {

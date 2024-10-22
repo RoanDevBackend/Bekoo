@@ -1,12 +1,12 @@
 package com.example.bookingserver.controller;
 
-import com.example.bookingserver.application.command.doctor.CreateDoctorCommand;
-import com.example.bookingserver.application.command.doctor.SetMaximumPeoplePerDayCommand;
-import com.example.bookingserver.application.command.doctor.UpdateInfoDoctorCommand;
-import com.example.bookingserver.application.handle.Handler;
-import com.example.bookingserver.application.handle.Handler_DTO;
-import com.example.bookingserver.application.reponse.ApiResponse;
-import com.example.bookingserver.application.reponse.DoctorResponse;
+import com.example.bookingserver.application.command.command.doctor.CreateDoctorCommand;
+import com.example.bookingserver.application.command.command.doctor.SetMaximumPeoplePerDayCommand;
+import com.example.bookingserver.application.command.command.doctor.UpdateInfoDoctorCommand;
+import com.example.bookingserver.application.command.handle.Handler;
+import com.example.bookingserver.application.command.handle.Handler_DTO;
+import com.example.bookingserver.application.command.reponse.ApiResponse;
+import com.example.bookingserver.application.command.reponse.DoctorResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

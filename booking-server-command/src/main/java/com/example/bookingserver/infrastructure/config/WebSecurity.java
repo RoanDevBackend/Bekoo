@@ -40,6 +40,8 @@ public class WebSecurity {
     final String[] getMappings={
             "/specialize/**"
     };
+    final String[] postMappings={
+    };
 
 
     @Bean
