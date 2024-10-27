@@ -1,6 +1,5 @@
 package com.example.bookingserverquery.application.reponse.department;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -13,4 +12,7 @@ public class DepartmentResponse {
     String id;
     String name;
     String description;
+    String urlImage;
+    Integer totalSpecialize;
+    Integer totalDoctor;
 }

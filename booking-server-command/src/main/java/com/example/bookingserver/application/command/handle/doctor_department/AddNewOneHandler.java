@@ -17,6 +17,7 @@ import com.example.bookingserver.domain.repository.OutboxEventRepository;
 import com.example.bookingserver.infrastructure.constant.ApplicationConstant;
 import com.example.bookingserver.infrastructure.message.MessageProducer;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -37,19 +38,24 @@ public class AddNewOneHandler implements Handler<AddNewOneCommand> {
 
     @Override
     @SneakyThrows
+    @Transactional
     public void execute(AddNewOneCommand command) {
-
-
         Doctor doctor= doctorRepository.findById(command.getDoctorId())
                         .orElseThrow(
-                                () -> new BookingCareException(ErrorDetail.ERR_DOCTOR_EXISTED)
+                                () -> new BookingCareException(ErrorDetail.ERR_DOCTOR_NOT_EXISTED)
                         );
+
         Department department= departmentRepository.findById(command.getDepartmentId())
                         .orElseThrow(
                                 () -> new BookingCareException(ErrorDetail.ERR_DEPARTMENT_NOT_EXISTED)
                         );
-        DoctorDepartment doctorDepartment= new DoctorDepartment(doctor, department);
 
+        var isExisted= doctorDepartmentRepository.findById(command.getDoctorId(), command.getDepartmentId());
+        if(isExisted.isPresent()){
+            throw new RuntimeException("Đã tồn tại");
+        }
+
+        DoctorDepartment doctorDepartment= new DoctorDepartment(doctor, department);
         doctorDepartmentRepository.save(doctorDepartment);
 
         DoctorDepartmentEvent event= new DoctorDepartmentEvent(command.getDoctorId(), command.getDepartmentId());

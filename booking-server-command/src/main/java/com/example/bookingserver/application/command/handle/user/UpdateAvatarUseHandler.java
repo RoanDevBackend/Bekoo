@@ -4,8 +4,10 @@ import com.cloudinary.Cloudinary;
 import com.example.bookingserver.application.command.command.user.UpdateAvatarUserCommand;
 import com.example.bookingserver.application.command.event.user.UpdateAvatarUserEvent;
 import com.example.bookingserver.application.command.handle.Handler;
+import com.example.bookingserver.application.command.handle.Handler_DTO;
 import com.example.bookingserver.application.command.handle.exception.BookingCareException;
 import com.example.bookingserver.application.command.handle.exception.ErrorDetail;
+import com.example.bookingserver.application.command.reponse.UserResponse;
 import com.example.bookingserver.domain.OutboxEvent;
 import com.example.bookingserver.domain.User;
 import com.example.bookingserver.domain.repository.OutboxEventRepository;
@@ -25,7 +27,7 @@ import java.util.Map;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class UpdateAvatarUseHandler implements Handler<UpdateAvatarUserCommand> {
+public class UpdateAvatarUseHandler implements Handler_DTO<UpdateAvatarUserCommand, String> {
 
     final Cloudinary cloudinary;
     final UserRepository userRepository;
@@ -36,12 +38,15 @@ public class UpdateAvatarUseHandler implements Handler<UpdateAvatarUserCommand> 
     final String TOPIC= "update-avatar-user-event";
     @Override
     @SneakyThrows
-    public void execute(UpdateAvatarUserCommand command) {
+    public String execute(UpdateAvatarUserCommand command) {
         User user= userRepository.findById(command.getId())
                 .orElseThrow(()-> new BookingCareException(ErrorDetail.ERR_USER_NOT_EXISTED));
+        String url_data="";
         try {
             Map responseByCloudinary = cloudinary.uploader().upload(command.getFileImage().getBytes(), Map.of());
-            user.setLinkAvatar(responseByCloudinary.get("url") + "");
+
+            url_data= responseByCloudinary.get("url") + "";
+            user.setLinkAvatar(url_data);
             userRepository.save(user);
 
             UpdateAvatarUserEvent event= userMapper.fromUserToUpdateAvatarEvent(user);
@@ -70,5 +75,6 @@ public class UpdateAvatarUseHandler implements Handler<UpdateAvatarUserCommand> 
             log.error("ERR_FILE: " + e.getMessage());
             throw new BookingCareException(ErrorDetail.ERR_FILE);
         }
+        return url_data;
     }
 }

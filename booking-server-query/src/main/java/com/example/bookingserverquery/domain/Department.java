@@ -27,5 +27,7 @@ public class Department {
     String name;
     @Field(type = FieldType.Text)
     String description;
+    @Field(type = FieldType.Keyword)
+    String urlImage;
     LocalDateTime createdAt;
 }

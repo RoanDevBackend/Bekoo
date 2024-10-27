@@ -12,8 +12,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@SuperBuilder
-@ToString
+@Builder
 @IdClass(DoctorDepartmentId.class)
 public class DoctorDepartment {
 

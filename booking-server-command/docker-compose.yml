@@ -101,3 +101,7 @@ volumes:
 networks:
   es_network:
     driver: bridge
+
+#docker compose build
+#docker compose tag v1 v2:tag (VD:docker tag fce1bd88f4b1c3fa79e6fa354de4f3fad9af0ae04e35cfdb15090f8bceeba8d7 roanvanquyen/booking-care-command:latest)
+#docker push v2:tag(VD: docker push roanvanquyen/booking-care-command:latest)

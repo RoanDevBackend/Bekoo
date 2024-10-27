@@ -57,6 +57,8 @@ public class SpecializeController {
         var response= findBySpecializeIdHandler.execute(id);
         return ApiResponse.success(200, "Tìm kiếm  theo mã định danh thành công", response);
     }
+
+
     @Operation(summary = "Lấy ra tất cả")
     @PostMapping(value = "/query-all")
     public ApiResponse findAll(@RequestBody(required = false) QueryBase<SpecializeResponse> queryBase){
@@ -66,6 +68,7 @@ public class SpecializeController {
         var response= findAllSpecializeHandler.execute(queryBase);
         return ApiResponse.success(200, "Tìm kiếm tất cả chuyên ngành đang có", response);
     }
+
     @Operation(summary = "Tìm kiếm chuyên ngành của chuyên khoa")
     @PostMapping(value = "/department/{id}")
     public ApiResponse getByDepartment(@PathVariable("id") String id, @RequestBody(required = false) QueryBase<SpecializeResponse> queryBase){

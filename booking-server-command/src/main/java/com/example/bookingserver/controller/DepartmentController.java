@@ -34,7 +34,7 @@ public class DepartmentController {
 
     @PostMapping
     @Operation(summary = "Thêm chuyên khoa mới")
-    public ApiResponse create(@RequestBody @Valid CreateDepartmentCommand command){
+    public ApiResponse create(@ModelAttribute @Valid CreateDepartmentCommand command){
         log.info("API: Create department");
         var response= createDepartmentCommandDepartmentResponseHandler.execute(command);
         return ApiResponse.success(201, "Tạo chuyên khoa thành công", response, HttpStatus.CREATED);
@@ -49,9 +49,9 @@ public class DepartmentController {
     }
 
 
-    @PutMapping
+    @PostMapping("/info")
     @Operation(summary = "Sửa thông tin chuyên khoa")
-    public ApiResponse update(@RequestBody @Valid UpdateInfoDepartmentCommand command){
+    public ApiResponse update(@ModelAttribute @Valid UpdateInfoDepartmentCommand command){
         log.info("API: Update department");
         var response= updateInfoDepartmentCommandDepartmentResponseHandler.execute(command);
         return ApiResponse.success(200, "Cập nhập thành công", response, HttpStatus.ACCEPTED);

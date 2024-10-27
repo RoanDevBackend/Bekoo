@@ -42,15 +42,16 @@ public class QueryBase<T> {
         Sort sort = Sort.by(sortOrder);
         return org.springframework.data.domain.PageRequest.of(pageIndex - 1, pageSize, sort);
     }
+    @Getter
+    @Setter
+    @Builder
+    @FieldDefaults(level = AccessLevel.PRIVATE)
+    @ToString
+    public static class OrderDTO{
+        String properties ;
+        @Builder.Default
+        Sort.Direction direction= Sort.Direction.ASC ;
+    }
 }
 
-@Getter
-@Setter
-@Builder
-@FieldDefaults(level = AccessLevel.PRIVATE)
-@ToString
-class OrderDTO{
-    String properties ;
-    @Builder.Default
-    Sort.Direction direction= Sort.Direction.ASC ;
-}
+

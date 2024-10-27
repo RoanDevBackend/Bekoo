@@ -2,6 +2,7 @@ package com.example.bookingserver.application.command.command.department;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
@@ -11,4 +12,5 @@ import lombok.experimental.FieldDefaults;
 public class CreateDepartmentCommand {
     String name;
     String description;
+    MultipartFile image;
 }

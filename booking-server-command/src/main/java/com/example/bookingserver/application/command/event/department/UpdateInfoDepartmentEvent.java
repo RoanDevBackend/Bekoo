@@ -12,4 +12,5 @@ public class UpdateInfoDepartmentEvent {
     String id;
     String name;
     String description;
+    String urlImage;
 }

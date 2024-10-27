@@ -17,6 +17,6 @@ public class UpdateSpecializeCommand {
     String name;
     String description;
     @Min(value = 1, message = "Giá tiền dịch vụ này không nhỏ hơn 1")
-            @NotNull
+            @NotNull(message = "Giá tiền không được bỏ trống")
     Integer price;
 }

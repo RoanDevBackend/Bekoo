@@ -6,6 +6,9 @@ import com.example.bookingserverquery.application.reponse.department.DepartmentR
 import com.example.bookingserverquery.domain.Department;
 import com.example.bookingserverquery.infrastructure.mapper.DepartmentMapper;
 import com.example.bookingserverquery.infrastructure.repository.DepartmentELRepository;
+import com.example.bookingserverquery.infrastructure.repository.DoctorDepartmentELRepository;
+import com.example.bookingserverquery.infrastructure.repository.DoctorELRepository;
+import com.example.bookingserverquery.infrastructure.repository.SpecializeELRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,6 +22,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GetAllDepartmentHandler {
     final DepartmentMapper departmentMapper;
+    final SpecializeELRepository specializeELRepository;
+    final DoctorDepartmentELRepository doctorDepartmentELRepository;
     final DepartmentELRepository departmentELRepository;
 
 
@@ -27,7 +32,12 @@ public class GetAllDepartmentHandler {
         Page<Department> page= departmentELRepository.findAll(pageable);
         List<DepartmentResponse> departmentResponses= new ArrayList<>();
         for(Department x: page.getContent()){
-            departmentResponses.add(departmentMapper.toResponse(x));
+            DepartmentResponse departmentResponse = departmentMapper.toResponse(x);
+            Integer totalDoctor= doctorDepartmentELRepository.countByDepartmentId(x.getId());
+            Integer totalSpecialize = specializeELRepository.countByDepartment(x); ;
+            departmentResponse.setTotalDoctor(totalDoctor);
+            departmentResponse.setTotalSpecialize(totalSpecialize);
+            departmentResponses.add(departmentResponse);
         }
         return PageResponse.<DepartmentResponse>builder()
                 .totalPage(page.getTotalPages())

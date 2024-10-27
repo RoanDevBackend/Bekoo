@@ -12,4 +12,5 @@ public class CreateDepartmentEvent {
     String id;
     String name;
     String description;
+    String urlImage;
 }

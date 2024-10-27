@@ -1,5 +1,6 @@
 package com.example.bookingserver.application.command.handle.department;
 
+import com.cloudinary.Cloudinary;
 import com.example.bookingserver.application.command.command.department.CreateDepartmentCommand;
 import com.example.bookingserver.application.command.event.department.CreateDepartmentEvent;
 import com.example.bookingserver.application.command.handle.Handler_DTO;
@@ -16,6 +17,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
@@ -27,12 +31,25 @@ public class CreateDepartmentHandler implements Handler_DTO<CreateDepartmentComm
     final DepartmentMapper departmentMapper;
     final ObjectMapper objectMapper;
     final MessageProducer messageProducer;
+    final Cloudinary cloudinary;
     final String TOPIC= "create-department-event";
 
     @Override
     @SneakyThrows
     public DepartmentResponse execute(CreateDepartmentCommand command) {
+
+
+        String url_data="";
+        try {
+            Map responseByCloudinary = cloudinary.uploader().upload(command.getImage().getBytes(), Map.of());
+            url_data = responseByCloudinary.get("url") + "";
+        }catch (Exception e){
+            throw new RuntimeException("Hiện không thể lưu ảnh");
+        }
+
         Department department= departmentMapper.toDepartment(command);
+        department.setUrlImage(url_data);
+
         departmentRepository.save(department);
 
         CreateDepartmentEvent event= departmentMapper.toCreateDepartmentEvent(department);

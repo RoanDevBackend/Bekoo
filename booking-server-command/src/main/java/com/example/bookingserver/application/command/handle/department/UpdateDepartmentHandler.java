@@ -1,5 +1,6 @@
 package com.example.bookingserver.application.command.handle.department;
 
+import com.cloudinary.Cloudinary;
 import com.example.bookingserver.application.command.command.department.UpdateInfoDepartmentCommand;
 import com.example.bookingserver.application.command.event.department.UpdateInfoDepartmentEvent;
 import com.example.bookingserver.application.command.handle.Handler_DTO;
@@ -19,6 +20,8 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -27,6 +30,7 @@ public class UpdateDepartmentHandler implements Handler_DTO<UpdateInfoDepartment
     final OutboxEventRepository outboxEventRepository;
     final DepartmentMapper departmentMapper;
     final ObjectMapper objectMapper;
+    final Cloudinary cloudinary;
     final MessageProducer messageProducer;
     final String TOPIC= "update-info-department-event";
 
@@ -37,6 +41,16 @@ public class UpdateDepartmentHandler implements Handler_DTO<UpdateInfoDepartment
                         .orElseThrow(() -> new BookingCareException(ErrorDetail.ERR_DEPARTMENT_NOT_EXISTED));
         departmentMapper.updateInfo(department, command);
 
+        if(command.getImage() != null){
+            String url_data="";
+            try {
+                Map responseByCloudinary = cloudinary.uploader().upload(command.getImage().getBytes(), Map.of());
+                url_data = responseByCloudinary.get("url") + "";
+                department.setUrlImage(url_data);
+            }catch (Exception e){
+                throw new RuntimeException("Hiện không thể lưu ảnh");
+            }
+        }
         departmentRepository.save(department);
 
         UpdateInfoDepartmentEvent event= departmentMapper.toUpdateDepartmentEvent(department);

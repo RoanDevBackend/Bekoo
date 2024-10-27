@@ -2,6 +2,7 @@ package com.example.bookingserver.controller;
 
 import com.example.bookingserver.application.command.command.user.*;
 import com.example.bookingserver.application.command.handle.Handler;
+import com.example.bookingserver.application.command.handle.Handler_DTO;
 import com.example.bookingserver.application.command.handle.user.CreateUserHandler;
 import com.example.bookingserver.application.command.handle.user.DeleteUserHandler;
 import com.example.bookingserver.application.command.reponse.ApiResponse;
@@ -32,7 +33,7 @@ public class UserController {
     Handler<ChangePasswordOTPCommand> changePasswordOTPCommandHandler;
     Handler<ForgotPasswordCommand> forgotPasswordCommandHandler;
     Handler<VerifyOTPCommand> verifyOTPCommandHandler;
-    Handler<UpdateAvatarUserCommand> updateAvatarUserCommandHandler;
+    Handler_DTO<UpdateAvatarUserCommand, String> updateAvatarUserCommandHandler;
 
     @PostMapping()
     public ApiResponse createUser(@RequestBody @Valid CreateUserCommand command){
@@ -70,12 +71,12 @@ public class UserController {
     }
 
 
-    @PutMapping("/avatar")
+    @PostMapping("/avatar")
     public ApiResponse updateAvatar(@ModelAttribute UpdateAvatarUserCommand command){
         log.info("abcs");
-        updateAvatarUserCommandHandler.execute(command);
+        String data= updateAvatarUserCommandHandler.execute(command);
         log.info("Update Avatar User: " + command.getId());
-        return ApiResponse.success(200, "Thay đổi ảnh đại diện thành công");
+        return ApiResponse.success(200, "Thay đổi ảnh đại diện thành công", data);
     }
 
 

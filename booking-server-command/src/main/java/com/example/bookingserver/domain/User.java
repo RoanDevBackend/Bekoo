@@ -59,6 +59,8 @@ public class User extends EntityBase implements UserDetails {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
             @JsonIgnore
     Doctor doctor;
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    Patient patient;
 
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Role> roles=new HashSet<>();

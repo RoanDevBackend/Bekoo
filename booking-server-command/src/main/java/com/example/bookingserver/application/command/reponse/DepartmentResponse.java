@@ -12,4 +12,5 @@ public class DepartmentResponse {
     String id;
     String name;
     String description;
+    String urlImage;
 }

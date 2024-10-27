@@ -1,6 +1,7 @@
 package com.example.bookingserver.domain;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -15,14 +16,17 @@ import java.util.List;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @SuperBuilder
-@ToString
 public class Department extends EntityBase{
     @Id
             @GeneratedValue(strategy = GenerationType.UUID)
     String id;
     String name;
     String description;
-
+    String urlImage;
     @OneToMany(mappedBy = "department", cascade = CascadeType.ALL)
+            @JsonIgnore
     List<DoctorDepartment> doctorDepartments;
+    @OneToMany(mappedBy = "department", cascade = CascadeType.ALL)
+            @JsonIgnore
+    List<Specialize> specialities;
 }

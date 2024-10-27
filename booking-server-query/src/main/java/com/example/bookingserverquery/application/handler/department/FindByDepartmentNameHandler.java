@@ -6,6 +6,8 @@ import com.example.bookingserverquery.application.reponse.department.DepartmentR
 import com.example.bookingserverquery.domain.Department;
 import com.example.bookingserverquery.infrastructure.mapper.DepartmentMapper;
 import com.example.bookingserverquery.infrastructure.repository.DepartmentELRepository;
+import com.example.bookingserverquery.infrastructure.repository.DoctorDepartmentELRepository;
+import com.example.bookingserverquery.infrastructure.repository.SpecializeELRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,6 +22,8 @@ import java.util.List;
 public class FindByDepartmentNameHandler {
 
     final DepartmentELRepository departmentELRepository;
+    final SpecializeELRepository specializeELRepository;
+    final DoctorDepartmentELRepository doctorDepartmentELRepository;
     final DepartmentMapper departmentMapper;
 
     public FindByNameResponse<DepartmentResponse> execute(FindByNameQuery<DepartmentResponse> query){
@@ -27,9 +31,13 @@ public class FindByDepartmentNameHandler {
         Page<Department> page= departmentELRepository.findDepartmentsByName(query.getName(), pageable);
         List<DepartmentResponse> departmentResponses= new ArrayList<>();
         for(Department x: page.getContent()){
-            departmentResponses.add(departmentMapper.toResponse(x));
+            DepartmentResponse departmentResponse = departmentMapper.toResponse(x);
+            Integer totalDoctor= doctorDepartmentELRepository.countByDepartmentId(x.getId());
+            Integer totalSpecialize = specializeELRepository.countByDepartment(x); ;
+            departmentResponse.setTotalDoctor(totalDoctor);
+            departmentResponse.setTotalSpecialize(totalSpecialize);
+            departmentResponses.add(departmentResponse);
         }
-
 
         return FindByNameResponse.<DepartmentResponse>builder()
                 .name(query.getName())
