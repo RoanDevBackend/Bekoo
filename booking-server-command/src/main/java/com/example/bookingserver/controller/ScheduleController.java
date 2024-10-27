@@ -60,15 +60,19 @@ public class ScheduleController {
     }
 
 
-    @Operation(summary = "Tìm kiếm lịch sử đặt lịch khám của bác sĩ")
-    @PostMapping("/doctor/{id}")
-    public ApiResponse getDoctorSchedule(@PathVariable String id, @RequestBody(required = false)@Valid QueryBase<FindByDoctorResponse> queryBase){
-        if(queryBase == null){
-            queryBase = QueryBase.<FindByDoctorResponse>builder().build();
-        }
+    @Operation(summary = "Tìm kiếm lịch sử đặt lịch khám của bác sĩ", parameters = {
+            @Parameter(name = "id", description = "Mã bác sĩ")
+    })
+    @GetMapping("/doctor/{id}")
+    public ApiResponse getDoctorSchedule(@PathVariable String id
+            , @RequestParam(required = false, defaultValue = "1") int pageIndex
+            , @RequestParam(required = false, defaultValue = "10000") int pageSize ){
+        QueryBase<FindByDoctorResponse> queryBase = QueryBase.<FindByDoctorResponse>builder()
+                .pageIndex(pageIndex)
+                .pageSize(pageSize)
+                .build();
         LocalDateTime start= LocalDateTime.now().minusYears(200);
         LocalDateTime end= LocalDateTime.now().plusYears(200);
-        System.out.println("Start: " + start.toString() + "\nEnd: " + end.toString());
         var response = findHistoryScheduleByDoctorHandler.execute(id, queryBase, start, end);
         return ApiResponse.success(200, "Tìm kiếm thành công", response);
     }
