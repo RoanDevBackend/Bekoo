@@ -1,8 +1,8 @@
 package com.example.bookingserver.application.query.handler.schedule;
 
 import com.example.bookingserver.application.query.QueryBase;
+import com.example.bookingserver.application.query.handler.response.FindByPatientResponse;
 import com.example.bookingserver.application.query.handler.response.PageResponse;
-import com.example.bookingserver.application.query.handler.response.FindByUserResponse;
 import com.example.bookingserver.domain.Schedule;
 import com.example.bookingserver.domain.repository.ScheduleRepository;
 import com.example.bookingserver.infrastructure.mapper.ScheduleMapper;
@@ -20,18 +20,20 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
-public class FindHistoryScheduleByUserHandler {
+public class FindHistoryScheduleByPatientHandler {
 
     ScheduleRepository scheduleRepository;
     ScheduleMapper scheduleMapper;
 
-    public PageResponse<FindByUserResponse> findByUser(String patientId, QueryBase<FindByUserResponse> queryBase){
+    public PageResponse<FindByPatientResponse> execute(String patientId, int statusId, QueryBase<FindByPatientResponse> queryBase){
         Page<Schedule> page= scheduleRepository.findByPatient(patientId, queryBase.getPageable());
-        List<FindByUserResponse> scheduleResponses= new ArrayList<>();
+        List<FindByPatientResponse> scheduleResponses= new ArrayList<>();
         for(Schedule schedule : page.getContent()){
-            scheduleResponses.add(scheduleMapper.toFindByUserResponse(schedule));
+            if(schedule.getStatusId() == statusId){
+                scheduleResponses.add(scheduleMapper.toFindByUserResponse(schedule));
+            }
         }
-        return PageResponse.<FindByUserResponse>builder()
+        return PageResponse.<FindByPatientResponse>builder()
                 .totalPage(page.getTotalPages())
                 .orders(queryBase.getOrders())
                 .contentResponse(scheduleResponses)

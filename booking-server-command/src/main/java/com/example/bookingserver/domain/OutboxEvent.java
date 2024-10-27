@@ -37,7 +37,6 @@ public class OutboxEvent {
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime processedAt;
-
     private String status;
 
 }

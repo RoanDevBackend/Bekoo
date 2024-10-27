@@ -18,5 +18,5 @@ public class ScheduleResponse {
     DoctorResponse doctor;
     SpecializeResponse specialize;
     LocalDateTime checkIn;
-    String active;
+    String status;
 }

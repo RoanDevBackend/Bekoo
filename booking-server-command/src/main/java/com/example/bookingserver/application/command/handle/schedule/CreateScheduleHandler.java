@@ -65,7 +65,6 @@ public class CreateScheduleHandler {
                 .specialize(specialize)
                 .patient(patient)
                 .checkIn(checkIn)
-                .active(true)
                 .build();
         scheduleRepository.save(schedule);
 

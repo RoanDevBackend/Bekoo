@@ -2,6 +2,7 @@ package com.example.bookingserver.infrastructure.persistence.impl;
 
 import com.example.bookingserver.domain.Schedule;
 import com.example.bookingserver.domain.repository.ScheduleRepository;
+import com.example.bookingserver.infrastructure.constant.ApplicationConstant;
 import com.example.bookingserver.infrastructure.persistence.repository.ScheduleJpaRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +35,7 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
     public void delete(String id) {
         Optional<Schedule> schedule = scheduleJpaRepository.findById(id);
         if(schedule.isPresent()) {
-            schedule.get().setActive(false);
+            schedule.get().setStatusId(ApplicationConstant.Status.CANCELLED);
             scheduleJpaRepository.save(schedule.get());
         }
     }

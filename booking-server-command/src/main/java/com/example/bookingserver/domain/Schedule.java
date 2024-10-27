@@ -29,6 +29,12 @@ public class Schedule extends EntityBase{
     Doctor doctor;
     LocalDateTime checkIn;
     String note;
+    /**
+     * 1. Đã xác nhận
+     * 2. Đã huỷ
+     * 3. Đã khám
+     * 4. Quá hạn chưa khám
+     */
     @Builder.Default
-    boolean active=true;
+    int statusId= 1;
 }

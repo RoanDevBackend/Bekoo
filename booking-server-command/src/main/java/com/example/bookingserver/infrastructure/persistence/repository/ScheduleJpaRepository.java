@@ -28,7 +28,7 @@ public interface ScheduleJpaRepository extends JpaRepository<Schedule, String> {
             "WHERE s.doctor.id= :doctorId " +
             "AND s.checkIn >= :start " +
             "AND s.checkIn < :end " +
-            "AND s.active= true ")
+            "AND s.statusId= 1 ")
     int getCountByDoctor(String doctorId, LocalDateTime start, LocalDateTime end);
     @Query("FROM Schedule s " +
             "WHERE s.patient.id= :id ")
