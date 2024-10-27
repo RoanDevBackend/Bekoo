@@ -17,6 +17,8 @@ public enum ErrorDetail {
     , ERR_DEPARTMENT_NOT_EXISTED(404, "Không tồn tại chuyên khoa này")
 
     , ERR_SPECIALIZE_NOT_EXISTED(404, "Chuyên ngành không tồn tại")
+
+    , ERR_PATIENT_NOT_EXISTED(404, "Bệnh nhân không tồn tại")
     ;
 
     private final int code;

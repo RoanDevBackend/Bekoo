@@ -14,14 +14,13 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @SuperBuilder
-@ToString
 public class Schedule extends EntityBase{
     @Id
             @GeneratedValue(strategy = GenerationType.UUID)
     String id;
     @ManyToOne
-            @JoinColumn(name = "user_id")
-    User user;
+            @JoinColumn(name = "patient_id")
+    Patient patient;
     @ManyToOne
             @JoinColumn(name = "specialize_id")
     Specialize specialize;

@@ -12,13 +12,13 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CreateScheduleCommand {
-    @NotBlank
-    String userId;
-    @NotBlank
+    @NotBlank(message = "Không được bỏ trống thông tin bệnh nhân, ex: patientId")
+    String patientId;
+    @NotBlank(message = "Mã bác sĩ không được bỏ trống")
     String doctorId;
-    @NotBlank
+    @NotBlank(message = "Mã gói khám không được bỏ trống")
     String specializeId;
-    @NotBlank
+    @NotBlank(message = "Không bỏ trống thời gian tới khám")
     String checkIn;
     String note;
 }

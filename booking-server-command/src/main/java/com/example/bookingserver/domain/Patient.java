@@ -33,6 +33,9 @@ public class Patient extends EntityBase{
             @JsonIgnore
     List<MedicalHistory> medicalHistories;
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
-        @JsonIgnore
+            @JsonIgnore
     List<EmergencyContact> emergencyContacts;
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
+            @JsonIgnore
+    List<Schedule> schedules;
 }

@@ -31,8 +31,8 @@ public interface ScheduleJpaRepository extends JpaRepository<Schedule, String> {
             "AND s.active= true ")
     int getCountByDoctor(String doctorId, LocalDateTime start, LocalDateTime end);
     @Query("FROM Schedule s " +
-            "WHERE s.user.id= :id ")
-    Page<Schedule> findByUser(String id, Pageable pageable);
+            "WHERE s.patient.id= :id ")
+    Page<Schedule> findByPatientId(String id, Pageable pageable);
 
     @Query("FROM Schedule s " +
             "WHERE s.doctor.id= :doctorId " +

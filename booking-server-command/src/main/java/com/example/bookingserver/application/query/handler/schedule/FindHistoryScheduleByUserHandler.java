@@ -25,8 +25,8 @@ public class FindHistoryScheduleByUserHandler {
     ScheduleRepository scheduleRepository;
     ScheduleMapper scheduleMapper;
 
-    public PageResponse<FindByUserResponse> findByUser(String userId, QueryBase<FindByUserResponse> queryBase){
-        Page<Schedule> page= scheduleRepository.findByUser(userId, queryBase.getPageable());
+    public PageResponse<FindByUserResponse> findByUser(String patientId, QueryBase<FindByUserResponse> queryBase){
+        Page<Schedule> page= scheduleRepository.findByPatient(patientId, queryBase.getPageable());
         List<FindByUserResponse> scheduleResponses= new ArrayList<>();
         for(Schedule schedule : page.getContent()){
             scheduleResponses.add(scheduleMapper.toFindByUserResponse(schedule));
