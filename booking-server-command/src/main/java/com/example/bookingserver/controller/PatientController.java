@@ -56,7 +56,7 @@ public class PatientController {
     public ApiResponse getAllMedicalHistory(
              @PathVariable String patientId
             ,@RequestParam(required = false, defaultValue = "1") Integer pageIndex
-            , @RequestParam(required = false, defaultValue = "10") Integer pageSize){
+            , @RequestParam(required = false, defaultValue = "10000") Integer pageSize){
         Pageable pageable= getPageable(pageIndex, pageSize);
         var response= getAllMedicalHistoryHandler.execute(patientId, pageable);
         return ApiResponse.success(200, "Lấy ra tất cả tiền án bệnh của bệnh nhân", response);
@@ -68,7 +68,7 @@ public class PatientController {
     @Operation(summary = "Lấy ra tất cả người liên hệ khẩn cấp theo bệnh nhân")
     public ApiResponse getAllEmergencyContact( @PathVariable String patientId
             ,@RequestParam(required = false, defaultValue = "1") Integer pageIndex
-            , @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
+            , @RequestParam(required = false, defaultValue = "10000") Integer pageSize) {
         Pageable pageable= getPageable(pageIndex, pageSize);
         var response= getAllEmergencyContactHandler.execute(patientId, pageable);
         return ApiResponse.success(200, "Lấy ra danh sách liên hệ khẩn cấp của bệnh nhân thành công", response);
@@ -96,6 +96,7 @@ public class PatientController {
         newEmergencyContactHandler.execute(patientId, command);
         return ApiResponse.success(200, "Thêm thông tin liên lạc khẩn cấp thành công");
     }
+
 
     @PostMapping("/history")
     @Operation(summary="Thêm hồ sơ bệnh án")
