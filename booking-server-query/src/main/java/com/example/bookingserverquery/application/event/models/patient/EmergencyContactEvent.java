@@ -16,5 +16,5 @@ public class EmergencyContactEvent extends EventBase {
     String phone;
     String address;
     String relationship;
-    Patient patient;
+    String patientId;
 }

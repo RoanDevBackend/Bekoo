@@ -2,11 +2,14 @@ package com.example.bookingserver.application.command.handle.patient;
 
 
 import com.example.bookingserver.application.command.command.patient.CreateMedicalHistoryCommand;
+import com.example.bookingserver.application.command.event.patient.MedicalHistoryEvent;
 import com.example.bookingserver.application.command.handle.exception.BookingCareException;
 import com.example.bookingserver.application.command.handle.exception.ErrorDetail;
 import com.example.bookingserver.domain.MedicalHistory;
 import com.example.bookingserver.domain.Patient;
+import com.example.bookingserver.infrastructure.constant.ApplicationConstant;
 import com.example.bookingserver.infrastructure.mapper.PatientMapper;
+import com.example.bookingserver.infrastructure.message.MessageProducer;
 import com.example.bookingserver.infrastructure.persistence.repository.MedicalHistoryRepository;
 import com.example.bookingserver.infrastructure.persistence.repository.PatientRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +26,8 @@ public class CreateMedicalHistoryHandler {
     private final PatientRepository patientRepository;
     private final MedicalHistoryRepository medicalHistoryRepository;
     private final PatientMapper patientMapper;
+    private final MessageProducer messageProducer;
+    private final String TOPIC="create-medical-history";
 
     @SneakyThrows
     public void execute(CreateMedicalHistoryCommand command) {
@@ -35,6 +40,10 @@ public class CreateMedicalHistoryHandler {
         }
         MedicalHistory medicalHistory= patientMapper.toMedicalHistory(command);
         medicalHistory.setPatient(patient);
+
         medicalHistoryRepository.save(medicalHistory);
+
+        MedicalHistoryEvent medicalHistoryEvent= patientMapper.toMedicalHistoryEvent(medicalHistory);
+        messageProducer.sendMessage(TOPIC, ApplicationConstant.EventType.ADD, medicalHistoryEvent, medicalHistory.getId()+"", "Medical History");
     }
 }

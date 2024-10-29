@@ -15,7 +15,7 @@ import java.time.LocalDate;
 public class MedicalHistoryEvent extends EventBase {
     Long id;
     String name;
-    Patient patient;
+    String patientId;
     LocalDate dateOfVisit;
     String diagnosis;
     String treatment;

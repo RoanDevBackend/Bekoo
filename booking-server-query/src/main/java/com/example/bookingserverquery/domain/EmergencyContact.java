@@ -4,6 +4,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
@@ -13,6 +14,7 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @SuperBuilder
+@Document(indexName = "emergency_contact")
 public class EmergencyContact extends EntityBase{
     @Id
     Long id;
