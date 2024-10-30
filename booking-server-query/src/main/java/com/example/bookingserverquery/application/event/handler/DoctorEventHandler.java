@@ -62,7 +62,7 @@ public class DoctorEventHandler {
     @SneakyThrows
     public void abc(String event){
         SetMaximumPeoplePerDayEvent setMaximumPeoplePerDayEvent= objectMapper.readValue(event, SetMaximumPeoplePerDayEvent.class);
-        Optional<Doctor> doctorOptional= doctorELRepository.findById(updateInfoDoctorEvent.getId());
+        Optional<Doctor> doctorOptional= doctorELRepository.findById(setMaximumPeoplePerDayEvent.getId());
         if(doctorOptional.isEmpty()){ return; }
         Doctor doctor= doctorOptional.get();
         doctor.setMaximumPeoplePerDay(setMaximumPeoplePerDayEvent.getValue());
