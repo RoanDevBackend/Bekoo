@@ -19,6 +19,7 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
 import javax.print.Doc;
+import java.util.Optional;
 
 @Component
 @Slf4j
@@ -36,9 +37,7 @@ public class DoctorEventHandler {
     public void createDoctorEvent(String event){
         CreateDoctorEvent createDoctorEvent= objectMapper.readValue(event, CreateDoctorEvent.class);
         Doctor doctor= doctorMapper.toDoctorFromCreateEvent(createDoctorEvent);
-        User user= userELRepository.findById(createDoctorEvent.getUser_id()).orElseThrow(
-                ()-> new BookingCareException(ErrorDetail.ERR_USER_NOT_EXISTED)
-        );
+        User user= userELRepository.findById(createDoctorEvent.getUser_id()).orElse(null);
         doctor.setUser(user);
         doctorELRepository.save(doctor);
         log.info("CREATE-DOCTOR-EVENT SUCCESS: {}", event);
@@ -50,9 +49,10 @@ public class DoctorEventHandler {
     public void updateDoctorEvent(String event){
         UpdateInfoDoctorEvent updateInfoDoctorEvent= objectMapper.readValue(event, UpdateInfoDoctorEvent.class);
 
-        Doctor doctor= doctorELRepository.findById(updateInfoDoctorEvent.getId()).orElseThrow(
-                ()-> new BookingCareException(ErrorDetail.ERR_USER_NOT_EXISTED)
-        );
+        Optional<Doctor> doctorOptional= doctorELRepository.findById(updateInfoDoctorEvent.getId());
+        if(doctorOptional.isEmpty()){ return; }
+        Doctor doctor= doctorOptional.get();
+
         doctorMapper.updateInfo(doctor, updateInfoDoctorEvent);
         doctorELRepository.save(doctor);
         log.info("UPDATE-INFO-DOCTOR-EVENT SUCCESS: {}", event);
@@ -62,9 +62,9 @@ public class DoctorEventHandler {
     @SneakyThrows
     public void abc(String event){
         SetMaximumPeoplePerDayEvent setMaximumPeoplePerDayEvent= objectMapper.readValue(event, SetMaximumPeoplePerDayEvent.class);
-        Doctor doctor= doctorELRepository.findById(setMaximumPeoplePerDayEvent.getId()).orElseThrow(
-                ()-> new BookingCareException(ErrorDetail.ERR_USER_NOT_EXISTED)
-        );
+        Optional<Doctor> doctorOptional= doctorELRepository.findById(updateInfoDoctorEvent.getId());
+        if(doctorOptional.isEmpty()){ return; }
+        Doctor doctor= doctorOptional.get();
         doctor.setMaximumPeoplePerDay(setMaximumPeoplePerDayEvent.getValue());
         doctorELRepository.save(doctor);
         log.info("SET-MAXIMUM-PEOPLE-PER-DAY-EVENT: {}", event);
