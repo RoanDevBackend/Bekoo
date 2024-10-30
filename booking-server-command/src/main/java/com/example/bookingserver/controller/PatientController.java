@@ -47,7 +47,7 @@ public class PatientController {
     @Operation(summary="Lấy ra thông tin bệnh nhân")
     public ApiResponse getInfo(@PathVariable String userId) {
         var response= findPatientByUserIdHandler.execute(userId);
-        return ApiResponse.success(200, "Lấy ra của bệnh nhân thành công", response);
+        return ApiResponse.success(200, "Lấy ra thông tin của bệnh nhân thành công", response);
     }
 
 
@@ -65,7 +65,7 @@ public class PatientController {
 
 
     @GetMapping("/contact/{patientId}")
-    @Operation(summary = "Lấy ra tất cả người liên hệ khẩn cấp theo bệnh nhân")
+    @Operation(summary = "Lấy ra tất cả người liên hệ khẩn cấp theo bệnh nhân", deprecated = true)
     public ApiResponse getAllEmergencyContact( @PathVariable String patientId
             ,@RequestParam(required = false, defaultValue = "1") Integer pageIndex
             , @RequestParam(required = false, defaultValue = "10000") Integer pageSize) {
@@ -86,12 +86,12 @@ public class PatientController {
     @Operation(summary="Xoá hồ sơ bệnh án")
     public ApiResponse deleteMedicalHistory(@PathVariable Long historyId) {
         deletePatientHandler.deleteMedicalHistory(historyId);
-        return ApiResponse.success(200, "Xoá liên lạc khẩn cấp thành công");
+        return ApiResponse.success(200, "Xoá hồ sơ bệnh án thành công");
     }
 
 
     @PostMapping("/contact/{patientId}")
-    @Operation(summary="Thêm liên hệ khẩn cấp")
+    @Operation(summary="Thêm liên hệ khẩn cấp", deprecated = true)
     public ApiResponse createContact(@PathVariable String patientId, @RequestBody @Valid EmergencyContactCommand command) {
         newEmergencyContactHandler.execute(patientId, command);
         return ApiResponse.success(200, "Thêm thông tin liên lạc khẩn cấp thành công");

@@ -29,5 +29,4 @@ public class Department {
     String description;
     @Field(type = FieldType.Keyword)
     String urlImage;
-    LocalDateTime createdAt;
 }

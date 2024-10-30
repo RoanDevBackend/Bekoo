@@ -2,6 +2,7 @@ package com.example.bookingserver.application.command.handle.schedule;
 
 
 import com.example.bookingserver.application.command.command.schedule.CreateScheduleCommand;
+import com.example.bookingserver.application.command.event.schedule.ScheduleEvent;
 import com.example.bookingserver.application.command.handle.exception.BookingCareException;
 import com.example.bookingserver.application.command.handle.exception.ErrorDetail;
 import com.example.bookingserver.application.command.reponse.ScheduleResponse;
@@ -11,7 +12,9 @@ import com.example.bookingserver.domain.repository.DoctorRepository;
 import com.example.bookingserver.domain.repository.ScheduleRepository;
 import com.example.bookingserver.domain.repository.SpecializeRepository;
 import com.example.bookingserver.domain.repository.UserRepository;
+import com.example.bookingserver.infrastructure.constant.ApplicationConstant;
 import com.example.bookingserver.infrastructure.mapper.ScheduleMapper;
+import com.example.bookingserver.infrastructure.message.MessageProducer;
 import com.example.bookingserver.infrastructure.persistence.repository.PatientRepository;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
@@ -33,19 +36,21 @@ public class CreateScheduleHandler {
     PatientRepository patientRepository;
     DoctorRepository doctorRepository;
     SpecializeRepository specializeRepository;
+    MessageProducer messageProducer;
     MessageService messageService;
+    String TOPIC= "create-schedule";
 
 
-//    @Transactional(rollbackOn = BookingCareException.class)
+    @Transactional
     @SneakyThrows
     public ScheduleResponse execute(CreateScheduleCommand command){
-        System.out.println("hello world");
         Patient patient= patientRepository.findById(command.getPatientId())
                 .orElseThrow(() -> new BookingCareException(ErrorDetail.ERR_USER_NOT_EXISTED));
         Doctor doctor = doctorRepository.findById(command.getDoctorId())
                 .orElseThrow(() -> new BookingCareException(ErrorDetail.ERR_PATIENT_NOT_EXISTED));
         Specialize specialize = specializeRepository.findById(command.getSpecializeId())
                 .orElseThrow(() -> new BookingCareException(ErrorDetail.ERR_SPECIALIZE_NOT_EXISTED));
+
         LocalDateTime checkIn = LocalDateTime.parse(command.getCheckIn());
 
         if (checkIn.isBefore(LocalDateTime.now())) {
@@ -67,6 +72,10 @@ public class CreateScheduleHandler {
                 .checkIn(checkIn)
                 .build();
         scheduleRepository.save(schedule);
+
+        ScheduleEvent event= scheduleMapper.toEvent(schedule);
+
+        messageProducer.sendMessage(TOPIC, ApplicationConstant.EventType.ADD, event, schedule.getId(), "Schedule");
 
         String content = "<h1> Cảm ơn " +
                 patient.getUser().getName() +

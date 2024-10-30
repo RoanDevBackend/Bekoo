@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -16,4 +18,5 @@ public class PatientResponse {
     String bloodType;
     @JsonProperty(value = "info")
     UserResponse user;
+    List<EmergencyContactResponse> emergencyContacts;
 }

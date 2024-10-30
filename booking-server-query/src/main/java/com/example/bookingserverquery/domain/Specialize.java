@@ -27,5 +27,4 @@ public class Specialize extends EntityBase{
     Integer price;
     @Field(type = FieldType.Nested)
     Department department;
-
 }

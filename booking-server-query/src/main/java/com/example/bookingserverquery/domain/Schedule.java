@@ -4,6 +4,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
@@ -15,11 +16,12 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @SuperBuilder
+@Document(indexName = "schedule")
 public class Schedule extends EntityBase{
     @Id
     String id;
     @Field(type = FieldType.Nested)
-    User user;
+    Patient patient;
     @Field(type = FieldType.Nested)
     Specialize specialize;
     @Field(type = FieldType.Nested)
@@ -28,6 +30,6 @@ public class Schedule extends EntityBase{
     LocalDateTime checkIn;
     @Field(type = FieldType.Text)
     String note;
-    @Field(type = FieldType.Boolean)
-    boolean active=true;
+    @Field(type = FieldType.Keyword)
+    String status;
 }
