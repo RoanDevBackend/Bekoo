@@ -4,11 +4,13 @@ import com.example.bookingserverquery.application.event.models.doctor.CreateDoct
 import com.example.bookingserverquery.application.event.models.doctor.DeleteDoctorEvent;
 import com.example.bookingserverquery.application.event.models.doctor.SetMaximumPeoplePerDayEvent;
 import com.example.bookingserverquery.application.event.models.doctor.UpdateInfoDoctorEvent;
+import com.example.bookingserverquery.application.event.models.user.CreateUserEvent;
 import com.example.bookingserverquery.application.handler.exception.BookingCareException;
 import com.example.bookingserverquery.application.handler.exception.ErrorDetail;
 import com.example.bookingserverquery.domain.Doctor;
 import com.example.bookingserverquery.domain.User;
 import com.example.bookingserverquery.infrastructure.mapper.DoctorMapper;
+import com.example.bookingserverquery.infrastructure.mapper.UserMapper;
 import com.example.bookingserverquery.infrastructure.repository.DoctorELRepository;
 import com.example.bookingserverquery.infrastructure.repository.UserELRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,6 +18,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.annotation.PartitionOffset;
+import org.springframework.kafka.annotation.TopicPartition;
 import org.springframework.stereotype.Component;
 
 import javax.print.Doc;
@@ -30,14 +34,19 @@ public class DoctorEventHandler {
     final DoctorELRepository doctorELRepository;
     final UserELRepository userELRepository;
     final DoctorMapper doctorMapper;
+    final UserMapper userMapper;
 
 
     @KafkaListener(topics = "create-doctor-event")
     @SneakyThrows
     public void createDoctorEvent(String event){
-        CreateDoctorEvent createDoctorEvent= objectMapper.readValue(event, CreateDoctorEvent.class);
-        Doctor doctor= doctorMapper.toDoctorFromCreateEvent(createDoctorEvent);
-        User user= userELRepository.findById(createDoctorEvent.getUser_id()).orElse(null);
+        CreateDoctorEvent doctorEvent= objectMapper.readValue(event, CreateDoctorEvent.class);
+        CreateUserEvent userEvent= doctorEvent.getUser();
+
+        User user= userMapper.toUserFromCreateUserEvent(userEvent);
+        userELRepository.save(user);
+
+        Doctor doctor= doctorMapper.toDoctorFromCreateEvent(doctorEvent);
         doctor.setUser(user);
         doctorELRepository.save(doctor);
         log.info("CREATE-DOCTOR-EVENT SUCCESS: {}", event);

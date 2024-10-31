@@ -2,6 +2,7 @@ package com.example.bookingserverquery;
 
 
 import com.example.bookingserverquery.infrastructure.repository.DepartmentELRepository;
+import com.example.bookingserverquery.infrastructure.repository.ScheduleELRepository;
 import com.example.bookingserverquery.infrastructure.repository.UserELRepository;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Contact;
@@ -24,22 +25,10 @@ public class BookingServerQueryApplication implements ApplicationRunner {
         SpringApplication.run(BookingServerQueryApplication.class, args);
     }
 
-    @Autowired
-    UserELRepository userELRepository;
-
-
-    @Value("${elastic.uris}")
-    String uris;
-    @Value("${elastic.username}")
-    String username;
-    @Value("${kafka.server}")
-    String kafkaPort;
 
 
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-//        System.out.println("Uris: " + uris);
-//        System.out.println("Username: " + username);
     }
 }

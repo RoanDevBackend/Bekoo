@@ -3,6 +3,7 @@ package com.example.bookingserverquery.application.handler.doctor;
 import com.example.bookingserverquery.application.query.FindByNameQuery;
 import com.example.bookingserverquery.application.reponse.FindByNameResponse;
 import com.example.bookingserverquery.application.reponse.doctor.DoctorResponse;
+import com.example.bookingserverquery.application.service.i.DoctorService;
 import com.example.bookingserverquery.domain.Doctor;
 import com.example.bookingserverquery.domain.repository.DoctorRepository;
 import com.example.bookingserverquery.infrastructure.mapper.DoctorMapper;
@@ -20,6 +21,8 @@ public class FindByDoctorNameHandler {
 
     final DoctorRepository doctorRepository;
     final DoctorMapper doctorMapper;
+    final DoctorService doctorService;
+
     public FindByNameResponse<DoctorResponse> findByName(FindByNameQuery<DoctorResponse> query){
 
         Pageable pageable= query.getPageable();
@@ -27,8 +30,9 @@ public class FindByDoctorNameHandler {
         Page<Doctor> page= doctorRepository.findByName(query.getName(), pageable);
 
         List<DoctorResponse> doctorResponses= new ArrayList<>();
+
         for(Doctor x: page.getContent()){
-            DoctorResponse doctorResponse= doctorMapper.toResponse(x);
+            DoctorResponse doctorResponse= doctorService.toResponse(x);
             doctorResponses.add(doctorResponse);
         }
 

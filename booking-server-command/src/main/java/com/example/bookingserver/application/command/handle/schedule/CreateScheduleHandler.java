@@ -45,9 +45,9 @@ public class CreateScheduleHandler {
     @SneakyThrows
     public ScheduleResponse execute(CreateScheduleCommand command){
         Patient patient= patientRepository.findById(command.getPatientId())
-                .orElseThrow(() -> new BookingCareException(ErrorDetail.ERR_USER_NOT_EXISTED));
-        Doctor doctor = doctorRepository.findById(command.getDoctorId())
                 .orElseThrow(() -> new BookingCareException(ErrorDetail.ERR_PATIENT_NOT_EXISTED));
+        Doctor doctor = doctorRepository.findById(command.getDoctorId())
+                .orElseThrow(() -> new BookingCareException(ErrorDetail.ERR_DOCTOR_NOT_EXISTED));
         Specialize specialize = specializeRepository.findById(command.getSpecializeId())
                 .orElseThrow(() -> new BookingCareException(ErrorDetail.ERR_SPECIALIZE_NOT_EXISTED));
 

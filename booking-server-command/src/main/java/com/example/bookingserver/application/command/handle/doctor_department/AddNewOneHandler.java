@@ -38,7 +38,7 @@ public class AddNewOneHandler implements Handler<AddNewOneCommand> {
 
     @Override
     @SneakyThrows
-    @Transactional
+    @Transactional()
     public void execute(AddNewOneCommand command) {
         Doctor doctor= doctorRepository.findById(command.getDoctorId())
                         .orElseThrow(

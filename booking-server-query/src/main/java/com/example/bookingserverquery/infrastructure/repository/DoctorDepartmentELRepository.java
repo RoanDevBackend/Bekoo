@@ -9,6 +9,13 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface DoctorDepartmentELRepository extends ElasticsearchRepository<DoctorDepartment, String> {
     Page<DoctorDepartment> findByDepartmentId(String id, Pageable pageable);
+    Page<DoctorDepartment> findByDoctorId(String id, Pageable pageable);
     void deleteByDoctorIdAndDepartmentId(String doctorId, String departmentId);
+
+    /**
+     * Dem so bac si co trong khoa
+     * @param departmentId
+     * @return
+     */
     Integer countByDepartmentId(String departmentId);
 }

@@ -2,6 +2,7 @@ package com.example.bookingserver.application.command.handle.doctor;
 
 import com.example.bookingserver.application.command.command.doctor.CreateDoctorCommand;
 import com.example.bookingserver.application.command.event.doctor.CreateDoctorEvent;
+import com.example.bookingserver.application.command.event.user.CreateUserEvent;
 import com.example.bookingserver.application.command.handle.Handler_DTO;
 import com.example.bookingserver.application.command.handle.exception.BookingCareException;
 import com.example.bookingserver.application.command.handle.exception.ErrorDetail;
@@ -61,9 +62,13 @@ public class CreateDoctorHandler implements Handler_DTO<CreateDoctorCommand, Doc
             throw new BookingCareException(ErrorDetail.ERR_DOCTOR_EXISTED);
         }
 
-        CreateDoctorEvent event= doctorMapper.fromDoctorToCreateDoctorEvent(doctor);
 
-        String content= objectMapper.writeValueAsString(event);
+        CreateDoctorEvent doctorEvent= doctorMapper.fromDoctorToCreateDoctorEvent(doctor);
+        CreateUserEvent userEvent= userMapper.fromUserToCreateUserEvent(user);
+
+        doctorEvent.setUser(userEvent);
+
+        String content= objectMapper.writeValueAsString(doctorEvent);
 
         OutboxEvent outboxEvent= OutboxEvent.builder()
                 .topic(TOPIC)

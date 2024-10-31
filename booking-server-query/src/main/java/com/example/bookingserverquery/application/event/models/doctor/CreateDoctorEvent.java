@@ -1,5 +1,7 @@
 package com.example.bookingserverquery.application.event.models.doctor;
 
+import com.example.bookingserverquery.application.event.models.EventBase;
+import com.example.bookingserverquery.application.event.models.user.CreateUserEvent;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -10,11 +12,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CreateDoctorEvent {
+public class CreateDoctorEvent extends EventBase {
     String id;
     String trainingBy;
     String description;
-    String user_id;
-    LocalDateTime createdAt;
-    LocalDateTime updatedAt;
+    CreateUserEvent user;
 }

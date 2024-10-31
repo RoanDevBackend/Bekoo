@@ -18,7 +18,8 @@ public interface DoctorMapper {
 
 
     DoctorResponse toResponse(Doctor doctor);
-    @Mapping(source = "doctor.user.id", target = "user_id")
+
+    @Mapping(target = "user", ignore = true)
     CreateDoctorEvent fromDoctorToCreateDoctorEvent(Doctor doctor);
     UpdateInfoDoctorEvent fromDoctorToUpdateInfoEvent(Doctor doctor);
     SetMaximumPeoplePerDayEvent fromDoctorToSerMaximumEvent(Doctor doctor);

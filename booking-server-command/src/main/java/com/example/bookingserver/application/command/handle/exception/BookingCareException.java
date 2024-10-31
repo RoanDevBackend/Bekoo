@@ -9,6 +9,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class BookingCareException extends Exception{
+public class BookingCareException extends RuntimeException{
     private ErrorDetail errorDetail;
 }
