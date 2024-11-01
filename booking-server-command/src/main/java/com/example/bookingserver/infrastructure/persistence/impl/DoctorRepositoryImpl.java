@@ -38,4 +38,9 @@ public class DoctorRepositoryImpl implements DoctorRepository{
     public void delete(Doctor doctor) {
         doctorJpaRepository.delete(doctor);
     }
+
+    @Override
+    public Optional<Doctor> findByUser(String userId) {
+        return doctorJpaRepository.findByUser(userId);
+    }
 }

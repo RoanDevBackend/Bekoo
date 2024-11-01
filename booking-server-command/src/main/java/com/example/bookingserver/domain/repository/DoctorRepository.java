@@ -11,4 +11,5 @@ public interface DoctorRepository {
     Optional<Doctor> findById(String id);
     void delete(String id);
     void delete(Doctor doctor);
+    Optional<Doctor> findByUser(String userId);
 }

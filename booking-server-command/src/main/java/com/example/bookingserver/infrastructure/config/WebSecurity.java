@@ -62,6 +62,8 @@ public class WebSecurity {
                                             .permitAll()
                                         .requestMatchers(HttpMethod.POST ,postMappings)
                                             .permitAll()
+                                        .requestMatchers(HttpMethod.POST, "patient/**")
+                                        .hasAuthority("USER")
                                         .anyRequest()
                                             .authenticated()
                 )

@@ -3,16 +3,22 @@ package com.example.bookingserver.application.command.service.impl;
 import com.example.bookingserver.application.command.command.user.SignInCommand;
 import com.example.bookingserver.application.command.handle.exception.BookingCareException;
 import com.example.bookingserver.application.command.handle.exception.ErrorDetail;
+import com.example.bookingserver.application.command.reponse.DoctorResponse;
+import com.example.bookingserver.application.command.reponse.GetInfoByTokenResponse;
 import com.example.bookingserver.application.command.reponse.UserResponse;
+import com.example.bookingserver.application.query.handler.response.patient.PatientResponse;
+import com.example.bookingserver.domain.*;
+import com.example.bookingserver.domain.repository.DoctorRepository;
+import com.example.bookingserver.infrastructure.mapper.DoctorMapper;
+import com.example.bookingserver.infrastructure.mapper.PatientMapper;
 import com.example.bookingserver.infrastructure.mapper.UserMapper;
 
 import com.example.bookingserver.application.command.reponse.TokenResponse;
 import com.example.bookingserver.application.command.service.JwtService;
-import com.example.bookingserver.domain.Role;
 import com.example.bookingserver.application.command.service.PasswordService;
 import com.example.bookingserver.application.command.service.AuthenticationService;
-import com.example.bookingserver.domain.User;
 import com.example.bookingserver.domain.repository.UserRepository;
+import com.example.bookingserver.infrastructure.persistence.repository.PatientRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -22,6 +28,7 @@ import org.springframework.stereotype.Component;
 
 import java.sql.Timestamp;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Component
@@ -31,6 +38,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     final UserRepository userRepository;
     final UserMapper userMapper;
     final PasswordService passwordService;
+    final DoctorMapper doctorMapper;
+    final PatientMapper patientMapper;
+    final DoctorRepository doctorRepository;
+    final PatientRepository patientRepository;
     final AuthenticationManager authenticationManager;
     final JwtService jwtService;
 
@@ -76,12 +87,36 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     @SneakyThrows
-    public UserResponse getIdByToken(String token) {
+    @Transactional
+    public GetInfoByTokenResponse getIdByToken(String token) {
         token= token.substring(7);
         String username= jwtService.extractUsername(token);
         User user= userRepository.findByUserName(username);
         if(user == null) throw new BookingCareException(ErrorDetail.ERR_USER_NOT_EXISTED);
-        return userMapper.toResponse(user);
+
+        Set<Role> roles= user.getRoles();
+        for(Role x : roles){
+            if(x.getName().equals("DOCTOR")){
+                Doctor doctor= doctorRepository.findByUser(user.getId()).orElseThrow(
+                        () -> new BookingCareException(ErrorDetail.ERR_DOCTOR_NOT_EXISTED)
+                );
+                DoctorResponse doctorResponse= doctorMapper.toResponse(doctor);
+                return GetInfoByTokenResponse.builder()
+                        .isDoctor(true)
+                        .doctor(doctorResponse)
+                        .patient(null)
+                        .build();
+            }
+        }
+        Patient patient = patientRepository.findByUserId(user.getId()).orElseThrow(
+                () -> new BookingCareException(ErrorDetail.ERR_PATIENT_NOT_EXISTED)
+        );
+        PatientResponse patientResponse= patientMapper.toPatientResponse(patient);
+        return GetInfoByTokenResponse.builder()
+                .isDoctor(true)
+                .doctor(null)
+                .patient(patientResponse)
+                .build();
     }
 
     @Transactional

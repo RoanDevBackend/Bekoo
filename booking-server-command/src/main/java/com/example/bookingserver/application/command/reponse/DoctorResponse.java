@@ -13,6 +13,7 @@ public class DoctorResponse{
     String id;
     String description;
     String trainingBy;
+    Integer maximumPeoplePerDay;
     @JsonProperty(value = "info")
     UserResponse user;
 }
