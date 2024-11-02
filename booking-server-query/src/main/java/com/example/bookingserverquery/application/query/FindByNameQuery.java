@@ -1,6 +1,5 @@
 package com.example.bookingserverquery.application.query;
 
-import com.example.bookingserverquery.application.query.QueryBase;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
