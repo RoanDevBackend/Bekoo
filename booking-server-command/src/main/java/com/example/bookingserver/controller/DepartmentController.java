@@ -48,7 +48,6 @@ public class DepartmentController {
         return ApiResponse.success(200, "Thêm thành công");
     }
 
-
     @PostMapping("/info")
     @Operation(summary = "Sửa thông tin chuyên khoa")
     public ApiResponse update(@ModelAttribute @Valid UpdateInfoDepartmentCommand command){
@@ -64,14 +63,10 @@ public class DepartmentController {
         return ApiResponse.success(200, "Xoá thành công");
     }
 
-
     @PostMapping("/doctor/delete")
     @Operation(summary = "Xoá bác sĩ ra khỏi chuyên khoa")
     public ApiResponse delete(@RequestBody DeleteDoctorDepartmentCommand command){
         deleteDoctorDepartmentCommandHandler.execute(command);
         return ApiResponse.success(200, "Xoá thành công");
     }
-
-
-
 }

@@ -1,25 +1,34 @@
-# Stage 1: Build the application using Maven
-FROM maven:3.8.8-eclipse-temurin-17 AS build
-# Set working directory inside the container
-WORKDIR /app
-# Copy the Maven project file and download dependencies
-COPY pom.xml .
-RUN mvn dependency:go-offline -X
-# Copy the source code and build the application
-COPY src ./src
-RUN mvn clean package -DskipTests
+# Build stage
+FROM maven:3.8.8-eclipse-temurin-17 as build
 
-# Stage 2: Create a lightweight final image with just the JAR
+# Cài đặt Maven
+#RUN apt-get update && apt-get install -y maven
+
+# Thiết lập thư mục làm việc
+WORKDIR /app
+
+# Sao chép dependency project
+COPY . .
+
+# Build và cài đặt dependency
+RUN cd /app/booking-care-document && mvn clean install -DskipTests
+
+# Sao chép main project
+COPY . /app/booking-server-command/
+
+# Build ứng dụng chính
+RUN cd /app/booking-server-command && mvn clean package -DskipTests
+
+# Runtime stage
 FROM eclipse-temurin:17-jdk
 
-# Set the working directory in the container
 WORKDIR /app
 
-# Copy the JAR file from the build stage
-COPY --from=build /app/target/booking-server-command-0.0.1-SNAPSHOT.jar /app/app.jar
+# Sao chép file JAR từ build stage
+COPY --from=build /app/booking-server-command/target/*.jar app.jar
 
-# Expose the application port (change if necessary)
+# Expose port 8080
 EXPOSE 8080
 
-# Command to run the Spring Boot application
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+# Chạy ứng dụng
+ENTRYPOINT ["java", "-jar", "app.jar"]

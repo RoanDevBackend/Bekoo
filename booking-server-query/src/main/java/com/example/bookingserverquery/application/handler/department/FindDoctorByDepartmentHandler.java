@@ -24,12 +24,16 @@ public class FindDoctorByDepartmentHandler {
     final DoctorDepartmentELRepository doctorDepartmentELRepository;
     final DoctorELRepository doctorELRepository;
     final DoctorMapper doctorMapper;
+
     public PageResponse<DoctorResponse> execute(String id, QueryBase<DoctorResponse> queryBase){
         Pageable pageable= PageRequest.of(queryBase.getPageIndex()-1 , queryBase.getPageSize());
+
         Page<DoctorDepartment> page= doctorDepartmentELRepository.findByDepartmentId(id, pageable);
         List<DoctorResponse> doctorResponses= new ArrayList<>();
+
         for(DoctorDepartment x: page.getContent()){
             Optional<Doctor> doctorOptional= doctorELRepository.findById(x.getDoctorId());
+            System.out.println(x.getDoctorId());
             doctorOptional.ifPresent(doctor -> doctorResponses.add(doctorMapper.toResponse(doctor)));
         }
         return PageResponse.<DoctorResponse>builder()

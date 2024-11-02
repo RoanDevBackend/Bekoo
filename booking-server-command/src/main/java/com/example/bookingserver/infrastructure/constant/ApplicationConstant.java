@@ -1,8 +1,11 @@
 package com.example.bookingserver.infrastructure.constant;
 
-import lombok.AccessLevel;
-import lombok.experimental.FieldDefaults;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class ApplicationConstant {
     public static class EventStatus {
         public static String PENDING = "pending";

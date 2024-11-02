@@ -6,15 +6,13 @@ import com.example.bookingserver.application.command.handle.exception.BookingCar
 import com.example.bookingserver.application.command.handle.exception.ErrorDetail;
 import com.example.bookingserver.application.command.reponse.SpecializeResponse;
 import com.example.bookingserver.domain.Department;
-import com.example.bookingserver.domain.OutboxEvent;
 import com.example.bookingserver.domain.Specialize;
 import com.example.bookingserver.domain.repository.DepartmentRepository;
-import com.example.bookingserver.domain.repository.OutboxEventRepository;
 import com.example.bookingserver.domain.repository.SpecializeRepository;
 import com.example.bookingserver.infrastructure.constant.ApplicationConstant;
 import com.example.bookingserver.infrastructure.mapper.SpecializeMapper;
 import com.example.bookingserver.infrastructure.message.MessageProducer;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import document.constant.TopicConstant;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -29,12 +27,9 @@ import org.springframework.stereotype.Component;
 public class CreateSpecializeHandler {
     SpecializeRepository specializeRepository;
     DepartmentRepository departmentRepository;
-    OutboxEventRepository outboxEventRepository;
-
     SpecializeMapper specializeMapper;
-    ObjectMapper objectMapper;
     MessageProducer messageProducer;
-    String TOPIC="create-specialize";
+    String TOPIC= TopicConstant.SpecializeTopic.CREATE_SPECIALIZE;
 
     @SneakyThrows
     @Transactional
@@ -48,24 +43,7 @@ public class CreateSpecializeHandler {
         specialize= specializeRepository.save(specialize);
 
         SpecializeEvent event= specializeMapper.toSpecializeEvent(specialize);
-        String content= objectMapper.writeValueAsString(event);
-        System.out.println(content);
-        OutboxEvent outboxEvent= OutboxEvent.builder()
-                .topic(TOPIC)
-                .eventType("CREATE-SPECIALIZE")
-                .aggregateId(specialize.getId())
-                .aggregateType("Specialize")
-                .content(content)
-                .status(ApplicationConstant.EventStatus.PENDING)
-                .build();
-
-        try {
-            messageProducer.sendMessage(TOPIC, content);
-            outboxEvent.setStatus(ApplicationConstant.EventStatus.SEND);
-        }catch (Exception e){
-            log.error("SEND EVENT CREATE SPECIALIZE FAILED: {}", TOPIC );
-        }
-        outboxEventRepository.save(outboxEvent);
+        messageProducer.sendMessage(TOPIC, ApplicationConstant.EventType.ADD, event, event.getId(), "Specialize");
         return specializeMapper.toResponse(specialize);
     }
 }

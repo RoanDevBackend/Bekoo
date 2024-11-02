@@ -43,7 +43,6 @@ public class SpecializeController {
         return ApiResponse.success(200, "Sửa thành công", response);
     }
 
-
     @DeleteMapping(value = "/{ids}")
     @Operation(summary = "Xoá chuyên khoa")
     public ApiResponse delete(@PathVariable("ids") List<String> ids){
@@ -58,21 +57,27 @@ public class SpecializeController {
         return ApiResponse.success(200, "Tìm kiếm  theo mã định danh thành công", response);
     }
 
-
-    @Operation(summary = "Lấy ra tất cả")
-    @PostMapping(value = "/query-all")
-    public ApiResponse findAll(@RequestBody(required = false) QueryBase<SpecializeResponse> queryBase){
-        if(queryBase== null){
-            queryBase= QueryBase.<SpecializeResponse>builder().build();
-        }
+    @Operation(summary = "Lấy ra tất cả", deprecated = true)
+    @GetMapping(value = "/query-all")
+    public ApiResponse findAll(@RequestParam(required = false, defaultValue = "1") int pageIndex
+                            , @RequestParam(required = false, defaultValue = "10000") int pageSize){
+        QueryBase<SpecializeResponse> queryBase= QueryBase.<SpecializeResponse>builder()
+                .pageIndex(pageIndex)
+                .pageSize(pageSize)
+                .build();
         var response= findAllSpecializeHandler.execute(queryBase);
         return ApiResponse.success(200, "Tìm kiếm tất cả chuyên ngành đang có", response);
     }
 
-    @Operation(summary = "Tìm kiếm chuyên ngành của chuyên khoa")
-    @PostMapping(value = "/department/{id}")
-    public ApiResponse getByDepartment(@PathVariable("id") String id, @RequestBody(required = false) QueryBase<SpecializeResponse> queryBase){
-        if(queryBase == null) queryBase = QueryBase.<SpecializeResponse>builder().build();
+    @Operation(summary = "Tìm kiếm chuyên ngành của chuyên khoa", deprecated = true)
+    @GetMapping(value = "/department/{id}")
+    public ApiResponse getByDepartment(@PathVariable("id") String id,
+                                       @RequestParam(required = false, defaultValue = "1") int pageIndex,
+                                       @RequestParam(required = false, defaultValue = "10000") int pageSize){
+        var queryBase = QueryBase.<SpecializeResponse>builder()
+                .pageIndex(pageIndex)
+                .pageSize(pageSize)
+                .build();
         var response= findByDepartmentHandler.execute(id, queryBase);
         return ApiResponse.success(200, "Tìm kiếm theo chuyên khoa thành công" ,response);
     }

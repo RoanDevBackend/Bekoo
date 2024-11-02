@@ -47,6 +47,7 @@ public class QueryBase<T> {
     @Builder
     @FieldDefaults(level = AccessLevel.PRIVATE)
     @ToString
+    @AllArgsConstructor
     public static class OrderDTO{
         String properties ;
         @Builder.Default

@@ -1,6 +1,5 @@
 package com.example.bookingserverquery.controller;
 
-
 import com.example.bookingserverquery.application.handler.department.FindByDepartmentIdHandler;
 import com.example.bookingserverquery.application.handler.department.FindByDepartmentNameHandler;
 import com.example.bookingserverquery.application.handler.department.FindDoctorByDepartmentHandler;
@@ -8,19 +7,14 @@ import com.example.bookingserverquery.application.handler.department.GetAllDepar
 import com.example.bookingserverquery.application.query.FindByNameQuery;
 import com.example.bookingserverquery.application.query.QueryBase;
 import com.example.bookingserverquery.application.reponse.ApiResponse;
-import com.example.bookingserverquery.application.reponse.department.DepartmentResponse;
 import com.example.bookingserverquery.application.reponse.doctor.DoctorResponse;
+import document.response.DepartmentResponse;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.models.annotations.OpenAPI30;
-import io.swagger.v3.oas.models.annotations.OpenAPI31;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-
 
 @Slf4j
 @RestController
@@ -41,30 +35,41 @@ public class DepartmentController {
         return ApiResponse.success(200, "Tìm kiếm thành công", response);
     }
 
-    @PostMapping("/name")
+    @GetMapping("/name/{name}")
     @Operation(summary = "Tìm kiếm theo tên")
-    public ApiResponse getDepartmentByName(@RequestBody @Valid FindByNameQuery<DepartmentResponse> query) {
+    public ApiResponse getDepartmentByName(@PathVariable String name,
+                                           @RequestParam(required = false, defaultValue = "1") int pageIndex,
+                                           @RequestParam(required = false, defaultValue = "10000") int pageSize) {
+        var query = FindByNameQuery.<DepartmentResponse>builder()
+                .name(name)
+                .pageIndex(pageIndex)
+                .pageSize(pageSize)
+                .build();
         var response= findByDepartmentNameHandler.execute(query);
         return ApiResponse.success(200, "Tìm kiếm thành công", response);
     }
 
-    @PostMapping
-    @Operation(summary = "Lấy ra danh sách tất cả Chuyên khoa")
-    public ApiResponse getAllDepartments(@RequestBody(required = false) @Valid QueryBase<DepartmentResponse> query) {
-        log.info("API: Get all departments ");
-        if(query == null){
-            query= FindByNameQuery.<DepartmentResponse>builder().build();
-        }
+    @GetMapping("/departments")
+    @Operation(summary = "Lấy ra danh sách tất cả chuyên khoa")
+    public ApiResponse getAllDepartments(@RequestParam(required = false, defaultValue = "1") int pageIndex,
+                                         @RequestParam(required = false, defaultValue = "10000") int pageSize) {
+        var query= QueryBase.<DepartmentResponse>builder()
+                .pageIndex(pageIndex)
+                .pageSize(pageSize)
+                .build();
         var response= getAllDepartmentHandler.execute(query);
         return ApiResponse.success(200, "Tìm kiếm thành công", response);
     }
 
     @Operation(summary = "Lấy danh sách bác sĩ của phòng ban bệnh viện")
-    @PostMapping("doctor/{id}")
-    public ApiResponse findDoctorByDepartment(@PathVariable String id, @RequestBody(required = false) @Valid QueryBase<DoctorResponse> query){
-        if(query == null){
-            query= QueryBase.<DoctorResponse>builder().build();
-        }
+    @GetMapping("doctor/{id}")
+    public ApiResponse findDoctorByDepartment(@PathVariable String id,
+                                              @RequestParam(required = false, defaultValue = "1") int pageIndex,
+                                              @RequestParam(required = false, defaultValue = "10000") int pageSize){
+        var query= QueryBase.<DoctorResponse>builder()
+                .pageIndex(pageIndex)
+                .pageSize(pageSize)
+                .build();
         var response= findDoctorByDepartmentHandler.execute(id, query);
         return ApiResponse.success(200, "Lấy danh sách bác sĩ theo phòng ban", response);
     }

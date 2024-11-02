@@ -25,7 +25,6 @@ public class DoctorController {
     final Handler<SetMaximumPeoplePerDayCommand> setMaximumPeoplePerDayCommandHandler;
     final Handler_DTO<UpdateInfoDoctorCommand, DoctorResponse> updateInfoDoctorCommandHandler;
 
-
     @PostMapping
     public ApiResponse create(@RequestBody @Valid CreateDoctorCommand command){
         var response= createDoctorCommandHandler.execute(command);
@@ -37,7 +36,6 @@ public class DoctorController {
         var response= updateInfoDoctorCommandHandler.execute(command);
         return ApiResponse.success(200, "Sửa thông tin thành công", response);
     }
-
 
     @PutMapping(value = "/day")
     @Operation(summary = "Đặt số người khám tối đa theo ngày cho bác sĩ")
@@ -51,7 +49,4 @@ public class DoctorController {
         deleteDoctorHandler.execute(ids);
         return ApiResponse.success(200, "Xoá thành công");
     }
-
-
-
 }

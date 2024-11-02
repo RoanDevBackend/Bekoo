@@ -22,7 +22,6 @@ import java.util.List;
 public class GetAllDoctorHandler {
 
     final DoctorRepository doctorRepository;
-    final DoctorMapper doctorMapper;
     final DoctorService doctorService;
 
 

@@ -73,8 +73,8 @@ services:
   #    platform: linux/arm64/v8
   app:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: booking-server-command/Dockerfile
     container_name: booking-care-command
     depends_on:
       - mysql

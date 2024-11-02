@@ -6,11 +6,14 @@ import com.example.bookingserver.application.query.handler.response.PageResponse
 import com.example.bookingserver.domain.Schedule;
 import com.example.bookingserver.domain.repository.ScheduleRepository;
 import com.example.bookingserver.infrastructure.mapper.ScheduleMapper;
+import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -26,19 +29,28 @@ public class FindHistoryScheduleByDoctorHandler {
     ScheduleRepository scheduleRepository;
     ScheduleMapper scheduleMapper;
 
-    public PageResponse<FindByDoctorResponse> execute(String doctorId, QueryBase<FindByDoctorResponse> queryBase, LocalDateTime start, LocalDateTime end){
-        Page<Schedule> page= scheduleRepository.findByDoctor(doctorId, queryBase.getPageable(), start, end);
+    @Transactional
+    public PageResponse<FindByDoctorResponse> execute(String doctorId, Pageable pageable, LocalDateTime start, LocalDateTime end, int statusId){
+        Page<Schedule> page= scheduleRepository.findByDoctor(doctorId, pageable, start, end);
         List<FindByDoctorResponse> contents= new ArrayList<>();
+        long totalElement= 0;
         for(Schedule schedule : page.getContent()){
-            contents.add(scheduleMapper.toFindByDoctorResponse(schedule));
+            if(schedule.getStatusId() == statusId) {
+                contents.add(scheduleMapper.toFindByDoctorResponse(schedule));
+                totalElement++;
+            }
         }
+
+        List<QueryBase.OrderDTO> orderDTOS= new ArrayList<>();
+        orderDTOS.add(new QueryBase.OrderDTO("checkIn", Sort.Direction.ASC));
+
         return PageResponse.<FindByDoctorResponse>builder()
                 .totalPage(page.getTotalPages())
-                .orders(queryBase.getOrders())
+                .orders(orderDTOS)
                 .contentResponse(contents)
-                .pageIndex(queryBase.getPageIndex())
+                .pageIndex(page.getNumber()+1)
                 .pageSize(page.getSize())
-                .totalElements(page.getTotalElements())
+                .totalElements(totalElement)
                 .build();
     }
 }

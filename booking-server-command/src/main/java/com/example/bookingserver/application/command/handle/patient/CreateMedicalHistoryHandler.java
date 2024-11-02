@@ -12,6 +12,7 @@ import com.example.bookingserver.infrastructure.mapper.PatientMapper;
 import com.example.bookingserver.infrastructure.message.MessageProducer;
 import com.example.bookingserver.infrastructure.persistence.repository.MedicalHistoryRepository;
 import com.example.bookingserver.infrastructure.persistence.repository.PatientRepository;
+import document.constant.TopicConstant;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -26,8 +27,8 @@ public class CreateMedicalHistoryHandler {
     private final PatientRepository patientRepository;
     private final MedicalHistoryRepository medicalHistoryRepository;
     private final PatientMapper patientMapper;
-    private final MessageProducer messageProducer;
-    private final String TOPIC="create-medical-history";
+    final MessageProducer messageProducer;
+    final String TOPIC= TopicConstant.PatientTopic.CREATE_MEDICAL;
 
     @SneakyThrows
     public void execute(CreateMedicalHistoryCommand command) {

@@ -15,6 +15,7 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @SuperBuilder
 @Document(indexName = "emergency_contact")
+@ToString
 public class EmergencyContact extends EntityBase{
     @Id
     Long id;

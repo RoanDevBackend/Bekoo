@@ -13,6 +13,7 @@ import com.example.bookingserver.infrastructure.constant.ApplicationConstant;
 import com.example.bookingserver.infrastructure.mapper.DoctorMapper;
 import com.example.bookingserver.infrastructure.message.MessageProducer;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import document.constant.TopicConstant;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -26,9 +27,8 @@ public class SetMaximumPeoplePerDayHandler implements Handler<SetMaximumPeoplePe
     final DoctorRepository doctorRepository;
     final OutboxEventRepository outboxEventRepository;
     final MessageProducer messageProducer;
-    final DoctorMapper doctorMapper;
     final ObjectMapper objectMapper;
-    final String TOPIC= "set-maximum-people-per-day-event";
+    final String TOPIC= TopicConstant.DoctorTopic.SET_PERSON_PER_DAY;
 
     @Override
     @SneakyThrows
@@ -38,28 +38,13 @@ public class SetMaximumPeoplePerDayHandler implements Handler<SetMaximumPeoplePe
                         () -> new BookingCareException(ErrorDetail.ERR_USER_NOT_EXISTED)
                 );
         doctor.setMaximumPeoplePerDay(command.getValue());
-        doctorRepository.save(doctor);
+        doctor= doctorRepository.save(doctor);
 
-        SetMaximumPeoplePerDayEvent event= doctorMapper.fromDoctorToSerMaximumEvent(doctor);
+        SetMaximumPeoplePerDayEvent event= new SetMaximumPeoplePerDayEvent();
+        event.setId(doctor.getId());
+        event.setValue(command.getValue());
+        event.setUpdatedAt(doctor.getUpdatedAt());
 
-        String content= objectMapper.writeValueAsString(event);
-
-        OutboxEvent outboxEvent= OutboxEvent.builder()
-                .topic(TOPIC)
-                .eventType("UPDATE MAXIMUM PEOPLE PER DAY")
-                .aggregateId(doctor.getId())
-                .aggregateType("Doctor")
-                .content(content)
-                .status(ApplicationConstant.EventStatus.PENDING)
-                .build();
-
-        try {
-            messageProducer.sendMessage(TOPIC, content);
-            outboxEvent.setStatus(ApplicationConstant.EventStatus.SEND);
-            log.info("SEND EVENT SUCCESS: {}", TOPIC);
-        }catch (Exception e){
-            log.error("SEND EVENT FAILED: {}", TOPIC );
-        }
-        outboxEventRepository.save(outboxEvent);
+        messageProducer.sendMessage(TOPIC, "UPDATE INFO", event, event.getId(), "Doctor");
     }
 }

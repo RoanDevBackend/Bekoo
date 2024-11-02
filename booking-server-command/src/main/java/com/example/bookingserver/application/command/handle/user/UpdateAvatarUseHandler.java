@@ -3,19 +3,15 @@ package com.example.bookingserver.application.command.handle.user;
 import com.cloudinary.Cloudinary;
 import com.example.bookingserver.application.command.command.user.UpdateAvatarUserCommand;
 import com.example.bookingserver.application.command.event.user.UpdateAvatarUserEvent;
-import com.example.bookingserver.application.command.handle.Handler;
 import com.example.bookingserver.application.command.handle.Handler_DTO;
 import com.example.bookingserver.application.command.handle.exception.BookingCareException;
 import com.example.bookingserver.application.command.handle.exception.ErrorDetail;
-import com.example.bookingserver.application.command.reponse.UserResponse;
-import com.example.bookingserver.domain.OutboxEvent;
 import com.example.bookingserver.domain.User;
-import com.example.bookingserver.domain.repository.OutboxEventRepository;
 import com.example.bookingserver.domain.repository.UserRepository;
 import com.example.bookingserver.infrastructure.constant.ApplicationConstant;
 import com.example.bookingserver.infrastructure.mapper.UserMapper;
 import com.example.bookingserver.infrastructure.message.MessageProducer;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import document.constant.TopicConstant;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -31,17 +27,15 @@ public class UpdateAvatarUseHandler implements Handler_DTO<UpdateAvatarUserComma
 
     final Cloudinary cloudinary;
     final UserRepository userRepository;
-    final ObjectMapper objectMapper;
     final UserMapper userMapper;
     final MessageProducer messageProducer;
-    final OutboxEventRepository outboxEventRepository;
-    final String TOPIC= "update-avatar-user-event";
+    final String TOPIC= TopicConstant.UserTopic.UPDATE_AVATAR_USER;
     @Override
     @SneakyThrows
     public String execute(UpdateAvatarUserCommand command) {
         User user= userRepository.findById(command.getId())
                 .orElseThrow(()-> new BookingCareException(ErrorDetail.ERR_USER_NOT_EXISTED));
-        String url_data="";
+        String url_data;
         try {
             Map responseByCloudinary = cloudinary.uploader().upload(command.getFileImage().getBytes(), Map.of());
 
@@ -50,29 +44,9 @@ public class UpdateAvatarUseHandler implements Handler_DTO<UpdateAvatarUserComma
             userRepository.save(user);
 
             UpdateAvatarUserEvent event= userMapper.fromUserToUpdateAvatarEvent(user);
-            String content= objectMapper.writeValueAsString(event);
-            OutboxEvent outboxEvent= OutboxEvent.builder()
-                    .topic(TOPIC)
-                    .eventType("UPDATE-AVATAR")
-                    .aggregateId(user.getId())
-                    .aggregateType("User")
-                    .content(content)
-                    .status(ApplicationConstant.EventStatus.PENDING)
-                    .build();
-
-            try {
-                messageProducer.sendMessage(TOPIC, content);
-                outboxEvent.setStatus(ApplicationConstant.EventStatus.SEND);
-                log.info("SEND EVENT SUCCESS: {}", TOPIC);
-            }catch (Exception e){
-                log.error("SEND EVENT FAILED: {}", TOPIC );
-            }
-            outboxEventRepository.save(outboxEvent);
-
-
-
+            messageProducer.sendMessage(TOPIC, ApplicationConstant.EventType.UPDATE, event, event.getId(), "User");
         }catch (IOException e){
-            log.error("ERR_FILE: " + e.getMessage());
+            log.error("ERR_FILE: {}", e.getMessage());
             throw new BookingCareException(ErrorDetail.ERR_FILE);
         }
         return url_data;

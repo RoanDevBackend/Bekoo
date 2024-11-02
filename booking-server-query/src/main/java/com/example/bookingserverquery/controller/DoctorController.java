@@ -21,17 +21,23 @@ public class DoctorController {
     final GetAllDoctorHandler getAllDoctorHandler;
     final FindByDoctorIdHandler findByDoctorIdHandler;
 
-    @PostMapping("/name")
-    public ApiResponse findByName(@RequestBody @Valid FindByNameQuery<DoctorResponse> query){
+    @GetMapping("/name/{name}")
+    public ApiResponse findByName(@PathVariable String name,
+                                  @RequestParam(required = false, defaultValue = "1") int pageIndex ,
+                                  @RequestParam(required = false, defaultValue = "10000") int pageSize){
+        var query= FindByNameQuery.<DoctorResponse>builder()
+                .name(name)
+                .pageIndex(pageIndex)
+                .pageSize(pageSize)
+                .build();
         var response= findByDoctorNameHandler.findByName(query);
-        return ApiResponse.success(200, "Tìm kiếm thành công", response);
+        return ApiResponse.success(200, "Tìm kiếm bác sĩ theo tên", response);
     }
 
-    @PostMapping
-    public ApiResponse getAll(@RequestBody(required = false)@Valid QueryBase<DoctorResponse> query){
-        if(query == null){
-            query= QueryBase.<DoctorResponse>builder().build();
-        }
+    @GetMapping
+    public ApiResponse getAll(@RequestParam(required = false, defaultValue = "1") int pageIndex ,
+                              @RequestParam(required = false, defaultValue = "10000") int pageSize){
+        var query= QueryBase.<DoctorResponse>builder().build();
         PageResponse<DoctorResponse> response= getAllDoctorHandler.getAll(query);
         return ApiResponse.success(200, "Tìm kiếm tất cả giá trị", response);
     }

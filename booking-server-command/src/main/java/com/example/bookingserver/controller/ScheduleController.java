@@ -11,11 +11,16 @@ import com.example.bookingserver.application.query.handler.schedule.FindHistoryS
 import com.example.bookingserver.application.query.handler.schedule.FindHistoryScheduleByPatientHandler;
 import com.example.bookingserver.application.query.QueryBase;
 import com.example.bookingserver.application.command.reponse.ApiResponse;
+import com.example.bookingserver.infrastructure.constant.ApplicationConstant;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -67,13 +72,10 @@ public class ScheduleController {
     public ApiResponse getDoctorSchedule(@PathVariable String id
             , @RequestParam(required = false, defaultValue = "1") int pageIndex
             , @RequestParam(required = false, defaultValue = "10000") int pageSize ){
-        QueryBase<FindByDoctorResponse> queryBase = QueryBase.<FindByDoctorResponse>builder()
-                .pageIndex(pageIndex)
-                .pageSize(pageSize)
-                .build();
+        Pageable pageable= PageRequest.of(pageIndex - 1,pageSize, Sort.by("checkIn").ascending());
         LocalDateTime start= LocalDateTime.now().minusYears(200);
         LocalDateTime end= LocalDateTime.now().plusYears(200);
-        var response = findHistoryScheduleByDoctorHandler.execute(id, queryBase, start, end);
+        var response = findHistoryScheduleByDoctorHandler.execute(id, pageable, start, end, ApplicationConstant.Status.CONFIRMED);
         return ApiResponse.success(200, "Tìm kiếm thành công", response);
     }
 
@@ -84,13 +86,10 @@ public class ScheduleController {
     public ApiResponse getDoctorSchedulePerDay(@PathVariable String id
             , @RequestParam(required = false, defaultValue = "1") int pageIndex
             , @RequestParam(required = false, defaultValue = "10000") int pageSize){
-        QueryBase<FindByDoctorResponse> queryBase = QueryBase.<FindByDoctorResponse>builder()
-                .pageIndex(pageIndex)
-                .pageSize(pageSize)
-                .build();
+        Pageable pageable= PageRequest.of(pageIndex - 1,pageSize, Sort.by("checkIn").ascending());
         LocalDateTime start= LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
         LocalDateTime end= start.plusDays(1).withHour(0).withMinute(0).withSecond(0).withNano(0);
-        var response = findHistoryScheduleByDoctorHandler.execute(id, queryBase, start, end);
+        var response = findHistoryScheduleByDoctorHandler.execute(id, pageable, start, end, ApplicationConstant.Status.CONFIRMED);
         return ApiResponse.success(200, "Tìm kiếm thành công", response);
     }
 }

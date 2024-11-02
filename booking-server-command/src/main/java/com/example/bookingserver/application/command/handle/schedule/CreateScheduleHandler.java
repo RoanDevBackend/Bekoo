@@ -11,11 +11,11 @@ import com.example.bookingserver.domain.*;
 import com.example.bookingserver.domain.repository.DoctorRepository;
 import com.example.bookingserver.domain.repository.ScheduleRepository;
 import com.example.bookingserver.domain.repository.SpecializeRepository;
-import com.example.bookingserver.domain.repository.UserRepository;
 import com.example.bookingserver.infrastructure.constant.ApplicationConstant;
 import com.example.bookingserver.infrastructure.mapper.ScheduleMapper;
 import com.example.bookingserver.infrastructure.message.MessageProducer;
 import com.example.bookingserver.infrastructure.persistence.repository.PatientRepository;
+import document.constant.TopicConstant;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -29,16 +29,16 @@ import java.time.LocalDateTime;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
+@FieldDefaults(makeFinal = true)
 public class CreateScheduleHandler {
-    ScheduleRepository scheduleRepository;
-    ScheduleMapper scheduleMapper;
-    PatientRepository patientRepository;
-    DoctorRepository doctorRepository;
-    SpecializeRepository specializeRepository;
-    MessageProducer messageProducer;
-    MessageService messageService;
-    String TOPIC= "create-schedule";
+    private ScheduleRepository scheduleRepository;
+    private ScheduleMapper scheduleMapper;
+    private PatientRepository patientRepository;
+    private DoctorRepository doctorRepository;
+    private SpecializeRepository specializeRepository;
+    private MessageProducer messageProducer;
+    private MessageService messageService;
+    String TOPIC= TopicConstant.ScheduleTopic.CREATE_SCHEDULE;
 
 
     @Transactional

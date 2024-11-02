@@ -8,6 +8,7 @@ import com.example.bookingserver.domain.repository.SpecializeRepository;
 import com.example.bookingserver.infrastructure.constant.ApplicationConstant;
 import com.example.bookingserver.infrastructure.message.MessageProducer;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import document.constant.TopicConstant;
 import jakarta.transaction.Transactional;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -17,19 +18,18 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Optional;
 
-import static org.springframework.kafka.support.KafkaHeaders.TOPIC;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@FieldDefaults(makeFinal = true)
 public class DeleteSpecializeHandler {
 
-    SpecializeRepository specializeRepository;
-    ObjectMapper objectMapper;
-    String TOPIC="delete-specialize";
-    MessageProducer messageProducer;
-    OutboxEventRepository outboxEventRepository;
+    private SpecializeRepository specializeRepository;
+    private ObjectMapper objectMapper;
+    String TOPIC= TopicConstant.SpecializeTopic.DELETE_SPECIALIZE;
+    private MessageProducer messageProducer;
+    private OutboxEventRepository outboxEventRepository;
 
 
     @SneakyThrows

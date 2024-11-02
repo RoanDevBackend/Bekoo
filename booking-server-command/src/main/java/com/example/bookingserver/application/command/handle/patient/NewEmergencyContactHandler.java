@@ -1,7 +1,6 @@
 package com.example.bookingserver.application.command.handle.patient;
 
 import com.example.bookingserver.application.command.command.patient.EmergencyContactCommand;
-import com.example.bookingserver.application.command.event.patient.EmergencyContactEvent;
 import com.example.bookingserver.application.command.handle.exception.BookingCareException;
 import com.example.bookingserver.application.command.handle.exception.ErrorDetail;
 import com.example.bookingserver.domain.EmergencyContact;
@@ -11,6 +10,8 @@ import com.example.bookingserver.infrastructure.mapper.PatientMapper;
 import com.example.bookingserver.infrastructure.message.MessageProducer;
 import com.example.bookingserver.infrastructure.persistence.repository.EmergencyContactRepository;
 import com.example.bookingserver.infrastructure.persistence.repository.PatientRepository;
+import document.constant.TopicConstant;
+import document.event.patient.EmergencyContactEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +25,7 @@ public class NewEmergencyContactHandler {
     private final PatientRepository patientRepository;
     private final PatientMapper patientMapper;
     private final MessageProducer  messageProducer;
-    private final String TOPIC= "create-info-contact";
+    final String TOPIC= TopicConstant.PatientTopic.CREATE_CONTACT;
 
     @SneakyThrows
     public void execute(String patientId, EmergencyContactCommand command){

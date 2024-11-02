@@ -42,17 +42,15 @@ public class PatientController {
         return ApiResponse.success(200, "Thêm thông tin bệnh nhân thành công", data);
     }
 
-
     @GetMapping("/{userId}")
-    @Operation(summary="Lấy ra thông tin bệnh nhân")
+    @Operation(summary="Lấy ra thông tin bệnh nhân", deprecated = true)
     public ApiResponse getInfo(@PathVariable String userId) {
         var response= findPatientByUserIdHandler.execute(userId);
         return ApiResponse.success(200, "Lấy ra thông tin của bệnh nhân thành công", response);
     }
 
-
     @GetMapping("/history/{patientId}")
-    @Operation(summary = "Lấy ra tất cả hồ sơ bệnh án của bệnh nhân")
+    @Operation(summary = "Lấy ra tất cả hồ sơ bệnh án của bệnh nhân", deprecated = true)
     public ApiResponse getAllMedicalHistory(
              @PathVariable String patientId
             ,@RequestParam(required = false, defaultValue = "1") Integer pageIndex
@@ -61,8 +59,6 @@ public class PatientController {
         var response= getAllMedicalHistoryHandler.execute(patientId, pageable);
         return ApiResponse.success(200, "Lấy ra tất cả tiền án bệnh của bệnh nhân", response);
     }
-
-
 
     @GetMapping("/contact/{patientId}")
     @Operation(summary = "Lấy ra tất cả người liên hệ khẩn cấp theo bệnh nhân", deprecated = true)
@@ -73,7 +69,6 @@ public class PatientController {
         var response= getAllEmergencyContactHandler.execute(patientId, pageable);
         return ApiResponse.success(200, "Lấy ra danh sách liên hệ khẩn cấp của bệnh nhân thành công", response);
     }
-
 
     @DeleteMapping("/contact/{contactId}")
     @Operation(summary="Xoá liên hệ khẩn cấp")
@@ -104,7 +99,6 @@ public class PatientController {
         createMedicalHistoryHandler.execute(command);
         return ApiResponse.success(200, "Thêm hồ sơ bệnh án thành công");
     }
-
 
     private Pageable getPageable(Integer pageIndex, Integer pageSize){
         return PageRequest.of(pageIndex-1,pageSize, Sort.by(new Sort.Order(Sort.Direction.DESC, "createdAt")));

@@ -9,6 +9,7 @@ import com.example.bookingserver.infrastructure.mapper.UserMapper;
 import com.example.bookingserver.domain.repository.UserRepository;
 import com.example.bookingserver.infrastructure.message.MessageProducer;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import document.constant.TopicConstant;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -22,11 +23,10 @@ import java.util.List;
 public class DeleteUserHandler implements Handler<List<String>> {
 
     final UserRepository userRepository;
-    final UserMapper userMapper;
     final MessageProducer messageProducer;
     final ObjectMapper objectMapper;
     final OutboxEventRepository outboxEventRepository;
-    final String TOPIC="delete-user-event";
+    final String TOPIC= TopicConstant.UserTopic.DELETE_USER;
 
     @SneakyThrows
     @Override

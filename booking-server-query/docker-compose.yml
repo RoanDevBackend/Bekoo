@@ -28,8 +28,8 @@ services:
 
   app:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: booking-server-query/Dockerfile
     container_name: booking-care-query
     depends_on:
       - kafka

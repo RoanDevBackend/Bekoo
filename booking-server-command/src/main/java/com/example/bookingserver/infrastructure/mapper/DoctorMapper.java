@@ -22,5 +22,4 @@ public interface DoctorMapper {
     @Mapping(target = "user", ignore = true)
     CreateDoctorEvent fromDoctorToCreateDoctorEvent(Doctor doctor);
     UpdateInfoDoctorEvent fromDoctorToUpdateInfoEvent(Doctor doctor);
-    SetMaximumPeoplePerDayEvent fromDoctorToSerMaximumEvent(Doctor doctor);
 }

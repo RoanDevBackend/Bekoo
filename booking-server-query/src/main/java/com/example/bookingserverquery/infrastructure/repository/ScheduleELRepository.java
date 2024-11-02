@@ -22,4 +22,18 @@ public interface ScheduleELRepository extends ElasticsearchRepository<Schedule, 
             "  }", count = true)
     Long countByDoctorId(String doctorId);
 
+    @Query(value = "{\n" +
+            "    \"nested\": {\n" +
+            "      \"path\": \"specialize\",\n" +
+            "      \"query\": {\n" +
+            "        \"term\": {\n" +
+            "          \"specialize.id.keyword\": {\n" +
+            "            \"value\": \"?0\"\n" +
+            "          }\n" +
+            "        }\n" +
+            "      }\n" +
+            "    }\n" +
+            "  }", count = true)
+    Long countBySpecializedId(String specializedId);
+
 }

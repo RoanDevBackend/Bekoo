@@ -9,6 +9,7 @@ import com.example.bookingserver.infrastructure.message.MessageProducer;
 import com.example.bookingserver.infrastructure.persistence.repository.EmergencyContactRepository;
 import com.example.bookingserver.infrastructure.persistence.repository.MedicalHistoryRepository;
 import com.example.bookingserver.infrastructure.persistence.repository.PatientRepository;
+import document.constant.TopicConstant;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -22,10 +23,12 @@ public class DeletePatientHandler {
     private final MedicalHistoryRepository medicalHistoryRepository;
     private final EmergencyContactRepository emergencyContactRepository;
     private final MessageProducer messageProducer;
+    final String TOPIC_1= TopicConstant.PatientTopic.DELETE_MEDICAL;
+    final String TOPIC_2= TopicConstant.PatientTopic.CREATE_CONTACT;
 
     public void deleteMedicalHistory(Long medicalHistoryId) {
         medicalHistoryRepository.deleteById(medicalHistoryId);
-        messageProducer.sendMessage("delete-medical-history", ApplicationConstant.EventType.DELETE, medicalHistoryId+"", medicalHistoryId+"", "Medical History");
+        messageProducer.sendMessage(TOPIC_1, ApplicationConstant.EventType.DELETE, medicalHistoryId+"", medicalHistoryId+"", "Medical History");
     }
 
     public void deleteEmergencyContact(Long emergencyContactId) {
@@ -33,7 +36,7 @@ public class DeletePatientHandler {
         if(emergencyContact.isPresent()) {
             if (emergencyContactRepository.countPatient(emergencyContact.get().getPatient().getId()) > 1) {
                 emergencyContactRepository.deleteById(emergencyContactId);
-                messageProducer.sendMessage("delete-emergency-contact", ApplicationConstant.EventType.DELETE, emergencyContactId+"", emergencyContactId+"", "Emergency Contact");
+                messageProducer.sendMessage(TOPIC_2, ApplicationConstant.EventType.DELETE, emergencyContactId+"", emergencyContactId+"", "Emergency Contact");
             }
             else{
                 throw new RuntimeException("Bạn cần giữ lại một liên hệ khẩn cấp");

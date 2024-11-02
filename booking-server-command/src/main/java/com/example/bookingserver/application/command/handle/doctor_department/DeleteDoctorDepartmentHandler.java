@@ -3,12 +3,9 @@ package com.example.bookingserver.application.command.handle.doctor_department;
 import com.example.bookingserver.application.command.command.doctor_department.DeleteDoctorDepartmentCommand;
 import com.example.bookingserver.application.command.event.doctor_department.DoctorDepartmentEvent;
 import com.example.bookingserver.application.command.handle.Handler;
-import com.example.bookingserver.domain.OutboxEvent;
 import com.example.bookingserver.domain.repository.DoctorDepartmentRepository;
-import com.example.bookingserver.domain.repository.OutboxEventRepository;
-import com.example.bookingserver.infrastructure.constant.ApplicationConstant;
 import com.example.bookingserver.infrastructure.message.MessageProducer;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import document.constant.TopicConstant;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -20,13 +17,9 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class DeleteDoctorDepartmentHandler implements Handler<DeleteDoctorDepartmentCommand> {
-
-
     final DoctorDepartmentRepository doctorDepartmentRepository;
-    final OutboxEventRepository outboxEventRepository;
-    final ObjectMapper objectMapper;
     final MessageProducer messageProducer;
-    final String TOPIC= "delete-doctor-department-event";
+    final String TOPIC= TopicConstant.DoctorDepartmentTopic.DELETE;
 
     @Override
     @SneakyThrows
@@ -39,25 +32,7 @@ public class DeleteDoctorDepartmentHandler implements Handler<DeleteDoctorDepart
 
             if(doctorDepartment.isPresent()) {
                 DoctorDepartmentEvent doctorDepartmentEvent= new DoctorDepartmentEvent(x.getDoctorId(), x.getDepartmentId());
-                String content = objectMapper.writeValueAsString(doctorDepartmentEvent);
-                doctorDepartmentRepository.delete(doctorDepartment.get());
-                OutboxEvent outboxEvent = OutboxEvent.builder()
-                        .topic(TOPIC)
-                        .eventType("DELETE")
-                        .aggregateId(content)
-                        .aggregateType("doctor department")
-                        .content(content)
-                        .status(ApplicationConstant.EventStatus.PENDING)
-                        .build();
-
-                try {
-                    messageProducer.sendMessage(TOPIC, content);
-                    outboxEvent.setStatus(ApplicationConstant.EventStatus.SEND);
-                    log.info("SEND EVENT SUCCESS: {}", TOPIC);
-                } catch (Exception e) {
-                    log.error("SEND EVENT FAILED: {}", TOPIC);
-                }
-                outboxEventRepository.save(outboxEvent);
+                messageProducer.sendMessage(TOPIC, "DELETE", doctorDepartmentEvent, doctorDepartmentEvent.getDoctorId() + " " + doctorDepartmentEvent.getDepartmentId(), "Doctor Department");
             }
         }
     }

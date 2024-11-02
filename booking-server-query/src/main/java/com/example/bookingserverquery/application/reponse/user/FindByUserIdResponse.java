@@ -15,30 +15,16 @@ import java.util.Set;
 @Builder
 public class FindByUserIdResponse {
     String id;
-
     String name;
-
     String phoneNumber;
-
     String email;
-
     String cccd;
-
     String province;
-
     String district;
-
     String commune ;
-
     String aboutAddress;
-
     LocalDate dob;
-
     String gender;
-
     Set<String> roles;
-
     String linkAvatar;
-    LocalDateTime createdAt;
-    LocalDateTime updatedAt;
 }

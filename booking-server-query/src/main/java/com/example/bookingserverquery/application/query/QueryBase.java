@@ -33,7 +33,7 @@ public class QueryBase<T> {
     @JsonIgnore
     public Pageable getPageable() {
         if(orders.isEmpty()){
-            orders.add(new OrderDTO("createdAt", Sort.Direction.DESC));
+            orders.add(new OrderDTO("updatedAt", Sort.Direction.DESC));
         }
         List<Sort.Order> sortOrder = new ArrayList<>();
         for (OrderDTO x : orders) {

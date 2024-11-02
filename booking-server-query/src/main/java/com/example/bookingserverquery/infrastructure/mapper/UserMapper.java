@@ -1,10 +1,10 @@
 package com.example.bookingserverquery.infrastructure.mapper;
 
-import com.example.bookingserverquery.application.event.models.user.CreateUserEvent;
-import com.example.bookingserverquery.application.event.models.user.UpdateInfoUserEvent;
 import com.example.bookingserverquery.application.reponse.user.FindByUserIdResponse;
 import com.example.bookingserverquery.application.reponse.user.UserResponse;
 import com.example.bookingserverquery.domain.User;
+import document.event.user.CreateUserEvent;
+import document.event.user.UpdateInfoUserEvent;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 
