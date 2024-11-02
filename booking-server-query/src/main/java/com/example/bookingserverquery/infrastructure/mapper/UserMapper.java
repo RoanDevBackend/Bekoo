@@ -1,10 +1,10 @@
 package com.example.bookingserverquery.infrastructure.mapper;
 
 import com.example.bookingserverquery.application.reponse.user.FindByUserIdResponse;
-import com.example.bookingserverquery.application.reponse.user.UserResponse;
 import com.example.bookingserverquery.domain.User;
 import document.event.user.CreateUserEvent;
 import document.event.user.UpdateInfoUserEvent;
+import document.response.UserResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 

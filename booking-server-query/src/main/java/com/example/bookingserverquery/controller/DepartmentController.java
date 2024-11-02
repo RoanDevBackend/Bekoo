@@ -10,7 +10,6 @@ import com.example.bookingserverquery.application.reponse.ApiResponse;
 import com.example.bookingserverquery.application.reponse.doctor.DoctorResponse;
 import document.response.DepartmentResponse;
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;

@@ -12,6 +12,12 @@ public class ApplicationConstant {
         public static String SEND = "send";
         public static String FAILED = "failed";
     }
+    public static class DateType{
+        public static int DAY= 1;
+        public static int WEEK= 2;
+        public static int MONTH= 3;
+        public static int YEAR= 4;
+    }
     public static class Status{
         public static int CONFIRMED = 1;
         public static int CANCELLED = 2;

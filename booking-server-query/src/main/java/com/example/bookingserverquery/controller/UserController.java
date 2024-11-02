@@ -7,9 +7,8 @@ import com.example.bookingserverquery.application.query.QueryBase;
 import com.example.bookingserverquery.application.query.FindByNameQuery;
 import com.example.bookingserverquery.application.reponse.ApiResponse;
 import com.example.bookingserverquery.application.reponse.PageResponse;
-import com.example.bookingserverquery.application.reponse.user.UserResponse;
+import document.response.UserResponse;
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,19 +21,26 @@ public class UserController {
     final GetAllHandler getAllHandler;
     final FindByIdHandler findByIdHandler;
 
-    @PostMapping("/name")
-    @Operation(deprecated = true)
-    public ApiResponse findByName(@RequestBody @Valid FindByNameQuery<UserResponse> query){
+    @GetMapping("/name/{name}")
+    public ApiResponse findByName(@PathVariable String name,
+                                  @RequestParam(required = false, defaultValue = "1") int pageIndex ,
+                                  @RequestParam(required = false, defaultValue = "10000") int pageSize) {
+        var query= FindByNameQuery.<UserResponse>builder()
+                .name(name)
+                .pageIndex(pageIndex)
+                .pageSize(pageSize)
+                .build();
         var response= findByNameHandler.findByName(query);
         return ApiResponse.success(200, "Tìm kiếm thành công", response);
     }
 
-    @PostMapping
-    @Operation(deprecated = true)
-    public ApiResponse getAll(@RequestBody(required = false)@Valid QueryBase<UserResponse> query){
-        if(query == null){
-            query= QueryBase.<UserResponse>builder().build();
-        }
+    @GetMapping
+    public ApiResponse getAll(@RequestParam(required = false, defaultValue = "1") int pageIndex ,
+                              @RequestParam(required = false, defaultValue = "10000") int pageSize){
+         var query= QueryBase.<UserResponse>builder()
+                 .pageIndex(pageIndex)
+                 .pageSize(pageSize)
+                 .build();
         PageResponse<UserResponse> response= getAllHandler.getAll(query);
         return ApiResponse.success(200, "Tìm kiếm tất cả giá trị", response);
     }

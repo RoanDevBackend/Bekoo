@@ -2,10 +2,10 @@ package com.example.bookingserverquery.application.handler.user;
 
 import com.example.bookingserverquery.application.query.QueryBase;
 import com.example.bookingserverquery.application.reponse.PageResponse;
-import com.example.bookingserverquery.application.reponse.user.UserResponse;
 import com.example.bookingserverquery.domain.User;
 import com.example.bookingserverquery.domain.repository.UserRepository;
 import com.example.bookingserverquery.infrastructure.mapper.UserMapper;
+import document.response.UserResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;

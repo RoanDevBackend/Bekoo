@@ -17,7 +17,7 @@ public interface ScheduleJpaRepository extends JpaRepository<Schedule, String> {
 
     /***
      *
-     Lấy ra số người đã đăng kí khám theo ngày
+     Lấy ra số người đã đăng kí khám theo ngày của bác sĩ
      * @param doctorId
      * @param start
      * @param end
@@ -30,10 +30,43 @@ public interface ScheduleJpaRepository extends JpaRepository<Schedule, String> {
             "AND s.checkIn < :end " +
             "AND s.statusId= 1 ")
     int getCountByDoctor(String doctorId, LocalDateTime start, LocalDateTime end);
+
+    /***
+     *
+     Lấy ra số người đã đăng kí khám theo ngày của hệ thống
+     * @param start
+     * @param end
+     * @return
+     */
+    @Query("SELECT COUNT(*) " +
+            "FROM Schedule s " +
+            "WHERE s.checkIn >= :start " +
+            "AND s.checkIn < :end " +
+            "AND s.statusId= 1 ")
+    int getTotalValue(LocalDateTime start, LocalDateTime end);
+
+
+    /**
+     *
+     Tất cả lịch khám của bác sĩ
+     * @param id
+     * @param pageable
+     * @return
+     */
     @Query("FROM Schedule s " +
             "WHERE s.patient.id= :id ")
     Page<Schedule> findByPatientId(String id, Pageable pageable);
 
+
+    /**
+     *
+     Tất cả lịch khám của bác sĩ theo thời gian
+     * @param doctorId
+     * @param pageable
+     * @param start
+     * @param end
+     * @return
+     */
     @Query("FROM Schedule s " +
             "WHERE s.doctor.id= :doctorId " +
             "AND s.checkIn >= :start " +

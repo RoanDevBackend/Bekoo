@@ -8,7 +8,6 @@ import com.example.bookingserverquery.application.query.QueryBase;
 import com.example.bookingserverquery.application.reponse.ApiResponse;
 import com.example.bookingserverquery.application.reponse.PageResponse;
 import com.example.bookingserverquery.application.reponse.doctor.DoctorResponse;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,7 +36,10 @@ public class DoctorController {
     @GetMapping
     public ApiResponse getAll(@RequestParam(required = false, defaultValue = "1") int pageIndex ,
                               @RequestParam(required = false, defaultValue = "10000") int pageSize){
-        var query= QueryBase.<DoctorResponse>builder().build();
+        var query= QueryBase.<DoctorResponse>builder()
+                .pageIndex(pageIndex)
+                .pageSize(pageSize)
+                .build();
         PageResponse<DoctorResponse> response= getAllDoctorHandler.getAll(query);
         return ApiResponse.success(200, "Tìm kiếm tất cả giá trị", response);
     }
