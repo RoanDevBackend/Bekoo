@@ -6,7 +6,6 @@ import com.example.bookingserverquery.application.reponse.doctor.DoctorResponse;
 import com.example.bookingserverquery.application.service.i.DoctorService;
 import com.example.bookingserverquery.domain.Doctor;
 import com.example.bookingserverquery.domain.repository.DoctorRepository;
-import com.example.bookingserverquery.infrastructure.mapper.DoctorMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,7 +19,6 @@ import java.util.List;
 public class FindByDoctorNameHandler {
 
     final DoctorRepository doctorRepository;
-    final DoctorMapper doctorMapper;
     final DoctorService doctorService;
 
     public FindByNameResponse<DoctorResponse> findByName(FindByNameQuery<DoctorResponse> query){

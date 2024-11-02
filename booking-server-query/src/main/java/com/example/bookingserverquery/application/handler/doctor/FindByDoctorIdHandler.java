@@ -6,7 +6,6 @@ import com.example.bookingserverquery.application.reponse.doctor.DoctorResponse;
 import com.example.bookingserverquery.application.service.i.DoctorService;
 import com.example.bookingserverquery.domain.Doctor;
 import com.example.bookingserverquery.domain.repository.DoctorRepository;
-import com.example.bookingserverquery.infrastructure.mapper.DoctorMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
@@ -17,7 +16,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class FindByDoctorIdHandler {
 
-    final DoctorMapper doctorMapper;
     final DoctorRepository doctorRepository;
     final DoctorService doctorService;
 
