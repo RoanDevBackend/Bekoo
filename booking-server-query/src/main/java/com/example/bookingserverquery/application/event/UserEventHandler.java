@@ -4,10 +4,12 @@ import com.example.bookingserverquery.application.handler.exception.BookingCareE
 import com.example.bookingserverquery.application.handler.exception.ErrorDetail;
 import com.example.bookingserverquery.domain.Doctor;
 import com.example.bookingserverquery.domain.Patient;
+import com.example.bookingserverquery.domain.Schedule;
 import com.example.bookingserverquery.infrastructure.mapper.UserMapper;
 import com.example.bookingserverquery.domain.User;
 import com.example.bookingserverquery.infrastructure.repository.DoctorELRepository;
 import com.example.bookingserverquery.infrastructure.repository.PatientELRepository;
+import com.example.bookingserverquery.infrastructure.repository.ScheduleELRepository;
 import com.example.bookingserverquery.infrastructure.repository.UserELRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import document.constant.TopicConstant;
@@ -18,6 +20,8 @@ import document.event.user.UpdateInfoUserEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
@@ -32,6 +36,7 @@ public class UserEventHandler {
     final UserELRepository userELRepository;
     final DoctorELRepository doctorELRepository;
     final PatientELRepository patientELRepository;
+    final ScheduleELRepository scheduleELRepository;
     final UserMapper userMapper;
     final ObjectMapper objectMapper;
 
@@ -91,12 +96,23 @@ public class UserEventHandler {
         if(doctorOptional.isPresent()){
             doctorOptional.get().setUser(user);
             doctorELRepository.save(doctorOptional.get());
+            Page<Schedule> page= scheduleELRepository.findByDoctorId(doctorOptional.get().getId(), Pageable.unpaged());
+            for(Schedule schedule: page.getContent()){
+                schedule.setDoctor(doctorOptional.get());
+                scheduleELRepository.save(schedule);
+            }
         }
 
         Optional<Patient> patientOptional= patientELRepository.findByUserId(user.getId());
         if(patientOptional.isPresent()){
             patientOptional.get().setUser(user);
             patientELRepository.save(patientOptional.get());
+            Page<Schedule> page= scheduleELRepository.findByPatientId(patientOptional.get().getId(), Pageable.unpaged());
+            for(Schedule schedule: page.getContent()){
+                schedule.setPatient(patientOptional.get());
+                scheduleELRepository.save(schedule);
+            }
         }
+
     }
 }
