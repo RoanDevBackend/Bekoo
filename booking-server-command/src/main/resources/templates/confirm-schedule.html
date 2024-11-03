@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xác nhận đặt lịch khám bệnh</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.5;
+            color: #333333;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            background-color: #1a56db;
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+        }
+        .content {
+            padding: 20px;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        .section-title {
+            font-size: 20px;
+            color: #1a56db;
+            margin-top: 0;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #1a56db;
+            padding-bottom: 5px;
+        }
+        .two-columns {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -10px;
+        }
+        .three-columns {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -10px;
+        }
+        .column {
+            flex: 1;
+            padding: 0 10px;
+            min-width: 200px;
+        }
+        .three-columns .column {
+            flex: 1;
+            padding: 0 10px;
+            min-width: 180px;
+        }
+        .info-label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .info-value {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        .warning {
+            background-color: #fff9c2;
+            border: 1px solid #ffd700;
+            padding: 10px;
+            margin-top: 20px;
+            border-radius: 4px;
+        }
+        .footer {
+            text-align: center;
+            color: #666666;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f8f8f8;
+            border-top: 1px solid #e0e0e0;
+        }
+        @media only screen and (max-width: 600px) {
+            .container {
+                width: 100% !important;
+            }
+            .content {
+                padding: 15px !important;
+            }
+            .column {
+                flex: 100%;
+            }
+            .three-columns .column {
+                flex: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1 style="margin: 0; font-size: 24px; font-weight: bold;">Xác nhận đặt lịch khám bệnh</h1>
+        <p style="margin: 10px 0 0; font-size: 18px;">Cảm ơn bạn đã đặt lịch khám tại phòng khám của chúng tôi</p>
+    </div>
+
+    <div class="content">
+        <div class="section">
+            <h2 class="section-title">Thông tin bệnh nhân</h2>
+            <div class="three-columns">
+                <div class="column">
+                    <p class="info-label">Họ và tên:</p>
+                    <p class="info-value" th:text="${schedule.getPatient().getUser().getName()}"></p>
+                    <p class="info-label">Số điện thoại:</p>
+                    <p class="info-value" th:text="${schedule.getPatient().getUser().getPhoneNumber()}"></p>
+                </div>
+                <div class="column">
+                    <p class="info-label">Email:</p>
+                    <p class="info-value" th:text="${schedule.getPatient().getUser().getEmail()}"></p>
+                    <p class="info-label">Số bảo hiểm y tế:</p>
+                    <p class="info-value" th:text="${schedule.getPatient().getHealthInsuranceNumber()}"></p>
+                </div>
+                <div class="column">
+                    <p class="info-label">Căn cước công dân:</p>
+                    <p class="info-value" th:text="${schedule.getPatient().getUser().getCccd()}"></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Thông tin bác sĩ</h2>
+            <div class="two-columns">
+                <div class="column">
+                    <p class="info-label">Bác sĩ phụ trách:</p>
+                    <p class="info-value" th:text="${schedule.getDoctor().getUser().getName()}"></p>
+                    <p class="info-label">Email bác sĩ:</p>
+                    <p class="info-value" th:text="${schedule.getDoctor().getUser().getEmail()}"></p>
+                    <p class="info-label">Số điện thoại bác sĩ:</p>
+                    <p class="info-value" th:text="${schedule.getDoctor().getUser().getPhoneNumber()}"></p>
+                </div>
+                <div class="column">
+                    <p class="info-label">Chuyên khoa:</p>
+                    <p class="info-value">Tim mạch</p>
+                    <p class="info-label">Năm sinh:</p>
+                    <p class="info-value" th:text="${#temporals.format(schedule.getDoctor().getUser().getDob(), 'yyyy')}"></p>
+                    <p class="info-label">Giới tính:</p>
+                    <p class="info-value" th:text="${schedule.getDoctor().getUser().getGender()}"></p>
+                </div>
+            </div>
+            <p class="info-label">Học vị:</p>
+            <p class="info-value" th:text="${schedule.getDoctor().getTrainingBy()}"></p>
+            <p class="info-label">Mô tả:</p>
+            <p class="info-value" th:text="${schedule.getDoctor().getDescription()}"></p>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Thông tin cuộc hẹn</h2>
+            <div class="two-columns">
+                <div class="column">
+                    <p class="info-label">Ngày khám:</p>
+                    <p class="info-value" th:text="${date}"></p>
+                </div>
+                <div class="column">
+                    <p class="info-label">Giờ khám:</p>
+                    <p class="info-value" th:text="${time}"></p>
+                </div>
+            </div>
+            <p class="info-label">Địa điểm:</p>
+            <p class="info-value">Phòng khám Đa khoa Bekoo, 123 Đường XYZ, Quận Nam Từ Liêm, TP.Hà Nội</p>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Thông tin gói khám</h2>
+            <p class="info-label">Tên gói khám:</p>
+            <p class="info-value" th:text="${schedule.getSpecialize().getName()}"></p>
+            <p class="info-label">Mô tả:</p>
+            <p class="info-value" th:text="${schedule.getSpecialize().getDescription()}"></p>
+            <p class="info-label">Giá:</p>
+            <p class="info-value" th:text="|${cost} VND|"></p>
+        </div>
+
+        <div class="warning">
+            <p style="margin: 0; color: #856404;">
+                Vui lòng đến trước giờ hẹn 15 phút để hoàn tất thủ tục đăng ký. Nếu bạn cần thay đổi hoặc hủy lịch hẹn,
+                vui lòng liên hệ với chúng tôi ít nhất 24 giờ trước giờ hẹn.
+            </p>
+        </div>
+
+        <div class="footer">
+            <p style="margin: 0;">Nếu bạn có bất kỳ câu hỏi nào, vui lòng liên hệ với chúng tôi:</p>
+            <p style="margin: 5px 0 0; font-weight: bold;">Số điện thoại: 0888 789 667 | Email: support.schedule@bekoo.com</p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

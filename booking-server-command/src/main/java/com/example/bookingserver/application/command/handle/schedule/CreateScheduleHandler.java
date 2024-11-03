@@ -23,8 +23,16 @@ import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring6.SpringTemplateEngine;
 
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Component
@@ -38,6 +46,7 @@ public class CreateScheduleHandler {
     private SpecializeRepository specializeRepository;
     private MessageProducer messageProducer;
     private MessageService messageService;
+    private SpringTemplateEngine templateEngine;
     String TOPIC= TopicConstant.ScheduleTopic.CREATE_SCHEDULE;
 
 
@@ -77,10 +86,36 @@ public class CreateScheduleHandler {
 
         messageProducer.sendMessage(TOPIC, ApplicationConstant.EventType.ADD, event, schedule.getId(), "Schedule");
 
-        String content = "<h1> Cảm ơn " +
-                patient.getUser().getName() +
-                " Đã đặt dịch vụ khám của chúng tôi, Sau đây là chi tiết lịch khám của bạn.....</h1>";
-        messageService.sendMail(patient.getUser().getEmail(), content, true);
+        DecimalFormat decimalFormat= new DecimalFormat("#,###");
+        String cost= decimalFormat.format(schedule.getSpecialize().getPrice());
+
+        List<String> departmentNames= new ArrayList<>();
+
+        for(DoctorDepartment department: schedule.getDoctor().getDoctorDepartments()){
+            departmentNames.add(department.getDepartment().getName());
+        }
+        StringBuilder departmentName= new StringBuilder();
+        if(departmentNames.isEmpty()){
+            departmentName = new StringBuilder("Bác sĩ này hiện chưa thuộc khoa nào");
+        }
+        for(int i =0 ;i < departmentNames.size(); i++){
+            departmentName.append(departmentNames.get(i));
+            if(i != departmentNames.size()-1) {
+                departmentName.append(", ");
+            }
+        }
+
+        Context context = new Context();
+        context.setVariable("schedule", schedule);
+        context.setVariable("date", schedule.getCheckIn().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+        context.setVariable("time", schedule.getCheckIn().format(DateTimeFormatter.ofPattern("HH:mm")));
+        context.setVariable("cost", cost);
+        context.setVariable("department", departmentName);
+
+        String subject= "Xác nhận lịch đặt khám";
+        String content = templateEngine.process("confirm-schedule", context);
+
+        messageService.sendMail(subject, patient.getUser().getEmail(), content, true);
         return scheduleMapper.toResponse(schedule);
     }
 
