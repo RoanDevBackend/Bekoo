@@ -2,8 +2,12 @@ package com.example.bookingserverquery.application.event;
 
 import com.example.bookingserverquery.application.handler.exception.BookingCareException;
 import com.example.bookingserverquery.application.handler.exception.ErrorDetail;
+import com.example.bookingserverquery.domain.Doctor;
+import com.example.bookingserverquery.domain.Patient;
 import com.example.bookingserverquery.infrastructure.mapper.UserMapper;
 import com.example.bookingserverquery.domain.User;
+import com.example.bookingserverquery.infrastructure.repository.DoctorELRepository;
+import com.example.bookingserverquery.infrastructure.repository.PatientELRepository;
 import com.example.bookingserverquery.infrastructure.repository.UserELRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import document.constant.TopicConstant;
@@ -17,6 +21,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 
 @Component
 @RequiredArgsConstructor
@@ -24,6 +30,8 @@ import org.springframework.stereotype.Component;
 public class UserEventHandler {
 
     final UserELRepository userELRepository;
+    final DoctorELRepository doctorELRepository;
+    final PatientELRepository patientELRepository;
     final UserMapper userMapper;
     final ObjectMapper objectMapper;
 
@@ -56,11 +64,24 @@ public class UserEventHandler {
     @SneakyThrows
     void updateInfoUser(String event){
         UpdateInfoUserEvent updateInfoUserEvent= objectMapper.readValue(event, UpdateInfoUserEvent.class);
-        User user= userELRepository.findById(updateInfoUserEvent.getId()).orElseThrow(
-                ()-> new BookingCareException(ErrorDetail.ERR_USER_NOT_EXISTED)
-        );
+        Optional<User> userOptional= userELRepository.findById(updateInfoUserEvent.getId());
+        if(userOptional.isEmpty()) return;
+        User user = userOptional.get();
         userMapper.updateInfo(user, updateInfoUserEvent);
         userELRepository.save(user);
+
+        Optional<Doctor> doctorOptional= doctorELRepository.findDoctorByUserId(user.getId());
+        if(doctorOptional.isPresent()){
+            doctorOptional.get().setUser(user);
+            doctorELRepository.save(doctorOptional.get());
+        }
+
+        Optional<Patient> patientOptional= patientELRepository.findByUserId(user.getId());
+        if(patientOptional.isPresent()){
+            patientOptional.get().setUser(user);
+            patientELRepository.save(patientOptional.get());
+        }
+
         log.info("UPDATE INFO USER SUCCESS: {}", event);
     }
 
