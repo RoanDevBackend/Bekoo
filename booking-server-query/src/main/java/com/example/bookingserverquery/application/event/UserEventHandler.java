@@ -69,19 +69,7 @@ public class UserEventHandler {
         User user = userOptional.get();
         userMapper.updateInfo(user, updateInfoUserEvent);
         userELRepository.save(user);
-
-        Optional<Doctor> doctorOptional= doctorELRepository.findDoctorByUserId(user.getId());
-        if(doctorOptional.isPresent()){
-            doctorOptional.get().setUser(user);
-            doctorELRepository.save(doctorOptional.get());
-        }
-
-        Optional<Patient> patientOptional= patientELRepository.findByUserId(user.getId());
-        if(patientOptional.isPresent()){
-            patientOptional.get().setUser(user);
-            patientELRepository.save(patientOptional.get());
-        }
-
+        this.updateDoctorOrPatient(user);
         log.info("UPDATE INFO USER SUCCESS: {}", event);
     }
 
@@ -94,6 +82,21 @@ public class UserEventHandler {
         );
         user.setLinkAvatar(updateAvatarUserEvent.getLinkAvatar());
         userELRepository.save(user);
+        this.updateDoctorOrPatient(user);
         log.info("UPDATE-AVATAR-USER SUCCESS: {}", event);
+    }
+
+    private void updateDoctorOrPatient(User user){
+        Optional<Doctor> doctorOptional= doctorELRepository.findDoctorByUserId(user.getId());
+        if(doctorOptional.isPresent()){
+            doctorOptional.get().setUser(user);
+            doctorELRepository.save(doctorOptional.get());
+        }
+
+        Optional<Patient> patientOptional= patientELRepository.findByUserId(user.getId());
+        if(patientOptional.isPresent()){
+            patientOptional.get().setUser(user);
+            patientELRepository.save(patientOptional.get());
+        }
     }
 }
