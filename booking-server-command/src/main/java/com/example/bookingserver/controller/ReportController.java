@@ -5,9 +5,7 @@ import com.example.bookingserver.application.command.handle.report.ReportByHandl
 import document.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.Parameters;
 import lombok.AccessLevel;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -44,8 +42,14 @@ public class ReportController {
     public ApiResponse total( @RequestParam LocalDate fromDate,
                                 @RequestParam LocalDate toDate,
                                 @RequestParam int groupType) {
-
         var response= reportByHandler.executeTotal(fromDate, toDate, groupType);
         return ApiResponse.success(200, "Báo cáo số người đặt khám của toàn hệ thống", response);
+    }
+
+    @GetMapping("/total")
+    @Operation(summary = "Báo cáo số lượng tổng thể của toàn hệ thống")
+    public ApiResponse total(){
+        var response= reportByHandler.execute();
+        return ApiResponse.success(200, "Báo cáo số lượng tổng thể của toàn hệ thống", response);
     }
 }

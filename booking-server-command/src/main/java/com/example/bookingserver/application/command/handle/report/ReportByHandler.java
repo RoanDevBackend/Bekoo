@@ -1,8 +1,9 @@
 package com.example.bookingserver.application.command.handle.report;
 
-import com.example.bookingserver.application.command.reponse.ReportResponse;
+import com.example.bookingserver.application.command.reponse.ReportChartTemplateResponse;
+import com.example.bookingserver.application.command.reponse.TotalReportResponse;
 import com.example.bookingserver.infrastructure.constant.ApplicationConstant;
-import com.example.bookingserver.infrastructure.persistence.repository.ScheduleJpaRepository;
+import com.example.bookingserver.infrastructure.persistence.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -18,30 +19,48 @@ import java.util.List;
 public class ReportByHandler {
 
     final ScheduleJpaRepository scheduleJpaRepository;
+    final DoctorJpaRepository doctorJpaRepository;
+    final PatientRepository patientJpaRepository;
+    final SpecializeJpaRepository specializeJpaRepository;
+    final DepartmentJpaRepository departmentJpaRepository;
 
-    public List<ReportResponse> executeByDoctor(String doctorId, LocalDate from, LocalDate to, int groupType) {
-
-        List<ReportResponse> responses= new ArrayList<>();
+    public List<ReportChartTemplateResponse> executeByDoctor(String doctorId, LocalDate from, LocalDate to, int groupType) {
+        List<ReportChartTemplateResponse> responses= new ArrayList<>();
         while (from.isBefore(to)){
             LocalDateTime start= from.atStartOfDay();
             LocalDateTime end= this.nextTo(from, groupType).atStartOfDay();
             int value= scheduleJpaRepository.getCountByDoctor(doctorId, start, end);
-            responses.add(new ReportResponse(from, value));
+            responses.add(new ReportChartTemplateResponse(from, value));
             from = nextTo(from, groupType);
         }
         return responses;
     }
 
-    public List<ReportResponse> executeTotal(LocalDate from, LocalDate to, int groupType) {
-        List<ReportResponse> responses= new ArrayList<>();
+    public List<ReportChartTemplateResponse> executeTotal(LocalDate from, LocalDate to, int groupType) {
+        List<ReportChartTemplateResponse> responses= new ArrayList<>();
         while (from.isBefore(to)){
             LocalDateTime start= from.atStartOfDay();
             LocalDateTime end= this.nextTo(from, groupType).atStartOfDay();
             int value= scheduleJpaRepository.getTotalValue(start, end);
-            responses.add(new ReportResponse(from, value));
+            responses.add(new ReportChartTemplateResponse(from, value));
             from = nextTo(from, groupType);
         }
         return responses;
+    }
+
+    public TotalReportResponse execute(){
+        long totalDoctor= doctorJpaRepository.count();
+        long totalPatient= patientJpaRepository.count();
+        long totalSpecialize= specializeJpaRepository.count();
+        long totalDepartment= departmentJpaRepository.count();
+        long totalSchedule= scheduleJpaRepository.count();
+        return TotalReportResponse.builder()
+                .totalDoctor(totalDoctor)
+                .totalPatient(totalPatient)
+                .totalSpecialize(totalSpecialize)
+                .totalDepartment(totalDepartment)
+                .totalSchedule(totalSchedule)
+                .build();
     }
 
     private LocalDate nextTo(LocalDate from, int groupType){
@@ -55,4 +74,6 @@ public class ReportByHandler {
             return from.plusYears(1);
         }
     }
+
+
 }
