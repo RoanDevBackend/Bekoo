@@ -19,14 +19,15 @@ public class MessageServiceImpl implements MessageService {
     @Override
     @SneakyThrows
     @Async
-    public void sendMail(String email, String content, boolean isHtml) {
+    public void sendMail(String subject, String email, String content, boolean isHtml) {
         var message = javaMailSender.createMimeMessage();
 
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
         helper.setFrom("roan.dev.backend@gmail.com", "Bekoo- Sức khoẻ tận tay");
         helper.setTo(email);
-        helper.setSubject("Mã xác thực tài khoản của bạn tại Bekoo");
+
+        helper.setSubject(subject);
         helper.setText(content, isHtml);
         javaMailSender.send(message);
 
