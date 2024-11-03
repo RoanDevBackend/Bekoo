@@ -1,7 +1,6 @@
 package com.example.bookingserver.application.command.handle.specialize;
 
 import com.example.bookingserver.application.command.command.specialize.UpdateSpecializeCommand;
-import com.example.bookingserver.application.command.event.specialize.SpecializeEvent;
 import com.example.bookingserver.application.command.handle.exception.BookingCareException;
 import com.example.bookingserver.application.command.handle.exception.ErrorDetail;
 import com.example.bookingserver.application.command.reponse.SpecializeResponse;
@@ -11,6 +10,7 @@ import com.example.bookingserver.infrastructure.constant.ApplicationConstant;
 import com.example.bookingserver.infrastructure.mapper.SpecializeMapper;
 import com.example.bookingserver.infrastructure.message.MessageProducer;
 import document.constant.TopicConstant;
+import document.event.specialize.SpecializeEvent;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;

@@ -2,7 +2,7 @@ package com.example.bookingserver.application.command.handle.department;
 
 import com.cloudinary.Cloudinary;
 import com.example.bookingserver.application.command.command.department.UpdateInfoDepartmentCommand;
-import com.example.bookingserver.application.command.handle.Handler_DTO;
+import com.example.bookingserver.application.command.handle.HandlerDTO;
 import com.example.bookingserver.application.command.handle.exception.BookingCareException;
 import com.example.bookingserver.application.command.handle.exception.ErrorDetail;
 import com.example.bookingserver.application.command.reponse.DepartmentResponse;
@@ -22,7 +22,7 @@ import java.util.Map;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class UpdateDepartmentHandler implements Handler_DTO<UpdateInfoDepartmentCommand, DepartmentResponse> {
+public class UpdateDepartmentHandler implements HandlerDTO<UpdateInfoDepartmentCommand, DepartmentResponse> {
     final DepartmentRepository departmentRepository;
     final DepartmentMapper departmentMapper;
     final Cloudinary cloudinary;
@@ -37,7 +37,7 @@ public class UpdateDepartmentHandler implements Handler_DTO<UpdateInfoDepartment
         departmentMapper.updateInfo(department, command);
 
         if(command.getImage() != null){
-            String url_data="";
+            String url_data;
             try {
                 Map responseByCloudinary = cloudinary.uploader().upload(command.getImage().getBytes(), Map.of());
                 url_data = responseByCloudinary.get("url") + "";

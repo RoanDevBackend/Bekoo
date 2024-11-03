@@ -4,7 +4,7 @@ import com.example.bookingserver.application.command.command.doctor.CreateDoctor
 import com.example.bookingserver.application.command.command.doctor.SetMaximumPeoplePerDayCommand;
 import com.example.bookingserver.application.command.command.doctor.UpdateInfoDoctorCommand;
 import com.example.bookingserver.application.command.handle.Handler;
-import com.example.bookingserver.application.command.handle.Handler_DTO;
+import com.example.bookingserver.application.command.handle.HandlerDTO;
 import com.example.bookingserver.application.command.reponse.ApiResponse;
 import com.example.bookingserver.application.command.reponse.DoctorResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,10 +20,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DoctorController {
 
-    final Handler_DTO<CreateDoctorCommand, DoctorResponse> createDoctorCommandHandler;
+    final HandlerDTO<CreateDoctorCommand, DoctorResponse> createDoctorCommandHandler;
     final Handler<List<String>> deleteDoctorHandler;
     final Handler<SetMaximumPeoplePerDayCommand> setMaximumPeoplePerDayCommandHandler;
-    final Handler_DTO<UpdateInfoDoctorCommand, DoctorResponse> updateInfoDoctorCommandHandler;
+    final HandlerDTO<UpdateInfoDoctorCommand, DoctorResponse> updateInfoDoctorCommandHandler;
 
     @PostMapping
     public ApiResponse create(@RequestBody @Valid CreateDoctorCommand command){

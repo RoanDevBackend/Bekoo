@@ -8,11 +8,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 
-@ToString
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Setter
 public class CreateUserEvent {
     String id;
     String name;

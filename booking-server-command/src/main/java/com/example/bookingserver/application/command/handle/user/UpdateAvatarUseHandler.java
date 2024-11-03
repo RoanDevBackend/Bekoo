@@ -2,8 +2,7 @@ package com.example.bookingserver.application.command.handle.user;
 
 import com.cloudinary.Cloudinary;
 import com.example.bookingserver.application.command.command.user.UpdateAvatarUserCommand;
-import com.example.bookingserver.application.command.event.user.UpdateAvatarUserEvent;
-import com.example.bookingserver.application.command.handle.Handler_DTO;
+import com.example.bookingserver.application.command.handle.HandlerDTO;
 import com.example.bookingserver.application.command.handle.exception.BookingCareException;
 import com.example.bookingserver.application.command.handle.exception.ErrorDetail;
 import com.example.bookingserver.domain.User;
@@ -12,6 +11,7 @@ import com.example.bookingserver.infrastructure.constant.ApplicationConstant;
 import com.example.bookingserver.infrastructure.mapper.UserMapper;
 import com.example.bookingserver.infrastructure.message.MessageProducer;
 import document.constant.TopicConstant;
+import document.event.user.UpdateAvatarUserEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +23,7 @@ import java.util.Map;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class UpdateAvatarUseHandler implements Handler_DTO<UpdateAvatarUserCommand, String> {
+public class UpdateAvatarUseHandler implements HandlerDTO<UpdateAvatarUserCommand, String> {
 
     final Cloudinary cloudinary;
     final UserRepository userRepository;

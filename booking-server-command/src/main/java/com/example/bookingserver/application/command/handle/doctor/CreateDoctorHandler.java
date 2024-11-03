@@ -1,9 +1,7 @@
 package com.example.bookingserver.application.command.handle.doctor;
 
 import com.example.bookingserver.application.command.command.doctor.CreateDoctorCommand;
-import com.example.bookingserver.application.command.event.doctor.CreateDoctorEvent;
-import com.example.bookingserver.application.command.event.user.CreateUserEvent;
-import com.example.bookingserver.application.command.handle.Handler_DTO;
+import com.example.bookingserver.application.command.handle.HandlerDTO;
 import com.example.bookingserver.application.command.reponse.DoctorResponse;
 import com.example.bookingserver.domain.*;
 import com.example.bookingserver.domain.repository.DoctorRepository;
@@ -12,6 +10,8 @@ import com.example.bookingserver.infrastructure.mapper.DoctorMapper;
 import com.example.bookingserver.infrastructure.mapper.UserMapper;
 import com.example.bookingserver.infrastructure.message.MessageProducer;
 import document.constant.TopicConstant;
+import document.event.doctor.CreateDoctorEvent;
+import document.event.user.CreateUserEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +23,7 @@ import java.util.Set;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class CreateDoctorHandler implements Handler_DTO<CreateDoctorCommand, DoctorResponse> {
+public class CreateDoctorHandler implements HandlerDTO<CreateDoctorCommand, DoctorResponse> {
 
     final DoctorRepository doctorRepository;
     final MessageProducer messageProducer;

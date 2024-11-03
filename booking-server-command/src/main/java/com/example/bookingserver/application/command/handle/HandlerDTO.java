@@ -1,6 +1,6 @@
 package com.example.bookingserver.application.command.handle;
 
-public interface Handler_DTO<T, U> {
+public interface HandlerDTO<T, U> {
 
     U execute(T command);
 }

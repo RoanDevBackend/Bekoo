@@ -1,10 +1,10 @@
 package com.example.bookingserver.infrastructure.mapper;
 
-import com.example.bookingserver.application.command.event.schedule.ScheduleEvent;
 import com.example.bookingserver.application.query.handler.response.FindByDoctorResponse;
 import com.example.bookingserver.application.query.handler.response.FindByPatientResponse;
 import com.example.bookingserver.application.command.reponse.ScheduleResponse;
 import com.example.bookingserver.domain.Schedule;
+import document.event.schedule.ScheduleEvent;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;

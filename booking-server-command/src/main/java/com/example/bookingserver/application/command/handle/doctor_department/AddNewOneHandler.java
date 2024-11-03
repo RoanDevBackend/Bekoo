@@ -2,7 +2,6 @@ package com.example.bookingserver.application.command.handle.doctor_department;
 
 
 import com.example.bookingserver.application.command.command.doctor_department.AddNewOneCommand;
-import com.example.bookingserver.application.command.event.doctor_department.DoctorDepartmentEvent;
 import com.example.bookingserver.application.command.handle.Handler;
 import com.example.bookingserver.application.command.handle.exception.BookingCareException;
 import com.example.bookingserver.application.command.handle.exception.ErrorDetail;
@@ -14,6 +13,7 @@ import com.example.bookingserver.domain.repository.DoctorDepartmentRepository;
 import com.example.bookingserver.domain.repository.DoctorRepository;
 import com.example.bookingserver.infrastructure.message.MessageProducer;
 import document.constant.TopicConstant;
+import document.event.doctor_department.DoctorDepartmentEvent;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;

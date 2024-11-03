@@ -2,7 +2,6 @@ package com.example.bookingserver.application.command.handle.schedule;
 
 
 import com.example.bookingserver.application.command.command.schedule.CreateScheduleCommand;
-import com.example.bookingserver.application.command.event.schedule.ScheduleEvent;
 import com.example.bookingserver.application.command.handle.exception.BookingCareException;
 import com.example.bookingserver.application.command.handle.exception.ErrorDetail;
 import com.example.bookingserver.application.command.reponse.ScheduleResponse;
@@ -16,8 +15,8 @@ import com.example.bookingserver.infrastructure.mapper.ScheduleMapper;
 import com.example.bookingserver.infrastructure.message.MessageProducer;
 import com.example.bookingserver.infrastructure.persistence.repository.PatientRepository;
 import document.constant.TopicConstant;
+import document.event.schedule.ScheduleEvent;
 import jakarta.transaction.Transactional;
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
@@ -30,9 +29,7 @@ import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Component

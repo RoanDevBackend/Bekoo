@@ -2,7 +2,7 @@ package com.example.bookingserver.application.command.handle.department;
 
 import com.cloudinary.Cloudinary;
 import com.example.bookingserver.application.command.command.department.CreateDepartmentCommand;
-import com.example.bookingserver.application.command.handle.Handler_DTO;
+import com.example.bookingserver.application.command.handle.HandlerDTO;
 import com.example.bookingserver.application.command.reponse.DepartmentResponse;
 import com.example.bookingserver.domain.Department;
 import com.example.bookingserver.domain.repository.DepartmentRepository;
@@ -19,7 +19,7 @@ import java.util.Map;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class CreateDepartmentHandler implements Handler_DTO<CreateDepartmentCommand, DepartmentResponse> {
+public class CreateDepartmentHandler implements HandlerDTO<CreateDepartmentCommand, DepartmentResponse> {
 
     final DepartmentRepository departmentRepository;
     final DepartmentMapper departmentMapper;

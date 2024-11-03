@@ -1,15 +1,14 @@
 package com.example.bookingserver.application.command.handle.user;
 
-import com.example.bookingserver.application.command.event.user.DeleteUserEvent;
 import com.example.bookingserver.application.command.handle.Handler;
 import com.example.bookingserver.domain.OutboxEvent;
 import com.example.bookingserver.domain.repository.OutboxEventRepository;
 import com.example.bookingserver.infrastructure.constant.ApplicationConstant;
-import com.example.bookingserver.infrastructure.mapper.UserMapper;
 import com.example.bookingserver.domain.repository.UserRepository;
 import com.example.bookingserver.infrastructure.message.MessageProducer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import document.constant.TopicConstant;
+import document.event.user.DeleteUserEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;

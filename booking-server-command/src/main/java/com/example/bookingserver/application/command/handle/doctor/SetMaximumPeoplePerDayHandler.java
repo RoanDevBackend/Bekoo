@@ -1,19 +1,14 @@
 package com.example.bookingserver.application.command.handle.doctor;
 
 import com.example.bookingserver.application.command.command.doctor.SetMaximumPeoplePerDayCommand;
-import com.example.bookingserver.application.command.event.doctor.SetMaximumPeoplePerDayEvent;
 import com.example.bookingserver.application.command.handle.Handler;
 import com.example.bookingserver.application.command.handle.exception.BookingCareException;
 import com.example.bookingserver.application.command.handle.exception.ErrorDetail;
 import com.example.bookingserver.domain.Doctor;
-import com.example.bookingserver.domain.OutboxEvent;
 import com.example.bookingserver.domain.repository.DoctorRepository;
-import com.example.bookingserver.domain.repository.OutboxEventRepository;
-import com.example.bookingserver.infrastructure.constant.ApplicationConstant;
-import com.example.bookingserver.infrastructure.mapper.DoctorMapper;
 import com.example.bookingserver.infrastructure.message.MessageProducer;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import document.constant.TopicConstant;
+import document.event.doctor.SetMaximumPeoplePerDayEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -25,9 +20,7 @@ import org.springframework.stereotype.Component;
 public class SetMaximumPeoplePerDayHandler implements Handler<SetMaximumPeoplePerDayCommand> {
 
     final DoctorRepository doctorRepository;
-    final OutboxEventRepository outboxEventRepository;
     final MessageProducer messageProducer;
-    final ObjectMapper objectMapper;
     final String TOPIC= TopicConstant.DoctorTopic.SET_PERSON_PER_DAY;
 
     @Override

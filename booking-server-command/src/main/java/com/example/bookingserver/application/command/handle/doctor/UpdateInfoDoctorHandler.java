@@ -1,8 +1,7 @@
 package com.example.bookingserver.application.command.handle.doctor;
 
 import com.example.bookingserver.application.command.command.doctor.UpdateInfoDoctorCommand;
-import com.example.bookingserver.application.command.event.doctor.UpdateInfoDoctorEvent;
-import com.example.bookingserver.application.command.handle.Handler_DTO;
+import com.example.bookingserver.application.command.handle.HandlerDTO;
 import com.example.bookingserver.application.command.handle.exception.BookingCareException;
 import com.example.bookingserver.application.command.handle.exception.ErrorDetail;
 import com.example.bookingserver.application.command.reponse.DoctorResponse;
@@ -11,6 +10,7 @@ import com.example.bookingserver.domain.repository.DoctorRepository;
 import com.example.bookingserver.infrastructure.mapper.DoctorMapper;
 import com.example.bookingserver.infrastructure.message.MessageProducer;
 import document.constant.TopicConstant;
+import document.event.doctor.UpdateInfoDoctorEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class UpdateInfoDoctorHandler implements Handler_DTO<UpdateInfoDoctorCommand, DoctorResponse> {
+public class UpdateInfoDoctorHandler implements HandlerDTO<UpdateInfoDoctorCommand, DoctorResponse> {
 
     final DoctorRepository doctorRepository;
     final MessageProducer messageProducer;

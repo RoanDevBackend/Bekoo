@@ -1,11 +1,11 @@
 package com.example.bookingserver.application.command.handle.doctor_department;
 
 import com.example.bookingserver.application.command.command.doctor_department.DeleteDoctorDepartmentCommand;
-import com.example.bookingserver.application.command.event.doctor_department.DoctorDepartmentEvent;
 import com.example.bookingserver.application.command.handle.Handler;
 import com.example.bookingserver.domain.repository.DoctorDepartmentRepository;
 import com.example.bookingserver.infrastructure.message.MessageProducer;
 import document.constant.TopicConstant;
+import document.event.doctor_department.DoctorDepartmentEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;

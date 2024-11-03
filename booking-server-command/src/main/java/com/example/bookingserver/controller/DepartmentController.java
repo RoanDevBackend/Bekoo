@@ -5,7 +5,7 @@ import com.example.bookingserver.application.command.command.department.UpdateIn
 import com.example.bookingserver.application.command.command.doctor_department.AddNewOneCommand;
 import com.example.bookingserver.application.command.command.doctor_department.DeleteDoctorDepartmentCommand;
 import com.example.bookingserver.application.command.handle.Handler;
-import com.example.bookingserver.application.command.handle.Handler_DTO;
+import com.example.bookingserver.application.command.handle.HandlerDTO;
 import com.example.bookingserver.application.command.handle.department.DeleteDepartmentHandler;
 import com.example.bookingserver.application.command.reponse.ApiResponse;
 import com.example.bookingserver.application.command.reponse.DepartmentResponse;
@@ -26,8 +26,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DepartmentController {
 
-    Handler_DTO<CreateDepartmentCommand, DepartmentResponse> createDepartmentCommandDepartmentResponseHandler;
-    Handler_DTO<UpdateInfoDepartmentCommand, DepartmentResponse> updateInfoDepartmentCommandDepartmentResponseHandler;
+    HandlerDTO<CreateDepartmentCommand, DepartmentResponse> createDepartmentCommandDepartmentResponseHandler;
+    HandlerDTO<UpdateInfoDepartmentCommand, DepartmentResponse> updateInfoDepartmentCommandDepartmentResponseHandler;
     DeleteDepartmentHandler deleteDepartmentHandler;
     Handler<AddNewOneCommand> addNewOneCommandHandler;
     Handler<DeleteDoctorDepartmentCommand> deleteDoctorDepartmentCommandHandler;

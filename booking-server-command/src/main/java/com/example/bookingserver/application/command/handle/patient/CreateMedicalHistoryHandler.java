@@ -2,7 +2,6 @@ package com.example.bookingserver.application.command.handle.patient;
 
 
 import com.example.bookingserver.application.command.command.patient.CreateMedicalHistoryCommand;
-import com.example.bookingserver.application.command.event.patient.MedicalHistoryEvent;
 import com.example.bookingserver.application.command.handle.exception.BookingCareException;
 import com.example.bookingserver.application.command.handle.exception.ErrorDetail;
 import com.example.bookingserver.domain.MedicalHistory;
@@ -13,6 +12,7 @@ import com.example.bookingserver.infrastructure.message.MessageProducer;
 import com.example.bookingserver.infrastructure.persistence.repository.MedicalHistoryRepository;
 import com.example.bookingserver.infrastructure.persistence.repository.PatientRepository;
 import document.constant.TopicConstant;
+import document.event.patient.MedicalHistoryEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;

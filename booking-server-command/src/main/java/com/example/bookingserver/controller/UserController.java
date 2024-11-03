@@ -2,7 +2,7 @@ package com.example.bookingserver.controller;
 
 import com.example.bookingserver.application.command.command.user.*;
 import com.example.bookingserver.application.command.handle.Handler;
-import com.example.bookingserver.application.command.handle.Handler_DTO;
+import com.example.bookingserver.application.command.handle.HandlerDTO;
 import com.example.bookingserver.application.command.handle.user.CreateUserHandler;
 import com.example.bookingserver.application.command.handle.user.DeleteUserHandler;
 import com.example.bookingserver.application.command.reponse.ApiResponse;
@@ -33,7 +33,7 @@ public class UserController {
     Handler<ChangePasswordOTPCommand> changePasswordOTPCommandHandler;
     Handler<ForgotPasswordCommand> forgotPasswordCommandHandler;
     Handler<VerifyOTPCommand> verifyOTPCommandHandler;
-    Handler_DTO<UpdateAvatarUserCommand, String> updateAvatarUserCommandHandler;
+    HandlerDTO<UpdateAvatarUserCommand, String> updateAvatarUserCommandHandler;
 
     @PostMapping()
     public ApiResponse createUser(@RequestBody @Valid CreateUserCommand command){
