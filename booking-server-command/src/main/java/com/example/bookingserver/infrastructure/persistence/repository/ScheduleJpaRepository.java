@@ -1,12 +1,9 @@
 package com.example.bookingserver.infrastructure.persistence.repository;
 
 import com.example.bookingserver.domain.Schedule;
-import jakarta.persistence.LockModeType;
-import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -40,10 +37,18 @@ public interface ScheduleJpaRepository extends JpaRepository<Schedule, String> {
      */
     @Query("SELECT COUNT(*) " +
             "FROM Schedule s " +
-            "WHERE s.checkIn >= :start " +
-            "AND s.checkIn < :end " +
+            "WHERE s.createdAt >= :start " +
+            "AND s.createdAt < :end " +
             "AND s.statusId= 1 ")
     int getTotalValue(LocalDateTime start, LocalDateTime end);
+
+    @Query("SELECT COUNT(*) " +
+            "FROM Schedule s " +
+            "WHERE s.doctor.id= :doctorId " +
+            "AND s.createdAt >= :start " +
+            "AND s.createdAt < :end " +
+            "AND s.statusId= 1 ")
+    int getCountByDoctorAndCreatedAt(String doctorId, LocalDateTime start, LocalDateTime end);
 
 
     /**

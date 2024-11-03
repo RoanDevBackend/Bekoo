@@ -26,10 +26,12 @@ public class ReportByHandler {
 
     public List<ReportChartTemplateResponse> executeByDoctor(String doctorId, LocalDate from, LocalDate to, int groupType) {
         List<ReportChartTemplateResponse> responses= new ArrayList<>();
+        from = this.nextTo(from, groupType);
+        to = this.nextTo(to, groupType);
         while (from.isBefore(to)){
             LocalDateTime start= from.atStartOfDay();
             LocalDateTime end= this.nextTo(from, groupType).atStartOfDay();
-            int value= scheduleJpaRepository.getCountByDoctor(doctorId, start, end);
+            int value= scheduleJpaRepository.getCountByDoctorAndCreatedAt(doctorId, start, end);
             responses.add(new ReportChartTemplateResponse(from, value));
             from = nextTo(from, groupType);
         }
@@ -38,6 +40,8 @@ public class ReportByHandler {
 
     public List<ReportChartTemplateResponse> executeTotal(LocalDate from, LocalDate to, int groupType) {
         List<ReportChartTemplateResponse> responses= new ArrayList<>();
+        from = this.nextTo(from, groupType);
+        to = this.nextTo(to, groupType);
         while (from.isBefore(to)){
             LocalDateTime start= from.atStartOfDay();
             LocalDateTime end= this.nextTo(from, groupType).atStartOfDay();
