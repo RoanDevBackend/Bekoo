@@ -36,7 +36,6 @@ public class CreateInfoPatientHandler {
     private final PatientMapper patientMapper;
     private final MessageProducer messageProducer;
     final String TOPIC_1= TopicConstant.PatientTopic.CREATE_PATIENT;
-    final String TOPIC_2= TopicConstant.PatientTopic.CREATE_CONTACT;
 
     @Transactional
     @SneakyThrows
