@@ -23,14 +23,12 @@ public class AuthenticationController {
 
     @PostMapping("/sign-in")
     public ApiResponse signIn(@RequestBody @Valid SignInCommand command){
-        log.info("API: Sign in");
         var response= authenticationService.signIn(command);
         return ApiResponse.success(200, "Đăng nhập thành công", response);
     }
 
     @PostMapping("/token/refresh/{token}")
     public ApiResponse refreshToken(@PathVariable String token){
-        log.info("API: Refresh token");
         var response= authenticationService.refreshToken(token);
         return ApiResponse.success(200, "Refresh token", response);
     }
@@ -38,7 +36,6 @@ public class AuthenticationController {
     @Operation(summary = "Lấy ra user từ token", description = "Cần token ở header")
     @PostMapping("/token")
     public ApiResponse getUserByToken(HttpServletRequest request){
-        log.info("API: Get user by token");
         var token= request.getHeader(HttpHeaders.AUTHORIZATION);
         var response= authenticationService.getIdByToken(token);
         return ApiResponse.success(200, "Thành công", response);

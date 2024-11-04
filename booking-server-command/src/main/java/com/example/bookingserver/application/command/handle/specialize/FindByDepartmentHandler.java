@@ -8,7 +8,6 @@ import com.example.bookingserver.domain.repository.SpecializeRepository;
 import com.example.bookingserver.infrastructure.mapper.SpecializeMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
 @FieldDefaults(makeFinal = true)

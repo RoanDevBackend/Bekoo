@@ -14,7 +14,6 @@ import document.constant.TopicConstant;
 import document.event.user.UpdateAvatarUserEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -22,7 +21,6 @@ import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class UpdateAvatarUseHandler implements HandlerDTO<UpdateAvatarUserCommand, String> {
 
     final Cloudinary cloudinary;
@@ -46,7 +44,6 @@ public class UpdateAvatarUseHandler implements HandlerDTO<UpdateAvatarUserComman
             UpdateAvatarUserEvent event= userMapper.fromUserToUpdateAvatarEvent(user);
             messageProducer.sendMessage(TOPIC, ApplicationConstant.EventType.UPDATE, event, event.getId(), "User");
         }catch (IOException e){
-            log.error("ERR_FILE: {}", e.getMessage());
             throw new BookingCareException(ErrorDetail.ERR_FILE);
         }
         return url_data;

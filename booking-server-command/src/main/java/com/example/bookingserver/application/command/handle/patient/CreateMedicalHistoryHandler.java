@@ -15,14 +15,12 @@ import document.constant.TopicConstant;
 import document.event.patient.MedicalHistoryEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class CreateMedicalHistoryHandler {
     private final PatientRepository patientRepository;
     private final MedicalHistoryRepository medicalHistoryRepository;

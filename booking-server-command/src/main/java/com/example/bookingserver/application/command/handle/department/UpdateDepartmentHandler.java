@@ -14,14 +14,12 @@ import document.constant.TopicConstant;
 import document.event.department.UpdateInfoDepartmentEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class UpdateDepartmentHandler implements HandlerDTO<UpdateInfoDepartmentCommand, DepartmentResponse> {
     final DepartmentRepository departmentRepository;
     final DepartmentMapper departmentMapper;

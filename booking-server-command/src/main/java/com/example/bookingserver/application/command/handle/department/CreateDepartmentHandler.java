@@ -11,14 +11,12 @@ import com.example.bookingserver.infrastructure.message.MessageProducer;
 import document.constant.TopicConstant;
 import document.event.department.CreateDepartmentEvent;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class CreateDepartmentHandler implements HandlerDTO<CreateDepartmentCommand, DepartmentResponse> {
 
     final DepartmentRepository departmentRepository;

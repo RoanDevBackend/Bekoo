@@ -10,7 +10,6 @@ import com.example.bookingserver.domain.repository.UserRepository;
 import com.example.bookingserver.infrastructure.persistence.repository.RedisRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
@@ -19,7 +18,6 @@ import java.util.Random;
 
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class ForgotPasswordHandler implements Handler<ForgotPasswordCommand> {
 
     final UserRepository userRepository;

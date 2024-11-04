@@ -13,13 +13,11 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Slf4j
 @RequestMapping(value = "/department")
 @RestController
 @FieldDefaults(makeFinal = true)
@@ -35,7 +33,6 @@ public class DepartmentController {
     @PostMapping
     @Operation(summary = "Thêm chuyên khoa mới")
     public ApiResponse create(@ModelAttribute @Valid CreateDepartmentCommand command){
-        log.info("API: Create department");
         var response= createDepartmentCommandDepartmentResponseHandler.execute(command);
         return ApiResponse.success(201, "Tạo chuyên khoa thành công", response, HttpStatus.CREATED);
     }
@@ -43,7 +40,6 @@ public class DepartmentController {
     @PostMapping("/doctor/new-one")
     @Operation(summary = "Thêm bác sĩ vào chuyên khoa")
     public ApiResponse addNewOne(@RequestBody AddNewOneCommand addNewOneCommand){
-        log.info("API: Add doctor to department");
         addNewOneCommandHandler.execute(addNewOneCommand);
         return ApiResponse.success(200, "Thêm thành công");
     }
@@ -51,7 +47,6 @@ public class DepartmentController {
     @PostMapping("/info")
     @Operation(summary = "Sửa thông tin chuyên khoa")
     public ApiResponse update(@ModelAttribute @Valid UpdateInfoDepartmentCommand command){
-        log.info("API: Update department");
         var response= updateInfoDepartmentCommandDepartmentResponseHandler.execute(command);
         return ApiResponse.success(200, "Cập nhập thành công", response, HttpStatus.ACCEPTED);
     }

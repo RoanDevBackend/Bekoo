@@ -40,7 +40,6 @@ public class UserController {
         Set<Role> roles= new HashSet<>();
         roles.add(new Role(ERole.USER));
         var response= createUserHandler.execute(command, roles);
-        log.info("Create User: " + command.getName());
         return ApiResponse.success(201, "Tạo tài khoản thành công", response);
     }
 
@@ -48,7 +47,6 @@ public class UserController {
     @PutMapping()
     public ApiResponse updateUser(@RequestBody @Valid UpdateInfoUserCommand command){
         updateInfoUserCommandHandler.execute(command);
-        log.info("Update User: " + command.getId());
         return ApiResponse.success(200, "Cập nhập thông tin tài khoản thành công");
     }
 
@@ -57,7 +55,6 @@ public class UserController {
     @PutMapping("/password")
     public ApiResponse changePassword(@RequestBody @Valid ChangePasswordCommand command){
         changePasswordCommandHandler.execute(command);
-        log.info("Change Password: " + command.getId());
         return ApiResponse.success(200, "Thay đổi mật khẩu thành công");
     }
 
@@ -66,16 +63,13 @@ public class UserController {
     @Operation(summary = "Thay đổi mật khẩu người dùng, không yêu cầu nhập mật khẩu cũ")
     public ApiResponse changePasswordOTP(@RequestBody @Valid ChangePasswordOTPCommand command){
         changePasswordOTPCommandHandler.execute(command);
-        log.info("Change password from OTP: {}", command.getEmail());
         return ApiResponse.success(200, "Thay đổi mật khẩu thành công");
     }
 
 
     @PostMapping("/avatar")
     public ApiResponse updateAvatar(@ModelAttribute UpdateAvatarUserCommand command){
-        log.info("abcs");
         String data= updateAvatarUserCommandHandler.execute(command);
-        log.info("Update Avatar User: " + command.getId());
         return ApiResponse.success(200, "Thay đổi ảnh đại diện thành công", data);
     }
 
@@ -83,7 +77,6 @@ public class UserController {
     @PostMapping("/forgot-password/send-otp")
     public ApiResponse forgotPassword(@RequestBody @Valid ForgotPasswordCommand command){
         forgotPasswordCommandHandler.execute(command);
-        log.info("Send OTP for phone number: {}", command.getEmail());
         return ApiResponse.success(200, "Gửi mã xác thực thành công, mã xác thực gồm 6 số");
     }
 
@@ -92,7 +85,6 @@ public class UserController {
     @PostMapping("/forgot-password/verify")
     public ApiResponse verifyOTP(@RequestBody @Valid VerifyOTPCommand command){
         verifyOTPCommandHandler.execute(command);
-        log.info("Verify User: {}", command.getEmail());
         return ApiResponse.success(200, "Xác thực thành công");
     }
 
@@ -100,7 +92,6 @@ public class UserController {
     @DeleteMapping("/{ids}")
     public ApiResponse deleteUser(@PathVariable("ids") List<String> ids){
         deleteUserHandler.execute(ids);
-        log.info("Delete User: {}", ids);
         return ApiResponse.success(200, "Xoá tài khoản thành công");
     }
 }

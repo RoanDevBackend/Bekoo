@@ -13,12 +13,10 @@ import document.constant.TopicConstant;
 import document.event.user.UpdateInfoUserEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class UpdateUserHandler implements Handler<UpdateInfoUserCommand> {
 
     final UserRepository userRepository;

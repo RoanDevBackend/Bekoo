@@ -21,8 +21,7 @@ public class MessageProducer {
 
 
     public void sendMessage(String topic, String value){
-        kafkaTemplate.send(topic, value);
-        log.info("VALUE: {}", value);
+        this.sendMessage(topic, null, value, null, null);
     }
 
     @SneakyThrows
@@ -40,11 +39,13 @@ public class MessageProducer {
                 .build();
 
         try {
-            this.sendMessage(topic, content);
+            kafkaTemplate.send(topic, content);
             outboxEvent.setStatus(ApplicationConstant.EventStatus.SEND);
-            log.info("SEND EVENT SUCCESS: {}", topic);
+            String contentLog = "SEND EVENT SUCCESS WITH TOPIC: '" + topic + "' VALUE: " + content;
+            log.info(contentLog);
         }catch (Exception e){
-            log.error("SEND EVENT FAILED: {}", topic);
+            String contentLog = "SEND EVENT ERROR WITH TOPIC: '" + topic + "' VALUE: " + content;
+            log.info(contentLog);
         }
         outboxEventRepository.save(outboxEvent);
     }
