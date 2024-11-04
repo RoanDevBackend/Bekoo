@@ -1,7 +1,7 @@
 package com.example.bookingserver.application.command.handle.exception;
 
 
-import com.example.bookingserver.application.command.reponse.ApiResponse;
+import document.response.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;

@@ -13,19 +13,23 @@ import lombok.experimental.FieldDefaults;
 public class ApiResponse {
     int code;
     String message;
+    String messageError;
     Object value;
 
     public static ApiResponse success(int code, String message){
-        return new ApiResponse(code, message, null);
+        return new ApiResponse(code, message, null, null);
     }
     public static ApiResponse success(int code, String message, Object value){
-        return new ApiResponse(code, message, value);
+        return new ApiResponse(code, message, null, value);
     }
 
     public static ApiResponse error(String message){
-        return new ApiResponse(400, message, null);
+        return new ApiResponse(400, message, null, null);
     }
     public static ApiResponse error(int code, String message){
-        return new ApiResponse(code, message, null);
+        return new ApiResponse(code, message, null, null);
+    }
+    public static ApiResponse error(int code, String message, String messageError){
+        return new ApiResponse(code, message, messageError, null);
     }
 }

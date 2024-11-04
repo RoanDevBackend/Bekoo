@@ -2,6 +2,8 @@ package com.example.bookingserver.infrastructure.config;
 
 import com.example.bookingserver.application.command.service.JwtService;
 import com.example.bookingserver.infrastructure.persistence.repository.RedisRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import document.response.ApiResponse;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,10 +26,9 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
-
     final RedisRepository redisRepository;
-
     private final UserDetailsService userDetailsService;
+    final ObjectMapper objectMapper;
 
     @Override
     protected void doFilterInternal(
@@ -41,29 +42,34 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")){
-            filterChain.doFilter(request,response);
+            filterChain.doFilter(request,response); // kiểm tra bước tiếp theo, vì có thể API không cần Jwt
             return;
         }
 
         jwt = authHeader.substring(7);
-
         Object a = redisRepository.get(jwt);
-
-        if(a != null) {
-            filterChain.doFilter(request,response);
+        if(a != null) { // kiểm tra JWT có đăng đang đăng xuất không
             return;
         }
 
-        username = jwtService.extractUsername(jwt);
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null ) {
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-            if (jwtService.isTokenValid(jwt, userDetails)) {
-                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+        try {
+            username = jwtService.extractUsername(jwt);
+            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+                if (jwtService.isTokenValid(jwt, userDetails)) {
+                    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                }
             }
+            filterChain.doFilter(request, response);
+        } catch (Exception e) {
+            response.setContentType("application/json; charset=UTF-8");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            ApiResponse apiResponse= ApiResponse.error(401, "Phiên đã hết hạn, vui lòng đăng nhập lại !");
+            String content= objectMapper.writeValueAsString(apiResponse);
+            response.getWriter().write(content);
         }
-        filterChain.doFilter(request ,response);
     }
 }
 
