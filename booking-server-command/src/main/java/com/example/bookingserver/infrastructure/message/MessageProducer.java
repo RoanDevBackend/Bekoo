@@ -17,7 +17,7 @@ public class MessageProducer {
 
     final ObjectMapper objectMapper;
     final OutboxEventRepository outboxEventRepository;
-    private final KafkaTemplate<String, String> kafkaTemplate;
+    final KafkaTemplate<String, String> kafkaTemplate;
 
 
     public void sendMessage(String topic, String value){

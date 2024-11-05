@@ -24,6 +24,18 @@ spring:
           auth: true
           starttls:
             enable: true
+  kafka:
+    bootstrap-servers: ${kafka.port}
+    security:
+      protocol: "SSL"
+    ssl:
+      trust-store-location: classpath:client.truststore.jks
+      trust-store-password: ${kafka.password}
+      key-store-location: classpath:client.keystore.p12
+      key-store-password: ${kafka.password}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
 logging:
   level:
     root: error
