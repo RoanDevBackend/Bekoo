@@ -3,7 +3,6 @@
 services:
   kafka:
     image: bitnami/kafka:latest
-    platform: linux/amd64
     ports:
       - "9092:9092"
       - "9093:9093"
@@ -30,6 +29,7 @@ services:
     build:
       context: ..
       dockerfile: booking-server-query/Dockerfile
+    platform: linux/amd64
     container_name: booking-care-query
     depends_on:
       - kafka
