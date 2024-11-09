@@ -2,7 +2,10 @@ package com.example.bookingserver.application.command.handle.doctor;
 
 import com.example.bookingserver.application.command.command.doctor.CreateDoctorCommand;
 import com.example.bookingserver.application.command.handle.HandlerDTO;
+import com.example.bookingserver.application.command.handle.exception.BookingCareException;
+import com.example.bookingserver.application.command.handle.exception.ErrorDetail;
 import com.example.bookingserver.application.command.reponse.DoctorResponse;
+import com.example.bookingserver.application.command.service.PasswordService;
 import com.example.bookingserver.domain.*;
 import com.example.bookingserver.domain.repository.DoctorRepository;
 import com.example.bookingserver.domain.repository.UserRepository;
@@ -29,15 +32,21 @@ public class CreateDoctorHandler implements HandlerDTO<CreateDoctorCommand, Doct
     final String TOPIC= TopicConstant.DoctorTopic.CREATE;
     private final UserMapper userMapper;
     private final UserRepository userRepository;
+    private final PasswordService passwordService;
 
     @Override
     @SneakyThrows
     public DoctorResponse execute(CreateDoctorCommand command) {
-
+        if(!command.getUser().getConfirmPassword().equals(command.getUser().getPassword())){
+            throw new BookingCareException(ErrorDetail.ERR_PASSWORD_NOT_CONFIRM);
+        }
+        if(userRepository.isEmailExisted(command.getUser().getEmail())){
+            throw new BookingCareException(ErrorDetail.ERR_USER_EMAIL_EXISTED);
+        }
+        User user= userMapper.toUserFromCreateCommand(command.getUser());
+        user.setPassword(passwordService.encode(user.getPassword()));
         Set<Role> roles= new HashSet<>();
         roles.add(new Role(ERole.DOCTOR));
-
-        User user= userMapper.toUserFromCreateCommand(command.getUser());
         user.setRoles(roles);
         user= userRepository.save(user);
 
