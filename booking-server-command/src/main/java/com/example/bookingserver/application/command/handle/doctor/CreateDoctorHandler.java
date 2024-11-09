@@ -35,7 +35,6 @@ public class CreateDoctorHandler implements HandlerDTO<CreateDoctorCommand, Doct
     public DoctorResponse execute(CreateDoctorCommand command) {
 
         Set<Role> roles= new HashSet<>();
-        roles.add(new Role(ERole.USER)); // Cần suy nghĩ lại, nếu doctor cũng là user, vậy doctor sẽ có nhưng khả năng của user
         roles.add(new Role(ERole.DOCTOR));
 
         User user= userMapper.toUserFromCreateCommand(command.getUser());
