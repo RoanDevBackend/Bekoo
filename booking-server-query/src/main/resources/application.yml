@@ -11,13 +11,13 @@ spring:
         enabled: true
   kafka:
     bootstrap-servers: ${kafka.server}
-    security:
-      protocol: "SSL"
-    ssl:
-      trust-store-location: classpath:client.truststore.jks
-      trust-store-password: ${kafka.password}
-      key-store-location: classpath:client.keystore.p12
-      key-store-password: ${kafka.password}
+#    security:
+#      protocol: "SSL"
+#    ssl:
+#      trust-store-location: classpath:client.truststore.jks
+#      trust-store-password: ${kafka.password}
+#      key-store-location: classpath:client.keystore.p12
+#      key-store-password: ${kafka.password}
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
