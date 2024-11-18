@@ -11,7 +11,21 @@ import java.util.Optional;
 
 @Repository
 public interface DoctorELRepository extends ElasticsearchRepository<Doctor, String> {
-    @Query("{\"nested\": {\"path\": \"user\", \"query\": {\"match\": {\"user.name\": {\"query\": \"?0\", \"fuzziness\": \"AUTO\"}}}}}}")
+    @Query("""
+        {
+          "nested": {
+            "path": "user",
+            "query": {
+              "match": {
+                "user.name": {
+                  "query": "?0",
+                  "fuzziness": "AUTO"
+                }
+              }
+            }
+          }
+        }
+        """)
     Page<Doctor> findDoctorsByName(String name, Pageable pageable);
 
     @Query("{\n" +
