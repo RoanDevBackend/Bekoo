@@ -8,6 +8,7 @@ import com.example.bookingserver.application.command.handle.HandlerDTO;
 import com.example.bookingserver.application.command.reponse.ApiResponse;
 import com.example.bookingserver.application.command.reponse.DoctorResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,7 @@ import java.util.List;
 @RequestMapping(value = "/doctor")
 @RestController
 @RequiredArgsConstructor
+@SecurityRequirement(name="bearerAuth")
 public class DoctorController {
 
     final HandlerDTO<CreateDoctorCommand, DoctorResponse> createDoctorCommandHandler;

@@ -7,6 +7,7 @@ import com.example.bookingserver.application.query.QueryBase;
 import com.example.bookingserver.application.command.reponse.ApiResponse;
 import com.example.bookingserver.application.command.reponse.SpecializeResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ public class SpecializeController {
 
     @PostMapping
     @Operation(summary = "Thêm chuyên khoa")
+    @SecurityRequirement(name="bearerAuth")
     public ApiResponse create(@RequestBody @Valid CreateSpecializeCommand command){
         var response= createSpecializeHandler.execute(command);
         return ApiResponse.success(201, "Thêm thành công", response, HttpStatus.CREATED);
@@ -38,6 +40,7 @@ public class SpecializeController {
 
     @PutMapping
     @Operation(summary = "Sửa chuyên khoa")
+    @SecurityRequirement(name="bearerAuth")
     public ApiResponse update(@RequestBody @Valid UpdateSpecializeCommand command){
         var response= updateSpecializeHandler.execute(command);
         return ApiResponse.success(200, "Sửa thành công", response);
@@ -45,6 +48,7 @@ public class SpecializeController {
 
     @DeleteMapping(value = "/{ids}")
     @Operation(summary = "Xoá chuyên khoa")
+    @SecurityRequirement(name="bearerAuth")
     public ApiResponse delete(@PathVariable("ids") List<String> ids){
         deleteSpecializeHandler.execute(ids);
         return ApiResponse.success(200, "Xoá thành công");

@@ -5,6 +5,7 @@ import com.example.bookingserver.application.command.handle.report.ReportByHandl
 import document.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -19,6 +20,7 @@ import java.time.LocalDate;
 @RestController
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@SecurityRequirement(name="bearerAuth")
 public class ReportController {
 
     ReportByHandler reportByHandler;

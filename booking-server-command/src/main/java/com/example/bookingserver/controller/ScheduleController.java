@@ -4,8 +4,6 @@ package com.example.bookingserver.controller;
 import com.example.bookingserver.application.command.command.schedule.CreateScheduleCommand;
 import com.example.bookingserver.application.command.handle.schedule.CreateScheduleHandler;
 import com.example.bookingserver.application.command.handle.schedule.DeleteScheduleHandler;
-import com.example.bookingserver.application.command.reponse.ScheduleResponse;
-import com.example.bookingserver.application.query.handler.response.FindByDoctorResponse;
 import com.example.bookingserver.application.query.handler.response.FindByPatientResponse;
 import com.example.bookingserver.application.query.handler.schedule.FindHistoryScheduleByDoctorHandler;
 import com.example.bookingserver.application.query.handler.schedule.FindHistoryScheduleByPatientHandler;
@@ -14,10 +12,10 @@ import com.example.bookingserver.application.command.reponse.ApiResponse;
 import com.example.bookingserver.infrastructure.constant.ApplicationConstant;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -30,6 +28,7 @@ import java.time.LocalDateTime;
 @RestController
 @FieldDefaults(makeFinal = true)
 @RequiredArgsConstructor
+@SecurityRequirement(name="bearerAuth")
 public class ScheduleController {
     CreateScheduleHandler createScheduleHandler;
     DeleteScheduleHandler deleteScheduleHandler;

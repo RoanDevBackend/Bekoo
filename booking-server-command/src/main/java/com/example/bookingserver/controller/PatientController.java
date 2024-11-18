@@ -12,6 +12,7 @@ import com.example.bookingserver.application.query.handler.patient.FindPatientBy
 import com.example.bookingserver.application.query.handler.patient.GetAllEmergencyContactHandler;
 import com.example.bookingserver.application.query.handler.patient.GetAllMedicalHistoryHandler;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@SecurityRequirement(name="bearerAuth")
 public class PatientController {
 
     CreateInfoPatientHandler createInfoPatientHandler;

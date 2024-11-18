@@ -10,6 +10,7 @@ import com.example.bookingserver.application.command.handle.department.DeleteDep
 import com.example.bookingserver.application.command.reponse.ApiResponse;
 import com.example.bookingserver.application.command.reponse.DepartmentResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -22,6 +23,7 @@ import java.util.List;
 @RestController
 @FieldDefaults(makeFinal = true)
 @RequiredArgsConstructor
+@SecurityRequirement(name="bearerAuth")
 public class DepartmentController {
 
     HandlerDTO<CreateDepartmentCommand, DepartmentResponse> createDepartmentCommandDepartmentResponseHandler;

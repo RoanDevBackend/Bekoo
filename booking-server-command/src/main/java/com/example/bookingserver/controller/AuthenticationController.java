@@ -4,6 +4,7 @@ import com.example.bookingserver.application.command.command.user.SignInCommand;
 import com.example.bookingserver.application.command.reponse.ApiResponse;
 import com.example.bookingserver.application.command.service.AuthenticationService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,12 +29,14 @@ public class AuthenticationController {
     }
 
     @PostMapping("/token/refresh/{token}")
+    @SecurityRequirement(name="bearerAuth")
     public ApiResponse refreshToken(@PathVariable String token){
         var response= authenticationService.refreshToken(token);
         return ApiResponse.success(200, "Refresh token", response);
     }
 
     @Operation(summary = "Lấy ra user từ token", description = "Cần token ở header")
+    @SecurityRequirement(name="bearerAuth")
     @PostMapping("/token")
     public ApiResponse getUserByToken(HttpServletRequest request){
         var token= request.getHeader(HttpHeaders.AUTHORIZATION);

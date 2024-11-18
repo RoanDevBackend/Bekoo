@@ -9,6 +9,7 @@ import com.example.bookingserver.application.command.reponse.ApiResponse;
 import com.example.bookingserver.domain.ERole;
 import com.example.bookingserver.domain.Role;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -45,6 +46,7 @@ public class UserController {
 
 
     @PutMapping()
+    @SecurityRequirement(name="bearerAuth")
     public ApiResponse updateUser(@RequestBody @Valid UpdateInfoUserCommand command){
         updateInfoUserCommandHandler.execute(command);
         return ApiResponse.success(200, "Cập nhập thông tin tài khoản thành công");
@@ -53,6 +55,7 @@ public class UserController {
 
     @Operation(summary = "Thay đổi mật khẩu người dùng, có yêu cầu nhập mật khẩu cũ")
     @PutMapping("/password")
+    @SecurityRequirement(name="bearerAuth")
     public ApiResponse changePassword(@RequestBody @Valid ChangePasswordCommand command){
         changePasswordCommandHandler.execute(command);
         return ApiResponse.success(200, "Thay đổi mật khẩu thành công");
@@ -68,6 +71,7 @@ public class UserController {
 
 
     @PostMapping("/avatar")
+    @SecurityRequirement(name="bearerAuth")
     public ApiResponse updateAvatar(@ModelAttribute UpdateAvatarUserCommand command){
         String data= updateAvatarUserCommandHandler.execute(command);
         return ApiResponse.success(200, "Thay đổi ảnh đại diện thành công", data);
@@ -90,6 +94,7 @@ public class UserController {
 
 
     @DeleteMapping("/{ids}")
+    @SecurityRequirement(name="bearerAuth")
     public ApiResponse deleteUser(@PathVariable("ids") List<String> ids){
         deleteUserHandler.execute(ids);
         return ApiResponse.success(200, "Xoá tài khoản thành công");
