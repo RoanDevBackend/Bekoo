@@ -46,6 +46,13 @@ public class ReportController {
         return ApiResponse.success(200, "Báo cáo số người đặt khám của toàn hệ thống", response);
     }
 
+    @GetMapping("/by-age")
+    @Operation(summary = "Báo cáo thống kê độ tuổi theo biểu đồ tròn")
+    public ApiResponse byAge(){
+        var response= reportByHandler.getByAge();
+        return ApiResponse.success(200, "Thống kê theo số tuổi dưới dạng biểu đồ tròn", response);
+    }
+
     @GetMapping("/total")
     @Operation(summary = "Báo cáo số lượng tổng thể của toàn hệ thống")
     public ApiResponse total(){

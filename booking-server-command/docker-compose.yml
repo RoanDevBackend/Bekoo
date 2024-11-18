@@ -17,19 +17,6 @@ services:
       - ALLOW_PLAINTEXT_LISTENER=yes
     volumes:
       - kafka_data:/var/lib/kafka
-
-  mysql:
-    image: mysql:8.0
-    container_name: mysql
-    environment:
-      MYSQL_DATABASE: root
-      MYSQL_ROOT_PASSWORD: root_admin
-
-    ports:
-      - "3307:3306"
-    volumes:
-      - mysql_data:/var/lib/mysql
-
   redis:
     image: redis:latest
     container_name: redis
@@ -52,7 +39,6 @@ services:
     platform: linux/amd64
     container_name: booking-care-command
     depends_on:
-      - mysql
       - redis
       - kafka
     restart: on-failure
@@ -68,7 +54,6 @@ services:
       SPRING_REDIS_PORT: 6379
       SPRING_REDIS_PASSWORD: root_admin
 volumes:
-  mysql_data:
   redis_data:
   kafka_data:
 
