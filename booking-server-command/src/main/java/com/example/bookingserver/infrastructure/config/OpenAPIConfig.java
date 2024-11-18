@@ -3,6 +3,7 @@ package com.example.bookingserver.infrastructure.config;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -16,6 +17,11 @@ public class OpenAPIConfig {
 
     @Bean
     public OpenAPI customOpenAPI() {
+        SecurityScheme securityScheme = new SecurityScheme()
+                .type(SecurityScheme.Type.HTTP)
+                .scheme("bearer")
+                .bearerFormat("JWT")
+                .name("bearerAuth");
         return new OpenAPI()
                 .info(new Info()
                         .title("Bekoo")
@@ -28,7 +34,6 @@ public class OpenAPIConfig {
                 .addServersItem(new Server()
                         .url(springUrl)
                         .description("Bekoo"))
-                ;
+                .schemaRequirement("bearerAuth", securityScheme);
     }
-
 }
