@@ -27,7 +27,7 @@ public class GPTServiceImpl implements GPTService {
     final ObjectMapper objectMapper = new ObjectMapper();
     final CreateDoctorHandler createDoctorHandler;
     @Value("${api.key}")
-    private static String API_KEY;
+    private String API_KEY;
 
     @Override
     @SneakyThrows

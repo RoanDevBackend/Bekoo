@@ -4,6 +4,7 @@ package com.example.bookingserver.controller;
 import com.example.bookingserver.application.command.command.schedule.CreateScheduleCommand;
 import com.example.bookingserver.application.command.handle.schedule.CreateScheduleHandler;
 import com.example.bookingserver.application.command.handle.schedule.DeleteScheduleHandler;
+import com.example.bookingserver.application.command.service.OnlinePayService;
 import com.example.bookingserver.application.query.handler.response.FindByPatientResponse;
 import com.example.bookingserver.application.query.handler.schedule.FindHistoryScheduleByDoctorHandler;
 import com.example.bookingserver.application.query.handler.schedule.FindHistoryScheduleByPatientHandler;
@@ -13,6 +14,7 @@ import com.example.bookingserver.infrastructure.constant.ApplicationConstant;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -34,6 +36,7 @@ public class ScheduleController {
     DeleteScheduleHandler deleteScheduleHandler;
     FindHistoryScheduleByPatientHandler findHistoryScheduleByPatientHandler;
     FindHistoryScheduleByDoctorHandler findHistoryScheduleByDoctorHandler;
+    OnlinePayService onlinePayService;
 
     @PostMapping
     public ApiResponse create(@RequestBody @Valid CreateScheduleCommand command){
@@ -91,4 +94,25 @@ public class ScheduleController {
         var response = findHistoryScheduleByDoctorHandler.execute(id, pageable, start, end, ApplicationConstant.Status.CONFIRMED);
         return ApiResponse.success(200, "Tìm kiếm thành công", response);
     }
+
+    @PostMapping("/payment")
+    public ApiResponse onlinePayment(@RequestParam String scheduleId, HttpServletRequest request){
+        String url= onlinePayService.payCart(scheduleId, request);
+        return ApiResponse.success(200, "", url);
+    }
+
+    @GetMapping("/payment/result")
+    public ApiResponse onlinePaymentResult(@RequestParam String vnp_ResponseCode){
+        if(vnp_ResponseCode.equals("00")) return ApiResponse.success(200, "Thanh toán thành công");
+        if(vnp_ResponseCode.equals("11")) return ApiResponse.success(200, "Giao dịch không thành công do: Đã hết hạn chờ thanh toán. Xin quý khách vui lòng thực hiện lại giao dịch.");
+        if(vnp_ResponseCode.equals("12")) return ApiResponse.success(200, "Giao dịch không thành công do: Thẻ/Tài khoản của khách hàng bị khóa.");
+        if(vnp_ResponseCode.equals("13")) return ApiResponse.success(400, "Giao dịch không thành công do Quý khách nhập sai mật khẩu xác thực giao dịch (OTP). Xin quý khách vui lòng thực hiện lại giao dịch.");
+        if(vnp_ResponseCode.equals("24")) return ApiResponse.success(200, "Giao dịch không thành công do: Khách hàng hủy giao dịch");
+        if(vnp_ResponseCode.equals("51")) return ApiResponse.success(200, "Giao dịch không thành công do: Tài khoản của quý khách không đủ số dư để thực hiện giao dịch.");
+        if(vnp_ResponseCode.equals("65")) return ApiResponse.success(200, "Giao dịch không thành công do: Tài khoản của Quý khách đã vượt quá hạn mức giao dịch trong ngày.");
+        if(vnp_ResponseCode.equals("75")) return ApiResponse.success(200, "Ngân hàng thanh toán đang bảo trì.");
+        if(vnp_ResponseCode.equals("79")) return ApiResponse.success(200, "Giao dịch không thành công do: KH nhập sai mật khẩu thanh toán quá số lần quy định. Xin quý khách vui lòng thực hiện lại giao dịch");
+        return ApiResponse.success(400, "Bạn hãy thử lại");
+    }
+
 }
