@@ -5,6 +5,7 @@ import com.example.bookingserverquery.domain.User;
 import com.example.bookingserverquery.infrastructure.mapper.DoctorMapper;
 import com.example.bookingserverquery.infrastructure.mapper.UserMapper;
 import com.example.bookingserverquery.infrastructure.repository.DoctorELRepository;
+import com.example.bookingserverquery.infrastructure.repository.RedisRepository;
 import com.example.bookingserverquery.infrastructure.repository.UserELRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import document.constant.TopicConstant;
@@ -31,13 +32,14 @@ public class DoctorEventHandler {
     final UserELRepository userELRepository;
     final DoctorMapper doctorMapper;
     final UserMapper userMapper;
+    final RedisRepository redisRepository;
 
     @KafkaListener(topics = TopicConstant.DoctorTopic.CREATE)
     @SneakyThrows
     public void createDoctorEvent(String event){
         CreateDoctorEvent doctorEvent= objectMapper.readValue(event, CreateDoctorEvent.class);
         CreateUserEvent userEvent= doctorEvent.getUser();
-
+        redisRepository.deleteListCache("doctor");
         User user= userMapper.toUserFromCreateUserEvent(userEvent);
         userELRepository.save(user);
 
@@ -80,5 +82,4 @@ public class DoctorEventHandler {
         doctorELRepository.deleteById(deleteDoctorEvent.getId());
         log.info("DELETE-DOCTOR-EVENT-SUCCESS: {}", event);
     }
-
 }
