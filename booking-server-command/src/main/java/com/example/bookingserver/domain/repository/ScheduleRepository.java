@@ -19,6 +19,6 @@ public interface ScheduleRepository {
     Optional<Schedule> findById(String id);
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     int getCountPersonPerDay(String doctorId, LocalDateTime start, LocalDateTime end);
-    Page<Schedule> findByPatient(String patientId, Pageable pageable);
-    Page<Schedule> findByDoctor(String doctorId, Pageable pageable, LocalDateTime start, LocalDateTime end);
+    Page<Schedule> findByPatient(String patientId, Pageable pageable, int statusId);
+    Page<Schedule> findByDoctor(String doctorId, int statusId, Pageable pageable, LocalDateTime start, LocalDateTime end);
 }

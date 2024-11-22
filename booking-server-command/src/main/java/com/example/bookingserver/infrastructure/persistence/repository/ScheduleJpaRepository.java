@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 public interface ScheduleJpaRepository extends JpaRepository<Schedule, String> {
 
     /***
-     *
      Lấy ra số người đã đăng kí khám theo ngày của bác sĩ
      * @param doctorId
      * @param start
@@ -59,7 +58,12 @@ public interface ScheduleJpaRepository extends JpaRepository<Schedule, String> {
      * @return
      */
     @Query("FROM Schedule s " +
-            "WHERE s.patient.id= :id ")
+            "WHERE s.patient.id= :id " +
+            "AND s.statusId= :statusId ")
+    Page<Schedule> findByPatientIdAndStatus(String id, Pageable pageable, int statusId);
+
+    @Query("FROM Schedule s " +
+            "WHERE s.patient.id= :id " )
     Page<Schedule> findByPatientId(String id, Pageable pageable);
 
 
@@ -75,6 +79,8 @@ public interface ScheduleJpaRepository extends JpaRepository<Schedule, String> {
     @Query("FROM Schedule s " +
             "WHERE s.doctor.id= :doctorId " +
             "AND s.checkIn >= :start " +
-            "AND s.checkIn < :end " )
-    Page<Schedule> findByDoctor(String doctorId, Pageable pageable, LocalDateTime start, LocalDateTime end);
+            "AND s.checkIn < :end " +
+            "AND (s.statusId= :statusId " +
+            "OR :statusId = 0 )" )
+    Page<Schedule> findByDoctor(String doctorId, int statusId, Pageable pageable, LocalDateTime start, LocalDateTime end);
 }

@@ -52,7 +52,7 @@ public class ScheduleController {
 
     @Operation(summary = "Tìm kiếm lịch sử đặt lịch khám của bệnh nhân", parameters = {
             @Parameter(name = "id", description = "Mã bệnh nhân")
-            , @Parameter(name = "statusId", description = "1 -Lấy ra tất cả. 2 -Lấy ra lịch khám đã huỷ. 3 -Đã tới khám.  4- Quá hạn chưa tới khám")
+            , @Parameter(name = "statusId", description = "1 -Lấy ra tất cả. 2 -Lấy ra lịch khám đã huỷ. 3 -Đã tới khám.  4- Quá hạn chưa tới khám. 0- Lấy ra tất cả")
     })
     @GetMapping("/patient/{id}/{statusId}")
     public ApiResponse getPatientSchedule(@PathVariable String id, @PathVariable int statusId
@@ -70,18 +70,18 @@ public class ScheduleController {
     @Operation(summary = "Tìm kiếm lịch sử đặt lịch khám của bác sĩ", parameters = {
             @Parameter(name = "id", description = "Mã bác sĩ")
     })
-    @GetMapping("/doctor/{id}")
-    public ApiResponse getDoctorSchedule(@PathVariable String id
+    @GetMapping("/doctor/{id}/{statusId}")
+    public ApiResponse getDoctorSchedule(@PathVariable String id, @PathVariable int statusId
             , @RequestParam(required = false, defaultValue = "1") int pageIndex
             , @RequestParam(required = false, defaultValue = "10000") int pageSize ){
         Pageable pageable= PageRequest.of(pageIndex - 1,pageSize, Sort.by("checkIn").ascending());
         LocalDateTime start= LocalDateTime.now().minusYears(200);
         LocalDateTime end= LocalDateTime.now().plusYears(200);
-        var response = findHistoryScheduleByDoctorHandler.execute(id, pageable, start, end, ApplicationConstant.Status.CONFIRMED);
+        var response = findHistoryScheduleByDoctorHandler.execute(id, pageable, start, end, statusId);
         return ApiResponse.success(200, "Tìm kiếm thành công", response);
     }
 
-    @Operation(summary = "Tìm kiếm lịch lịch khám của bác sĩ ngày hôm nay", parameters = {
+    @Operation(summary = "Tìm kiếm lịch khám của bác sĩ ngày hôm nay", parameters = {
             @Parameter(name = "id", description = "Mã bác sĩ")
     })
     @GetMapping("/doctor/day/{id}")

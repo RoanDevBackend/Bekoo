@@ -31,14 +31,10 @@ public class FindHistoryScheduleByDoctorHandler {
 
     @Transactional
     public PageResponse<FindByDoctorResponse> execute(String doctorId, Pageable pageable, LocalDateTime start, LocalDateTime end, int statusId){
-        Page<Schedule> page= scheduleRepository.findByDoctor(doctorId, pageable, start, end);
+        Page<Schedule> page= scheduleRepository.findByDoctor(doctorId, statusId, pageable, start, end);
         List<FindByDoctorResponse> contents= new ArrayList<>();
-        long totalElement= 0;
         for(Schedule schedule : page.getContent()){
-            if(schedule.getStatusId() == statusId) {
-                contents.add(scheduleMapper.toFindByDoctorResponse(schedule));
-                totalElement++;
-            }
+            contents.add(scheduleMapper.toFindByDoctorResponse(schedule));
         }
 
         List<QueryBase.OrderDTO> orderDTOS= new ArrayList<>();
@@ -50,7 +46,7 @@ public class FindHistoryScheduleByDoctorHandler {
                 .contentResponse(contents)
                 .pageIndex(page.getNumber()+1)
                 .pageSize(page.getSize())
-                .totalElements(totalElement)
+                .totalElements(page.getTotalElements())
                 .build();
     }
 }

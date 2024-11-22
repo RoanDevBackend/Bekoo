@@ -26,12 +26,10 @@ public class FindHistoryScheduleByPatientHandler {
     ScheduleMapper scheduleMapper;
 
     public PageResponse<FindByPatientResponse> execute(String patientId, int statusId, QueryBase<FindByPatientResponse> queryBase){
-        Page<Schedule> page= scheduleRepository.findByPatient(patientId, queryBase.getPageable());
+        Page<Schedule> page= scheduleRepository.findByPatient(patientId, queryBase.getPageable(), statusId);
         List<FindByPatientResponse> scheduleResponses= new ArrayList<>();
         for(Schedule schedule : page.getContent()){
-            if(schedule.getStatusId() == statusId){
-                scheduleResponses.add(scheduleMapper.toFindByUserResponse(schedule));
-            }
+           scheduleResponses.add(scheduleMapper.toFindByUserResponse(schedule));
         }
         return PageResponse.<FindByPatientResponse>builder()
                 .totalPage(page.getTotalPages())
