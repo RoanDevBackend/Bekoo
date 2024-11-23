@@ -1,7 +1,6 @@
 package com.example.bookingserver.application.query.handler.response;
 
 import com.example.bookingserver.application.command.reponse.SpecializeResponse;
-import com.example.bookingserver.application.command.reponse.UserResponse;
 import com.example.bookingserver.application.query.handler.response.patient.PatientResponse;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
@@ -21,4 +20,5 @@ public class FindByDoctorResponse {
     @JsonProperty(value = "status")
     String active;
     LocalDateTime checkIn;
+    String paymentStatus;
 }

@@ -4,8 +4,10 @@ package com.example.bookingserver.controller;
 import com.example.bookingserver.application.command.command.schedule.CreateScheduleCommand;
 import com.example.bookingserver.application.command.handle.schedule.CreateScheduleHandler;
 import com.example.bookingserver.application.command.handle.schedule.DeleteScheduleHandler;
+import com.example.bookingserver.application.command.reponse.ScheduleResponse;
 import com.example.bookingserver.application.command.service.OnlinePayService;
 import com.example.bookingserver.application.query.handler.response.FindByPatientResponse;
+import com.example.bookingserver.application.query.handler.schedule.FindAllScheduleHandler;
 import com.example.bookingserver.application.query.handler.schedule.FindHistoryScheduleByDoctorHandler;
 import com.example.bookingserver.application.query.handler.schedule.FindHistoryScheduleByPatientHandler;
 import com.example.bookingserver.application.query.QueryBase;
@@ -36,19 +38,37 @@ public class ScheduleController {
     DeleteScheduleHandler deleteScheduleHandler;
     FindHistoryScheduleByPatientHandler findHistoryScheduleByPatientHandler;
     FindHistoryScheduleByDoctorHandler findHistoryScheduleByDoctorHandler;
+    FindAllScheduleHandler findAllScheduleHandler;
     OnlinePayService onlinePayService;
 
+    @Operation(summary = "Đặt lịch khám", parameters = {
+            @Parameter(name = "command.paymentMethod", description = "1 Thanh toán khi tới khám. 2 Thanh toán bằng thẻ tín dụng")
+    })
     @PostMapping
-    public ApiResponse create(@RequestBody @Valid CreateScheduleCommand command){
-        var response = createScheduleHandler.execute(command);
+    public ApiResponse create(@RequestBody @Valid CreateScheduleCommand command, HttpServletRequest request) {
+        var response = createScheduleHandler.execute(command, request);
         return ApiResponse.success(201, "Tạo thành công", response);
     }
 
+    @Operation(summary = "Xoá lịch đặt khám")
     @DeleteMapping(value = "/{id}")
     public ApiResponse delete(@PathVariable String id){
         deleteScheduleHandler.execute(id);
         return ApiResponse.success(200, "Đã xác nhận huỷ khám");
     }
+
+    @Operation(summary = "Lấy ra danh sách tất cả lịch khám")
+    @GetMapping()
+    public ApiResponse getAll(@RequestParam(required = false, defaultValue = "1") int pageIndex
+            , @RequestParam(required = false, defaultValue = "10000") int pageSize ){
+        QueryBase<ScheduleResponse> queryBase= QueryBase.<ScheduleResponse>builder()
+                .pageIndex(pageIndex)
+                .pageSize(pageSize)
+                .build();
+        var response = findAllScheduleHandler.execute(queryBase);
+        return ApiResponse.success(200, "Tìm kiếm lịch sử lịch khám của bệnh nhân", response);
+    }
+
 
     @Operation(summary = "Tìm kiếm lịch sử đặt lịch khám của bệnh nhân", parameters = {
             @Parameter(name = "id", description = "Mã bệnh nhân")
@@ -95,24 +115,28 @@ public class ScheduleController {
         return ApiResponse.success(200, "Tìm kiếm thành công", response);
     }
 
-    @PostMapping("/payment")
-    public ApiResponse onlinePayment(@RequestParam String scheduleId, HttpServletRequest request){
-        String url= onlinePayService.payCart(scheduleId, request);
-        return ApiResponse.success(200, "", url);
+    @GetMapping("/payment/result")
+    public ApiResponse onlinePaymentResult(@RequestParam String vnp_ResponseCode,
+                                           @RequestParam String vnp_TxnRef){
+        if(vnp_ResponseCode.equals("00")){
+            onlinePayService.extractPay(vnp_TxnRef);
+            return ApiResponse.success(200, "Thanh toán thành công");
+        }
+        if(vnp_ResponseCode.equals("11")) return ApiResponse.success(400, "Giao dịch không thành công do: Đã hết hạn chờ thanh toán. Xin quý khách vui lòng thực hiện lại giao dịch.");
+        if(vnp_ResponseCode.equals("12")) return ApiResponse.success(400, "Giao dịch không thành công do: Thẻ/Tài khoản của khách hàng bị khóa.");
+        if(vnp_ResponseCode.equals("13")) return ApiResponse.success(400, "Giao dịch không thành công do Quý khách nhập sai mật khẩu xác thực giao dịch (OTP). Xin quý khách vui lòng thực hiện lại giao dịch.");
+        if(vnp_ResponseCode.equals("24")) return ApiResponse.success(400, "Giao dịch không thành công do: Khách hàng hủy giao dịch");
+        if(vnp_ResponseCode.equals("51")) return ApiResponse.success(400, "Giao dịch không thành công do: Tài khoản của quý khách không đủ số dư để thực hiện giao dịch.");
+        if(vnp_ResponseCode.equals("65")) return ApiResponse.success(400, "Giao dịch không thành công do: Tài khoản của Quý khách đã vượt quá hạn mức giao dịch trong ngày.");
+        if(vnp_ResponseCode.equals("75")) return ApiResponse.success(400, "Ngân hàng thanh toán đang bảo trì.");
+        if(vnp_ResponseCode.equals("79")) return ApiResponse.success(400, "Giao dịch không thành công do: KH nhập sai mật khẩu thanh toán quá số lần quy định. Xin quý khách vui lòng thực hiện lại giao dịch");
+        return ApiResponse.success(400, "Bạn hãy thử lại");
     }
 
-    @GetMapping("/payment/result")
-    public ApiResponse onlinePaymentResult(@RequestParam String vnp_ResponseCode){
-        if(vnp_ResponseCode.equals("00")) return ApiResponse.success(200, "Thanh toán thành công");
-        if(vnp_ResponseCode.equals("11")) return ApiResponse.success(200, "Giao dịch không thành công do: Đã hết hạn chờ thanh toán. Xin quý khách vui lòng thực hiện lại giao dịch.");
-        if(vnp_ResponseCode.equals("12")) return ApiResponse.success(200, "Giao dịch không thành công do: Thẻ/Tài khoản của khách hàng bị khóa.");
-        if(vnp_ResponseCode.equals("13")) return ApiResponse.success(400, "Giao dịch không thành công do Quý khách nhập sai mật khẩu xác thực giao dịch (OTP). Xin quý khách vui lòng thực hiện lại giao dịch.");
-        if(vnp_ResponseCode.equals("24")) return ApiResponse.success(200, "Giao dịch không thành công do: Khách hàng hủy giao dịch");
-        if(vnp_ResponseCode.equals("51")) return ApiResponse.success(200, "Giao dịch không thành công do: Tài khoản của quý khách không đủ số dư để thực hiện giao dịch.");
-        if(vnp_ResponseCode.equals("65")) return ApiResponse.success(200, "Giao dịch không thành công do: Tài khoản của Quý khách đã vượt quá hạn mức giao dịch trong ngày.");
-        if(vnp_ResponseCode.equals("75")) return ApiResponse.success(200, "Ngân hàng thanh toán đang bảo trì.");
-        if(vnp_ResponseCode.equals("79")) return ApiResponse.success(200, "Giao dịch không thành công do: KH nhập sai mật khẩu thanh toán quá số lần quy định. Xin quý khách vui lòng thực hiện lại giao dịch");
-        return ApiResponse.success(400, "Bạn hãy thử lại");
+    @PostMapping("/payment")
+    public ApiResponse payment(@RequestParam String scheduleId, HttpServletRequest request) {
+        String url= onlinePayService.payCart(scheduleId, request);
+        return ApiResponse.success(200, "Thanh toán bằng thẻ tín dụng", url);
     }
 
 }

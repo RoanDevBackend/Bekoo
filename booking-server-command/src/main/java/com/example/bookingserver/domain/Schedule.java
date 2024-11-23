@@ -37,4 +37,9 @@ public class Schedule extends EntityBase{
      */
     @Builder.Default
     int statusId= 1;
+    /**
+     * 1. Đã thanh toán
+     * 2. Chưa thanh toán
+     */
+    int paymentStatus;
 }

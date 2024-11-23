@@ -12,6 +12,12 @@ public class ApplicationConstant {
         public static int OK = 3;
         public static int EXPIRED = 4;
     }
+
+    public static class PaymentMethod{
+        public static int CASH = 1;
+        public static int CREDIT = 2;
+    }
+
     public static class EventType{
         public static String ADD= "add";
         public static String UPDATE= "update";

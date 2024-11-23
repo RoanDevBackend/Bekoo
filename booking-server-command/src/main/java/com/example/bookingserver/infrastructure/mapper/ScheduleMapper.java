@@ -4,6 +4,7 @@ import com.example.bookingserver.application.query.handler.response.FindByDoctor
 import com.example.bookingserver.application.query.handler.response.FindByPatientResponse;
 import com.example.bookingserver.application.command.reponse.ScheduleResponse;
 import com.example.bookingserver.domain.Schedule;
+import document.constant.ApplicationConstant;
 import document.event.schedule.ScheduleEvent;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -20,7 +21,14 @@ public interface ScheduleMapper {
         return "Quá hạn";
     }
 
+    @Named(value = "convertPaymentStatus")
+    default String convertPaymentStatus(int paymentMethod) {
+        if(paymentMethod == ApplicationConstant.PaymentMethod.CREDIT) return "Đã thanh toán";
+        return "Chưa thanh toán";
+    }
+
     @Mapping(target = "status", source = "statusId", qualifiedByName = "convertStatus")
+    @Mapping(target = "paymentStatus", source = "paymentStatus", qualifiedByName = "convertPaymentStatus")
     ScheduleResponse toResponse(Schedule schedule);
 
     @Mappings({
@@ -32,9 +40,11 @@ public interface ScheduleMapper {
     ScheduleEvent toEvent(Schedule schedule);
 
     @Mapping(target = "active", source = "statusId", qualifiedByName = "convertStatus")
+    @Mapping(target = "paymentStatus", source = "paymentStatus", qualifiedByName = "convertPaymentStatus")
     FindByPatientResponse toFindByUserResponse(Schedule schedule);
 
     @Mapping(target = "active", source = "statusId", qualifiedByName = "convertStatus")
+    @Mapping(target = "paymentStatus", source = "paymentStatus", qualifiedByName = "convertPaymentStatus")
     FindByDoctorResponse toFindByDoctorResponse(Schedule schedule);
 
 }

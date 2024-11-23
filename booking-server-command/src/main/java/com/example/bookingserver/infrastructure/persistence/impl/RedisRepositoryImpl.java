@@ -2,7 +2,6 @@ package com.example.bookingserver.infrastructure.persistence.impl;
 
 import com.example.bookingserver.infrastructure.persistence.repository.RedisRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
@@ -21,13 +20,13 @@ public class RedisRepositoryImpl implements RedisRepository {
     }
 
     @Override
-    public void set(String key, int value) {
+    public void set(String key, Object value) {
         redisTemplate.opsForValue().set(key, value);
     }
 
     @Override
-    public Integer get(String key) {
-        return (Integer) redisTemplate.opsForValue().get(key);
+    public Object get(String key) {
+        return redisTemplate.opsForValue().get(key);
     }
 
     @Override

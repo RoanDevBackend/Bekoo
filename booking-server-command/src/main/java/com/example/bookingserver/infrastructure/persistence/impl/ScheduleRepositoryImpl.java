@@ -59,4 +59,9 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
     public Page<Schedule> findByDoctor(String doctorId, int statusId, Pageable pageable, LocalDateTime start, LocalDateTime end) {
         return  scheduleJpaRepository.findByDoctor(doctorId, statusId, pageable, start, end);
     }
+
+    @Override
+    public Page<Schedule> findAll(Pageable pageable) {
+        return scheduleJpaRepository.findAll(pageable);
+    }
 }

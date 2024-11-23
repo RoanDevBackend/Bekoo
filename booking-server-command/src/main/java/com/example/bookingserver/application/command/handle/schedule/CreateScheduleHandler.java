@@ -4,18 +4,19 @@ package com.example.bookingserver.application.command.handle.schedule;
 import com.example.bookingserver.application.command.command.schedule.CreateScheduleCommand;
 import com.example.bookingserver.application.command.handle.exception.BookingCareException;
 import com.example.bookingserver.application.command.handle.exception.ErrorDetail;
-import com.example.bookingserver.application.command.reponse.ScheduleResponse;
 import com.example.bookingserver.application.command.service.MessageService;
+import com.example.bookingserver.application.command.service.OnlinePayService;
 import com.example.bookingserver.domain.*;
 import com.example.bookingserver.domain.repository.DoctorRepository;
 import com.example.bookingserver.domain.repository.ScheduleRepository;
 import com.example.bookingserver.domain.repository.SpecializeRepository;
-import com.example.bookingserver.infrastructure.constant.ApplicationConstant;
 import com.example.bookingserver.infrastructure.mapper.ScheduleMapper;
 import com.example.bookingserver.infrastructure.message.MessageProducer;
 import com.example.bookingserver.infrastructure.persistence.repository.PatientRepository;
+import document.constant.ApplicationConstant;
 import document.constant.TopicConstant;
 import document.event.schedule.ScheduleEvent;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -34,20 +35,21 @@ import java.util.List;
 @RequiredArgsConstructor
 @FieldDefaults(makeFinal = true)
 public class CreateScheduleHandler {
-    private ScheduleRepository scheduleRepository;
-    private ScheduleMapper scheduleMapper;
-    private PatientRepository patientRepository;
-    private DoctorRepository doctorRepository;
-    private SpecializeRepository specializeRepository;
-    private MessageProducer messageProducer;
-    private MessageService messageService;
-    private SpringTemplateEngine templateEngine;
+    OnlinePayService onlinePayService;
+    ScheduleRepository scheduleRepository;
+    ScheduleMapper scheduleMapper;
+    PatientRepository patientRepository;
+    DoctorRepository doctorRepository;
+    SpecializeRepository specializeRepository;
+    MessageProducer messageProducer;
+    MessageService messageService;
+    SpringTemplateEngine templateEngine;
     String TOPIC= TopicConstant.ScheduleTopic.CREATE_SCHEDULE;
 
 
     @Transactional
     @SneakyThrows
-    public ScheduleResponse execute(CreateScheduleCommand command){
+    public String execute(CreateScheduleCommand command, HttpServletRequest request) {
         Patient patient= patientRepository.findById(command.getPatientId())
                 .orElseThrow(() -> new BookingCareException(ErrorDetail.ERR_PATIENT_NOT_EXISTED));
         Doctor doctor = doctorRepository.findById(command.getDoctorId())
@@ -74,7 +76,9 @@ public class CreateScheduleHandler {
                 .specialize(specialize)
                 .patient(patient)
                 .checkIn(checkIn)
+                .paymentStatus(ApplicationConstant.PaymentMethod.CASH)
                 .build();
+
         scheduleRepository.save(schedule);
 
         ScheduleEvent event= scheduleMapper.toEvent(schedule);
@@ -109,9 +113,13 @@ public class CreateScheduleHandler {
 
         String subject= "Xác nhận lịch đặt khám";
         String content = templateEngine.process("confirm-schedule", context);
-
         messageService.sendMail(subject, patient.getUser().getEmail(), content, true);
-        return scheduleMapper.toResponse(schedule);
+
+        if(command.getPaymentMethod() == ApplicationConstant.PaymentMethod.CASH){
+            return null;
+        }else{
+            return onlinePayService.payCart(schedule.getId(), request);
+        }
     }
 
     private int getPersonPerDay(String doctorId){

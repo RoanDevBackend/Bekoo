@@ -6,5 +6,5 @@ import org.springframework.stereotype.Service;
 @Service
 public interface OnlinePayService {
     String payCart(String scheduleId, HttpServletRequest req);
-//    int extractPay(int vnpay_responseCode , int  vnp_TxnRef);
+    void extractPay(String vnp_TxnRef);
 }

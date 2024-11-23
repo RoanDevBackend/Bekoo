@@ -19,4 +19,5 @@ public class FindByPatientResponse {
     @JsonProperty(value = "status")
     String active;
     LocalDateTime checkIn;
+    String paymentStatus;
 }

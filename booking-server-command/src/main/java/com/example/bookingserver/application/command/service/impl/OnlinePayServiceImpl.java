@@ -4,6 +4,8 @@ import com.example.bookingserver.application.command.service.OnlinePayService;
 import com.example.bookingserver.domain.Schedule;
 import com.example.bookingserver.domain.repository.ScheduleRepository;
 import com.example.bookingserver.infrastructure.config.VNPayConfig;
+import com.example.bookingserver.infrastructure.persistence.repository.RedisRepository;
+import document.constant.ApplicationConstant;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -20,8 +22,13 @@ import java.util.*;
 public class OnlinePayServiceImpl implements OnlinePayService{
 
     final ScheduleRepository scheduleRepository;
+    final RedisRepository redisRepository;
+    final String PREFIX="VNPayID: ";
     @Value("${vnpay.return.url}")
     String vnp_ReturnUrl;
+
+
+
     @Override
     @SneakyThrows
     public String payCart(String scheduleId, HttpServletRequest req) {
@@ -32,7 +39,6 @@ public class OnlinePayServiceImpl implements OnlinePayService{
         Integer amount = schedule.getSpecialize().getPrice() * 100;
         String vnp_TxnRef = VNPayConfig.getRandomNumber() + "";
 
-//        saveInfoCart.put(Integer.parseInt(vnp_TxnRef) , requests) ;
         System.out.println(vnp_ReturnUrl);
         String vnp_IpAddr = VNPayConfig.getIpAddress(req);
         String vnp_TmnCode = VNPayConfig.vnp_TmnCode;
@@ -83,10 +89,23 @@ public class OnlinePayServiceImpl implements OnlinePayService{
                 }
             }
         }
+
         String queryUrl = query.toString();
         String vnp_SecureHash = VNPayConfig.hmacSHA512(VNPayConfig.secretKey, hashData.toString());
         queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
+
+        redisRepository.set(PREFIX + vnp_TxnRef, scheduleId);
+        redisRepository.setTimeToLive(PREFIX + vnp_TxnRef, 1000 * 60 * 15L);
         return VNPayConfig.vnp_PayUrl + "?" + queryUrl;
     }
 
+
+    @Override
+    public void extractPay(String vnp_TxnRef) {
+        String scheduleId= redisRepository.get(PREFIX + vnp_TxnRef).toString();
+        scheduleRepository.findById(scheduleId).ifPresent(schedule -> {
+            schedule.setPaymentStatus(ApplicationConstant.PaymentMethod.CREDIT);
+            scheduleRepository.save(schedule);
+        });
+    }
 }

@@ -19,4 +19,5 @@ public class ScheduleResponse {
     SpecializeResponse specialize;
     LocalDateTime checkIn;
     String status;
+    String paymentStatus;
 }

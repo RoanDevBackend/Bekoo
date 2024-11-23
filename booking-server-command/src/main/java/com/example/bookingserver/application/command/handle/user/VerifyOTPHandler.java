@@ -17,7 +17,7 @@ public class VerifyOTPHandler implements Handler<VerifyOTPCommand> {
     @Override
     @SneakyThrows
     public void execute(VerifyOTPCommand command) {
-        Integer codeForOncePerson=redisRepository.get(command.getEmail());
+        Integer codeForOncePerson= (Integer) redisRepository.get(command.getEmail());
         if(codeForOncePerson == null || !codeForOncePerson.equals(command.getCode())){
             throw new BookingCareException(ErrorDetail.ERR_USER_UN_AUTHENTICATE);
         }
