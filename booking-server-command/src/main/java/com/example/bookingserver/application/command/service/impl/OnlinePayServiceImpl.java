@@ -38,8 +38,6 @@ public class OnlinePayServiceImpl implements OnlinePayService{
         String orderType = "other";
         Integer amount = schedule.getSpecialize().getPrice() * 100;
         String vnp_TxnRef = VNPayConfig.getRandomNumber() + "";
-
-        System.out.println(vnp_ReturnUrl);
         String vnp_IpAddr = VNPayConfig.getIpAddress(req);
         String vnp_TmnCode = VNPayConfig.vnp_TmnCode;
         Map<String, String> vnp_Params = new HashMap<>();

@@ -88,12 +88,16 @@ services:
     container_name: booking-care-query
     depends_on:
       - kafka
+      - redis
     restart: on-failure
     ports:
       - "8084:8081"
     environment:
       SPRING_URL: http://localhost:8084
       SPRING_KAFKA_PORT: kafka:9092
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+      SPRING_REDIS_PASSWORD: root_admin
 volumes:
   mysql_data:
   redis_data:
