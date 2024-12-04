@@ -24,15 +24,7 @@ public class OutboxEventServiceImpl implements OutboxEventService {
         List<OutboxEvent> outboxEvents= outboxEventRepository.findAllByStatus(ApplicationConstant.EventStatus.PENDING);
 
         for(OutboxEvent x: outboxEvents) {
-            try {
-                messageProducer.sendMessage(x.getTopic(), x.getContent());
-                x.setStatus(ApplicationConstant.EventStatus.SEND);
-                outboxEventRepository.save(x);
-                log.info("SEND MESSAGE SUCCESS: {}", x.getTopic());
-            }catch (Exception e){
-                log.error("Send message failure: {}", x.getTopic());
-                log.error(e.getMessage());
-            }
+            messageProducer.sendMessage(x.getTopic(), x.getEventType(), x.getContent(), x.getAggregateId(), x.getAggregateType());
         }
     }
 }
