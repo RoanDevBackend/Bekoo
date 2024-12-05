@@ -24,6 +24,8 @@ First, clone the project to your computer:
 git clone https://github.com/RoanDevBackend/Bekoo
 ```
 
+Second, start docker applicaton.
+
 -   Start all services with one line of code:
 
 ```bash
