@@ -3,7 +3,6 @@ package com.example.bookingserverquery.application.handler.specialize;
 import com.example.bookingserverquery.application.query.QueryBase;
 import com.example.bookingserverquery.application.reponse.PageResponse;
 import com.example.bookingserverquery.domain.Specialize;
-import com.example.bookingserverquery.infrastructure.repository.ScheduleELRepository;
 import com.example.bookingserverquery.infrastructure.repository.SpecializeELRepository;
 import document.response.SpecializeResponse;
 import lombok.RequiredArgsConstructor;
