@@ -88,7 +88,7 @@ public class PatientController {
 
 
     @PostMapping("/contact/{patientId}")
-    @Operation(summary="Thêm liên hệ khẩn cấp", deprecated = true)
+    @Operation(summary="Thêm liên hệ khẩn cấp")
     public ApiResponse createContact(@PathVariable String patientId, @RequestBody @Valid EmergencyContactCommand command) {
         newEmergencyContactHandler.execute(patientId, command);
         return ApiResponse.success(200, "Thêm thông tin liên lạc khẩn cấp thành công");

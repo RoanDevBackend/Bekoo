@@ -46,7 +46,7 @@ public class UserController {
     }
 
     @GetMapping("/id/{id}")
-    @Operation(deprecated = true)
+    @Operation(summary = "Tìm kiếm người dùng bằng mã người dùng")
     public ApiResponse findById(@PathVariable String id){
         var response= findByIdHandler.execute(id);
         return ApiResponse.success(200, "Tìm kiếm người dùng", response);

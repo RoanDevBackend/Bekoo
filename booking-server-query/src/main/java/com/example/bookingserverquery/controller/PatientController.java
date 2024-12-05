@@ -46,7 +46,7 @@ public class PatientController {
     }
 
     @GetMapping("/contact/{patientId}")
-    @Operation(summary = "Lấy ra tất cả người liên hệ khẩn cấp theo bệnh nhân", deprecated = true)
+    @Operation(summary = "Lấy ra tất cả người liên hệ khẩn cấp theo bệnh nhân")
     public ApiResponse getAllEmergencyContact( @PathVariable String patientId
             ,@RequestParam(required = false, defaultValue = "1") Integer pageIndex
             , @RequestParam(required = false, defaultValue = "10000") Integer pageSize) {

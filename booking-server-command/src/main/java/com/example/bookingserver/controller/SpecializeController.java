@@ -54,7 +54,7 @@ public class SpecializeController {
         return ApiResponse.success(200, "Xoá thành công");
     }
 
-    @Operation(summary = "Tìm kiếm theo ID")
+    @Operation(summary = "Tìm kiếm theo ID", deprecated = true)
     @GetMapping(value = "/{id}")
     public ApiResponse get(@PathVariable("id") String id){
         var response= findBySpecializeIdHandler.execute(id);
