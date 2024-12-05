@@ -27,12 +27,12 @@ public class Doctor extends EntityBase{
     @Field(type = FieldType.Text)
     String description;
 
-
     @Field(type = FieldType.Integer)
     Integer price;
 
     @Field(type = FieldType.Integer)
-    Integer maximumPeoplePerDay;
+            @Builder.Default
+    Integer maximumPeoplePerDay= 0;
 
     @Field(type = FieldType.Nested)
     User user;

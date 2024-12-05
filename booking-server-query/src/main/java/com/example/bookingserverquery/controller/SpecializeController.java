@@ -1,11 +1,13 @@
 package com.example.bookingserverquery.controller;
 
 import com.example.bookingserverquery.application.handler.specialize.FindByDepartmentHandler;
+import com.example.bookingserverquery.application.handler.specialize.FindSpecializeByIdHandler;
 import com.example.bookingserverquery.application.handler.specialize.GetAllSpecializeHandler;
 import com.example.bookingserverquery.application.query.QueryBase;
 import document.response.ApiResponse;
 import document.response.SpecializeResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +22,7 @@ public class SpecializeController {
 
     GetAllSpecializeHandler getAllSpecializeHandler;
     FindByDepartmentHandler findByDepartmentHandler;
+    FindSpecializeByIdHandler findSpecializeByIdHandler;
 
     @Operation(summary = "Lấy ra tất cả")
     @GetMapping
@@ -30,7 +33,7 @@ public class SpecializeController {
                 .pageSize(pageSize)
                 .build();
         var response= getAllSpecializeHandler.execute(queryBase);
-        return ApiResponse.success(200, "Tìm kiếm tất cả chuyên ngành đang có", response);
+        return ApiResponse.success(200, "Tìm kiếm tất cả gói khám", response);
     }
 
     @Operation(summary = "Tìm kiếm chuyên ngành của chuyên khoa")
@@ -43,7 +46,15 @@ public class SpecializeController {
                 .pageSize(pageSize)
                 .build();
         var response= findByDepartmentHandler.execute(id, queryBase);
-        return ApiResponse.success(200, "Tìm kiếm theo chuyên khoa thành công" ,response);
+        return ApiResponse.success(200, "Tìm kiếm gói khám theo chuyên khoa" ,response);
     }
 
+    @Operation(summary = "Tìm kiếm gói khám theo mã gói khám", parameters = {
+            @Parameter(name = "id", description = "Mã gói khám")
+    })
+    @GetMapping("/{id}")
+    public ApiResponse findById(@PathVariable String id){
+        var response = findSpecializeByIdHandler.execute(id);
+        return ApiResponse.success(200, "Tìm kiếm gói khám bằng mã gói khám", response);
+    }
 }
