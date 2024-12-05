@@ -115,26 +115,8 @@ public class ScheduleController {
         return ApiResponse.success(200, "Tìm kiếm thành công", response);
     }
 
-//    @GetMapping("/payment/result")
-//    public ApiResponse onlinePaymentResult(@RequestParam String vnp_ResponseCode,
-//                                           @RequestParam String vnp_TxnRef){
-//        if(vnp_ResponseCode.equals("00")){
-//            onlinePayService.extractPay(vnp_TxnRef);
-//            return ApiResponse.success(200, "Thanh toán thành công");
-//        }
-//        if(vnp_ResponseCode.equals("11")) return ApiResponse.success(400, "Giao dịch không thành công do: Đã hết hạn chờ thanh toán. Xin quý khách vui lòng thực hiện lại giao dịch.");
-//        if(vnp_ResponseCode.equals("12")) return ApiResponse.success(400, "Giao dịch không thành công do: Thẻ/Tài khoản của khách hàng bị khóa.");
-//        if(vnp_ResponseCode.equals("13")) return ApiResponse.success(400, "Giao dịch không thành công do Quý khách nhập sai mật khẩu xác thực giao dịch (OTP). Xin quý khách vui lòng thực hiện lại giao dịch.");
-//        if(vnp_ResponseCode.equals("24")) return ApiResponse.success(400, "Giao dịch không thành công do: Khách hàng hủy giao dịch");
-//        if(vnp_ResponseCode.equals("51")) return ApiResponse.success(400, "Giao dịch không thành công do: Tài khoản của quý khách không đủ số dư để thực hiện giao dịch.");
-//        if(vnp_ResponseCode.equals("65")) return ApiResponse.success(400, "Giao dịch không thành công do: Tài khoản của Quý khách đã vượt quá hạn mức giao dịch trong ngày.");
-//        if(vnp_ResponseCode.equals("75")) return ApiResponse.success(400, "Ngân hàng thanh toán đang bảo trì.");
-//        if(vnp_ResponseCode.equals("79")) return ApiResponse.success(400, "Giao dịch không thành công do: KH nhập sai mật khẩu thanh toán quá số lần quy định. Xin quý khách vui lòng thực hiện lại giao dịch");
-//        return ApiResponse.success(400, "Bạn hãy thử lại");
-//    }
-
-    @PostMapping("/ipn")
-    public ApiResponse result(@RequestParam String vnp_ResponseCode,
+    @GetMapping("/payment/result")
+    public ApiResponse onlinePaymentResult(@RequestParam String vnp_ResponseCode,
                                            @RequestParam String vnp_TxnRef){
         if(vnp_ResponseCode.equals("00")){
             onlinePayService.extractPay(vnp_TxnRef);
