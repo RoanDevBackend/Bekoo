@@ -57,7 +57,6 @@ public class BookingServerCommandApplication implements ApplicationRunner {
 			command.setGender("Nam");
 			Set<Role> roles = new HashSet<>();
 			roles.add(new Role(ERole.ADMIN));
-			roles.add(new Role(ERole.USER));
 			createUserHandler.execute(command, roles);
 			log.info("Create ADMIN account successfully");
 		}
