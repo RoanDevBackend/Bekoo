@@ -33,9 +33,9 @@ cd Bekoo
 docker compose up -d
 ```
 
-The project Command will be running at `localhost:8080`. You can open `localhost:8080/swagger-ui.html` to open List API for Command Server
+The project Command will be running at `localhost:8083`. You can open `localhost:8083/swagger-ui.html` to open List API for Command Server
 
-The project Query will be running at `localhost:8081`. You can open `localhost:8081/swagger-ui.html` to open List API for Query Server
+The project Query will be running at `localhost:8084`. You can open `localhost:8084/swagger-ui.html` to open List API for Query Server
 
 
 
