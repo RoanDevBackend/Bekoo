@@ -3,6 +3,7 @@ package com.example.bookingserver.application.command.handle.exception;
 
 import document.response.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -15,7 +16,7 @@ public class GlobalException {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse> exception(Exception e){
         log.error(e.getMessage());
-        return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage()));
+        return ResponseEntity.badRequest().body(ApiResponse.error("Lỗi kết nối"));
     }
 
 
@@ -25,6 +26,11 @@ public class GlobalException {
         return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage()));
     }
 
+    @ExceptionHandler(DataAccessResourceFailureException.class)
+    public ResponseEntity<ApiResponse> timeoutException(DataAccessResourceFailureException e){
+        log.error(e.getMessage());
+        return ResponseEntity.badRequest().body(ApiResponse.error("Lỗi kết nối !"));
+    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse> methodArgument(MethodArgumentNotValidException e){

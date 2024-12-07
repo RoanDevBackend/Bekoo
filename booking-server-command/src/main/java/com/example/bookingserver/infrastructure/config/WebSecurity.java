@@ -34,7 +34,7 @@ public class WebSecurity {
             , "/swagger-ui/**"
             , "/swagger-ui.html"
             , "specialize/department/**"
-            , "/schedule/payment/result/**"
+            , "/payment/result/**"
     };
 
     final String[] getMappings={

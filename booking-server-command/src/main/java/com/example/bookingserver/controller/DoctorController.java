@@ -27,6 +27,7 @@ public class DoctorController {
     final Handler<SetMaximumPeoplePerDayCommand> setMaximumPeoplePerDayCommandHandler;
     final HandlerDTO<UpdateInfoDoctorCommand, DoctorResponse> updateInfoDoctorCommandHandler;
 
+    @Operation(summary = "Thêm bác sĩ")
     @PostMapping
     public ApiResponse create(@RequestBody @Valid CreateDoctorCommand command){
         var response= createDoctorCommandHandler.execute(command);

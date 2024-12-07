@@ -60,14 +60,14 @@ public class CreateScheduleHandler {
         LocalDateTime checkIn = LocalDateTime.parse(command.getCheckIn());
 
         if (checkIn.isBefore(LocalDateTime.now())) {
-            throw new RuntimeException("Ngày đặt không hợp lệ");
+            throw new BookingCareException(ErrorDetail.ERR_SCHEDULE_DATE);
         }
 
         int personPerDay = this.getPersonPerDay(command.getDoctorId());
         System.out.println(personPerDay);
 
         if (personPerDay + 1 > doctor.getMaximumPeoplePerDay()) {
-            throw new RuntimeException("Bác sĩ đã đạt giới hạn lịch khám trong ngày");
+            throw new BookingCareException(ErrorDetail.ERR_DOCTOR_PERSON);
         }
 
         Schedule schedule = Schedule.builder()

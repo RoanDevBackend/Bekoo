@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Successful</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background-color: #1a56db;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 20px;
+        }
+        .checkmark {
+            width: 40px;
+            height: 40px;
+            border: 4px solid white;
+            border-top: none;
+            border-right: none;
+            transform: rotate(-45deg);
+            margin-top: -5px;
+        }
+        h1 {
+            color: #1a56db;
+            margin-bottom: 20px;
+        }
+        p {
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .details {
+            background-color: #f9f9f9;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .button {
+            background-color: #1a56db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="success-icon">
+        <div class="checkmark"></div>
+    </div>
+    <h1 th:text="${txt_result}"></h1>
+    <p>Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi, Chúng tôi luôn mong muốn đem lại những trải nghiệm tốt nhất đến quý khách.</p>
+    <div class="details">
+        <p><strong>Mã hoá đơn:</strong> <span th:text="${txt_txnRef}"></span></p>
+        <p><strong>Giá tiền:</strong> <span th:text="${txt_amount}"></span></p>
+        <p><strong>Ngày thanh toán:</strong> <span th:text="${txt_date}"></span> </p>
+    </div>
+    <a class="button" th:href='${txt_url}'>
+        Quay trở về trang home
+    </a>
+</div>
+</body>
+</html>
