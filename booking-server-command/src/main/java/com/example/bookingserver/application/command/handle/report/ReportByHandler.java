@@ -39,7 +39,6 @@ public class ReportByHandler {
         }
         return responses;
     }
-
     public List<ReportChartTemplateResponse> executeTotal(LocalDate from, LocalDate to, int groupType) {
         List<ReportChartTemplateResponse> responses= new ArrayList<>();
         from = this.nextTo(from, groupType);

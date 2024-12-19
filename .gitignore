@@ -35,4 +35,10 @@ build/
 
 **/application.properties
 **/application.log
+**/.DS_Store
 *.log
+booking-server-query/docker-compose.yml
+booking-server-query/Dockerfile
+
+booking-server-command/docker-compose.yml
+booking-server-command/Dockerfile
