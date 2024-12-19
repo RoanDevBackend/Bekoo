@@ -9,12 +9,16 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.DateTimeException;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 
 @RequestMapping("/report")
 @RestController
@@ -41,10 +45,12 @@ public class ReportController {
     @Operation(summary = "Báo cáo số người đặt khám của toàn hệ thống", parameters = {
             @Parameter(name = "groupType", description = "1-Theo ngày, 2-Theo tuần, 3-Theo tháng, 4-Theo năm")
     })
-    public ApiResponse total( @RequestParam LocalDate fromDate,
-                                @RequestParam LocalDate toDate,
-                                @RequestParam int groupType) {
-        var response= reportByHandler.executeTotal(fromDate, toDate, groupType);
+    public ApiResponse total(@RequestParam String fromDate,
+                             @RequestParam String toDate,
+                             @RequestParam int groupType) {
+        LocalDate from = LocalDate.parse(fromDate);
+        LocalDate to = LocalDate.parse(toDate);
+        var response= reportByHandler.executeTotal(from, to, groupType);
         return ApiResponse.success(200, "Báo cáo số người đặt khám của toàn hệ thống", response);
     }
 
