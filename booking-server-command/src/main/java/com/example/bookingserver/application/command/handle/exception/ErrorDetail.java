@@ -22,6 +22,7 @@ public enum ErrorDetail {
     , ERR_PATIENT_NOT_EXISTED(404, "Bệnh nhân không tồn tại")
 
     , ERR_SCHEDULE_DATE(400, "Ngày đặt không hợp lệ")
+    ,ERR_INVALID_FILE_TYPE(400, "Chỉ được phép là hình ảnh")
     ;
 
     private final int code;

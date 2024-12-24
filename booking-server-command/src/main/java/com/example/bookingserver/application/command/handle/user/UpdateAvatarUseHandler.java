@@ -34,13 +34,15 @@ public class UpdateAvatarUseHandler implements HandlerDTO<UpdateAvatarUserComman
         User user= userRepository.findById(command.getId())
                 .orElseThrow(()-> new BookingCareException(ErrorDetail.ERR_USER_NOT_EXISTED));
         String url_data;
+        String contentType = command.getFileImage().getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            throw new BookingCareException(ErrorDetail.ERR_INVALID_FILE_TYPE);
+        }
         try {
             Map responseByCloudinary = cloudinary.uploader().upload(command.getFileImage().getBytes(), Map.of());
-
             url_data= responseByCloudinary.get("url") + "";
             user.setLinkAvatar(url_data);
             userRepository.save(user);
-
             UpdateAvatarUserEvent event= userMapper.fromUserToUpdateAvatarEvent(user);
             messageProducer.sendMessage(TOPIC, ApplicationConstant.EventType.UPDATE, event, event.getId(), "User");
         }catch (IOException e){
