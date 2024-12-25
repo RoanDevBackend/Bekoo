@@ -83,4 +83,12 @@ public interface ScheduleJpaRepository extends JpaRepository<Schedule, String> {
             "AND (s.statusId= :statusId " +
             "OR :statusId = 0 )" )
     Page<Schedule> findByDoctor(String doctorId, int statusId, Pageable pageable, LocalDateTime start, LocalDateTime end);
+
+
+    @Query("SELECT COUNT (*)  " +
+            "FROM Schedule s " +
+            "WHERE s.doctor.id = :doctorId " +
+            "AND s.checkIn = :checkIn " +
+            "AND s.statusId = 1 ")
+    int countScheduleByDoctorIdAndCheckIn(String doctorId, LocalDateTime checkIn);
 }

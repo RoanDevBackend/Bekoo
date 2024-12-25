@@ -11,18 +11,11 @@ spring:
         enabled: true
   kafka:
     bootstrap-servers: ${kafka.server}
-#    security:
-#      protocol: "SSL"
-#    ssl:
-#      trust-store-location: classpath:client.truststore.jks
-#      trust-store-password: ${kafka.password}
-#      key-store-location: classpath:client.keystore.p12
-#      key-store-password: ${kafka.password}
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
     consumer:
-      group-id: group-1
+      group-id: 1
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       auto-offset-reset: earliest

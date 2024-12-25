@@ -12,6 +12,7 @@ import com.example.bookingserver.application.query.handler.schedule.FindHistoryS
 import com.example.bookingserver.application.query.handler.schedule.FindHistoryScheduleByPatientHandler;
 import com.example.bookingserver.application.query.QueryBase;
 import com.example.bookingserver.application.command.reponse.ApiResponse;
+import com.example.bookingserver.application.query.handler.schedule.GetAvailableTimeByDoctorHandler;
 import com.example.bookingserver.infrastructure.constant.ApplicationConstant;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -40,6 +41,7 @@ public class ScheduleController {
     FindHistoryScheduleByDoctorHandler findHistoryScheduleByDoctorHandler;
     FindAllScheduleHandler findAllScheduleHandler;
     OnlinePayService onlinePayService;
+    GetAvailableTimeByDoctorHandler getAvailableTimeByDoctorHandler;
 
     @Operation(summary = "Đặt lịch khám", parameters = {
             @Parameter(name = "paymentMethod", description = "1 Thanh toán khi tới khám. 2 Thanh toán bằng thẻ tín dụng")
@@ -113,6 +115,13 @@ public class ScheduleController {
         LocalDateTime end= start.plusDays(1).withHour(0).withMinute(0).withSecond(0).withNano(0);
         var response = findHistoryScheduleByDoctorHandler.execute(id, pageable, start, end, ApplicationConstant.Status.CONFIRMED);
         return ApiResponse.success(200, "Tìm kiếm thành công", response);
+    }
+
+    @Operation(summary = "Lấy ra trạng thái thời gian của bác sĩ")
+    @GetMapping("/doctor/time/{doctorId}")
+    public ApiResponse getAvailableTime(@PathVariable String doctorId){
+        var response = getAvailableTimeByDoctorHandler.execute(doctorId);
+        return ApiResponse.success(200, "" , response);
     }
 
     @GetMapping("/payment/result")

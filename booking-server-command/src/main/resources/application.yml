@@ -33,6 +33,10 @@ spring:
     multipart:
       max-file-size: 10MB
       max-request-size: 12MB
+  web:
+    resources:
+      add-mappings: false
+      #Khong tu anh xa tai nguyen tinh
 logging:
   level:
     root: error
