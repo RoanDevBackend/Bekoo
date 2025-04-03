@@ -2,6 +2,7 @@
 
 services:
   kafka:
+    container_name: kafka
     image: bitnami/kafka:latest
     ports:
       - "9092:9092"
@@ -9,18 +10,17 @@ services:
     environment:
       - KAFKA_CFG_NODE_ID=0
       - KAFKA_CFG_PROCESS_ROLES=controller,broker
-      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@localhost:9093
-      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
-      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:9093
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,PLAINTEXT_HOST://:29092,CONTROLLER://:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,CONTROLLER:PLAINTEXT
       - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
       - ALLOW_PLAINTEXT_LISTENER=yes
-    volumes:
-      - kafka_data:/var/lib/kafka
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
 
   mysql:
     image: mysql:8.0
-    container_name: mysql_docker
+    container_name: mysql
     environment:
       MYSQL_DATABASE: root
       MYSQL_ROOT_PASSWORD: root_admin
@@ -60,12 +60,11 @@ services:
     ports:
       - "9200:9200"
       - "9300:9300"
-    networks:
-      - es_network
 
 
   booking-care-command:
-    image: roanvanquyen/booking-care-command:latest
+    platform: linux/amd64
+    image: presidentquyen/booking-care-command:v1.0.0
     container_name: booking-care-command
     depends_on:
       - mysql
@@ -85,7 +84,8 @@ services:
       SPRING_REDIS_PASSWORD: root_admin
       WEB_URL: localhost:8082/home
   booking-care-query:
-    image: roanvanquyen/booking-care-query:latest
+    platform: linux/amd64
+    image: presidentquyen/booking-care-query:v1.0.0
     container_name: booking-care-query
     depends_on:
       - kafka
@@ -95,6 +95,7 @@ services:
       - "8084:8081"
     environment:
       SPRING_URL: http://localhost:8084
+      SPRING_ELASTICSEARCH_ENDPOINT: elasticsearch:9200
       SPRING_KAFKA_PORT: kafka:9092
       SPRING_REDIS_HOST: redis
       SPRING_REDIS_PORT: 6379
@@ -104,7 +105,3 @@ volumes:
   redis_data:
   kafka_data:
   es_data:
-    driver: local
-networks:
-  es_network:
-    driver: bridge

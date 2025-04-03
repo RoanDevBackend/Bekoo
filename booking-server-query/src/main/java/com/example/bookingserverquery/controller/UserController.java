@@ -21,8 +21,8 @@ public class UserController {
     final GetAllHandler getAllHandler;
     final FindByIdHandler findByIdHandler;
 
-    @GetMapping("/name/{name}")
-    public ApiResponse findByName(@PathVariable String name,
+    @GetMapping("/name")
+    public ApiResponse findByName(@RequestParam(required = false) String name,
                                   @RequestParam(required = false, defaultValue = "1") int pageIndex ,
                                   @RequestParam(required = false, defaultValue = "10000") int pageSize) {
         var query= FindByNameQuery.<UserResponse>builder()

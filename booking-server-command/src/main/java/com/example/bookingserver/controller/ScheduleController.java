@@ -117,10 +117,10 @@ public class ScheduleController {
         return ApiResponse.success(200, "Tìm kiếm thành công", response);
     }
 
-    @Operation(summary = "Lấy ra trạng thái thời gian của bác sĩ")
-    @GetMapping("/doctor/time/{doctorId}")
-    public ApiResponse getAvailableTime(@PathVariable String doctorId){
-        var response = getAvailableTimeByDoctorHandler.execute(doctorId);
+    @Operation(summary = "Lấy ra trạng thái thời gian của bác sĩ", parameters = {@Parameter(name="date" , description = "yyyy-mm-dd") })
+    @GetMapping("/doctor/time")
+    public ApiResponse getAvailableTime(@RequestParam String doctorId, @RequestParam String date){
+        var response = getAvailableTimeByDoctorHandler.execute(doctorId, date);
         return ApiResponse.success(200, "" , response);
     }
 

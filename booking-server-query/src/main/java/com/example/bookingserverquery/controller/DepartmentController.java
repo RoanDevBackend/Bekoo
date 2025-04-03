@@ -34,9 +34,9 @@ public class DepartmentController {
         return ApiResponse.success(200, "Tìm kiếm thành công", response);
     }
 
-    @GetMapping("/name/{name}")
+    @GetMapping("/name")
     @Operation(summary = "Tìm kiếm theo tên")
-    public ApiResponse getDepartmentByName(@PathVariable String name,
+    public ApiResponse getDepartmentByName(@RequestParam(required = false) String name,
                                            @RequestParam(required = false, defaultValue = "1") int pageIndex,
                                            @RequestParam(required = false, defaultValue = "10000") int pageSize) {
         var query = FindByNameQuery.<DepartmentResponse>builder()

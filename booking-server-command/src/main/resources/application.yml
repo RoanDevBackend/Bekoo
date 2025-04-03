@@ -37,6 +37,9 @@ spring:
     resources:
       add-mappings: false
       #Khong tu anh xa tai nguyen tinh
+
 logging:
   level:
     root: error
+server:
+  port: ${server.port}

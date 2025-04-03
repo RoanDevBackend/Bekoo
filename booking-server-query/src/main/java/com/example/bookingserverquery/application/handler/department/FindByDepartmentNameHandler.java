@@ -29,19 +29,16 @@ public class FindByDepartmentNameHandler {
     public FindByNameResponse<DepartmentResponse> execute(FindByNameQuery<DepartmentResponse> query){
         Pageable pageable= PageRequest.of(query.getPageIndex()-1, query.getPageSize());//Không có trường createdAt mặc định
 
-        Page<Department> page= departmentELRepository.findDepartmentsByName(query.getName(), pageable);
+        Page<Department> page = query.getName() == null ? departmentELRepository.findAll(pageable) : departmentELRepository.findDepartmentsByName(query.getName(), pageable);
 
         List<DepartmentResponse> departmentResponses= new ArrayList<>();
 
         for(Department x: page.getContent()){
             DepartmentResponse departmentResponse = departmentMapper.toResponse(x);
-
             Integer totalDoctor= doctorDepartmentELRepository.countByDepartmentId(x.getId());
-            Long totalSpecialize = specializeELRepository.countByDepartment(x.getId()); ;
-
+            Long totalSpecialize = specializeELRepository.countByDepartment(x.getId());
             departmentResponse.setTotalDoctor(totalDoctor);
             departmentResponse.setTotalSpecialize(totalSpecialize);
-
             departmentResponses.add(departmentResponse);
         }
 

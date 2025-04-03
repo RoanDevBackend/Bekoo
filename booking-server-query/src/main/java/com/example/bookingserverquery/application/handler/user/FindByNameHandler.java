@@ -24,7 +24,7 @@ public class FindByNameHandler {
     public FindByNameResponse<UserResponse> findByName(FindByNameQuery<UserResponse> query){
         Pageable pageable= query.getPageable();
 
-        Page<User> page= userRepository.findByName(query.getName(), pageable);
+        Page<User> page= query.getName() == null ? userRepository.getAll(query.getPageable()) : userRepository.findByName(query.getName(), pageable);
 
         List<UserResponse> userResponses= new ArrayList<>();
         for(User x: page.getContent()){

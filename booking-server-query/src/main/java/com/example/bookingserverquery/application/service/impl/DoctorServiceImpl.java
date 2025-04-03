@@ -38,7 +38,7 @@ public class DoctorServiceImpl implements DoctorService {
             var department= departmentELRepository.findById(x.getDepartmentId());
             department.ifPresent(value -> departmentNames.add(value.getName()));
         }
-        StringBuilder departmentName= new StringBuilder("Thuộc khoa: ");
+        StringBuilder departmentName= new StringBuilder();
         if(departmentNames.isEmpty()){
             departmentName = new StringBuilder("Bác sĩ này hiện chưa thuộc khoa nào");
         }
@@ -50,7 +50,6 @@ public class DoctorServiceImpl implements DoctorService {
         }
         Long totalPatientsVisited = getTotalPatientsVisited(doctor.getId());
         DoctorResponse doctorResponse= doctorMapper.toResponse(doctor);
-
 
         doctorResponse.setTotalPatientsVisited(totalPatientsVisited);
         doctorResponse.setDepartment(departmentName.toString());
