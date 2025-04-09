@@ -20,9 +20,10 @@ public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
+    @Column(columnDefinition = "text")
     String content;
     @Nullable
-    Long sender_id;
+    String senderId;
     LocalDateTime timestamp;
     @Column(name = "group_id")
     int groupId;

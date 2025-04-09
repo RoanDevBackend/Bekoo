@@ -17,31 +17,32 @@ public class ChatBotServiceImpl implements ChatBotService {
     ChatBotJpaRepository chatBotRepository;
 
     @Override
-    public boolean checkUserIdExits(Long id) {
-        if (chatBotRepository.existsBySenderId(id)) return false;
-        return true;
-    }
-
-    @Override
-    public int takeGroupIdByUserId(Long id) {
-        Message userMessage = chatBotRepository.findById(id).orElseThrow(() -> new RuntimeException("Not found"));
-        return userMessage.getGroupId();
-    }
-
-    @Override
-    public boolean addNewUser(Long id, String content) {
-        if (!checkUserIdExits(id))
-            return false;
-        if (saveContent(id, content, true, 1)) return true;
+    public boolean checkUserIdExits(String id) {
+        if (chatBotRepository.existsBySenderId(id)) return true;
         return false;
     }
 
     @Override
-    public boolean saveContent(Long id, String content, boolean isUser, int groupId) {
+    public int takeGroupIdByUserId(String id) {
+        Message userMessage = chatBotRepository.findBySenderId(id);
+        return userMessage.getGroupId();
+    }
+
+    @Override
+    public boolean addNewChat(String id, String content, boolean isUser) {
+        if (isUser) saveContent(id, content, true, chatBotRepository.findMaxGroupId()+1);
+        else {
+            saveContent(id, content, false, chatBotRepository.findMaxGroupId());
+        }
+        return true;
+    }
+
+    @Override
+    public boolean saveContent(String id, String content, boolean isUser, int groupId) {
         Message chatMessage = new Message().builder()
                 .groupId(groupId)
                 .content(content)
-                .sender_id((isUser) ? id : null)
+                .senderId((isUser) ? id : null)
                 .timestamp(LocalDateTime.now())
                 .build();
         chatBotRepository.save(chatMessage);

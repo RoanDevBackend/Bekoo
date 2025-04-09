@@ -2,11 +2,11 @@ package com.example.bookingserver.application.command.service;
 
 public interface ChatBotService {
     // Kiểm tra xem người dùng đã từng chat hay chưa
-    boolean checkUserIdExits(Long id);
+    boolean checkUserIdExits(String id);
     // Lấy groupId của User hiện tại
-    int takeGroupIdByUserId(Long id);
+    int takeGroupIdByUserId(String id);
     // Thêm người dùng mới (sẽ sort groupId và ++groupIdMaximum)
-    boolean addNewUser(Long id, String content);
+    boolean addNewChat(String id, String content, boolean isUser);
     // Lưu đoạn chat
-    boolean saveContent(Long id, String content, boolean isUser, int groupId);
+    boolean saveContent(String id, String content, boolean isUser, int groupId);
 }
