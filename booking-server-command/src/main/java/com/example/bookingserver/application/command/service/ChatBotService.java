@@ -9,4 +9,6 @@ public interface ChatBotService {
     boolean addNewChat(String id, String content, boolean isUser);
     // Lưu đoạn chat
     boolean saveContent(String id, String content, boolean isUser, int groupId);
+    // Thêm đoạn chat
+    boolean addUserChat(String id, String content);
 }

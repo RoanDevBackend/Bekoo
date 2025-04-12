@@ -30,7 +30,7 @@ public class ChatBotServiceImpl implements ChatBotService {
 
     @Override
     public boolean addNewChat(String id, String content, boolean isUser) {
-        if (isUser) saveContent(id, content, true, chatBotRepository.findMaxGroupId()+1);
+        if (isUser) saveContent(id, content, true, chatBotRepository.findMaxGroupId() + 1);
         else {
             saveContent(id, content, false, chatBotRepository.findMaxGroupId());
         }
@@ -46,6 +46,20 @@ public class ChatBotServiceImpl implements ChatBotService {
                 .timestamp(LocalDateTime.now())
                 .build();
         chatBotRepository.save(chatMessage);
+        return true;
+    }
+
+    @Override
+    public boolean addUserChat(String id, String content) {
+        int group = 0;
+        if (!content.equals("") && !id.equals("")) {
+            if (checkUserIdExits(id)) {
+                group = takeGroupIdByUserId(id);
+                saveContent(id, content, true, group);
+            } else {
+                addNewChat(id, content, true);
+            }
+        }
         return true;
     }
 }
