@@ -1,5 +1,11 @@
 package com.example.bookingserver.application.command.service;
 
+import com.example.bookingserver.application.command.reponse.ChatBotResponse;
+import com.example.bookingserver.domain.Message;
+
+import java.io.IOException;
+import java.util.List;
+
 public interface ChatBotService {
     // Kiểm tra xem người dùng đã từng chat hay chưa
     boolean checkUserIdExits(String id);
@@ -11,4 +17,8 @@ public interface ChatBotService {
     boolean saveContent(String id, String content, boolean isUser, int groupId);
     // Thêm đoạn chat
     boolean addUserChat(String id, String content);
+    // AI
+    String askAI(String userMessage, String userID) throws IOException;
+    // Lấy dữ liệu đoạn chat
+    List<ChatBotResponse> getMessages(int groupId);
 }
