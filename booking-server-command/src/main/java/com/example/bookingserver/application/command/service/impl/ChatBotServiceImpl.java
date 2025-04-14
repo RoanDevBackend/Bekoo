@@ -30,7 +30,7 @@ public class ChatBotServiceImpl implements ChatBotService {
 
     @Override
     public boolean checkUserIdExits(String id) {
-        if(userRepository.findById(id).isEmpty()){
+        if (userRepository.findById(id).isEmpty()) {
             throw new BookingCareException(ErrorDetail.ERR_USER_NOT_EXISTED);
         }
         return chatBotRepository.existsBySenderId(id);
@@ -38,16 +38,16 @@ public class ChatBotServiceImpl implements ChatBotService {
 
     @Override
     public int takeGroupIdByUserId(String id) {
+        if (chatBotRepository.findBySenderId(id).isEmpty()) {
+            throw new BookingCareException(ErrorDetail.ERR_USER_NOT_EXISTED);
+        }
         Message userMessage = chatBotRepository.findBySenderId(id).get(0);
         return userMessage.getGroupId();
     }
 
     @Override
     public boolean addNewChat(String id, String content, boolean isUser) {
-        if (isUser) saveContent(id, content, true, chatBotRepository.findMaxGroupId() + 1);
-        else {
-            saveContent(id, content, false, chatBotRepository.findMaxGroupId());
-        }
+        saveContent(id, content, isUser ? true : false, chatBotRepository.findMaxGroupId() + 1);
         return true;
     }
 
@@ -65,20 +65,25 @@ public class ChatBotServiceImpl implements ChatBotService {
 
     @Override
     public boolean addUserChat(String id, String content) {
+        if (userRepository.findById(id).isEmpty()) {
+            throw new BookingCareException(ErrorDetail.ERR_USER_NOT_EXISTED);
+        }
         int group = 0;
-        if (!content.equals("") && !id.equals("")) {
-            if (checkUserIdExits(id)) {
-                group = takeGroupIdByUserId(id);
-                saveContent(id, content, true, group);
-            } else {
-                addNewChat(id, content, true);
-            }
+        if (checkUserIdExits(id)) {
+            group = takeGroupIdByUserId(id);
+            saveContent(id, content, true, group);
+        } else {
+            addNewChat(id, content, true);
         }
         return true;
     }
 
     @Override
     public String askAI(String userMessage, String userId) throws IOException {
+        if (userRepository.findById(userId).isEmpty()) {
+            throw new BookingCareException(ErrorDetail.ERR_USER_NOT_EXISTED);
+        }
+
         String botResponse = askGemini(userMessage);
         int group = 0;
 
@@ -93,12 +98,14 @@ public class ChatBotServiceImpl implements ChatBotService {
 
     @Override
     public List<ChatBotResponse> getMessages(int groupId) {
-        if (chatBotRepository.findByGroupId(groupId).isEmpty()){
-            throw new RuntimeException("Không lấy được dữ liệu đoạn chat");
+        if (chatBotRepository.findByGroupId(groupId) == null) {
+            throw new BookingCareException(ErrorDetail.ERR_GROUP_NOT_EXISTED);
         }
         List<ChatBotResponse> chatBotResponses = new ArrayList<>();
-        List<Message> messages = chatBotRepository.findByGroupId(groupId);
-        for(Message m : messages){
+
+        List<Message> messages = chatBotRepository.findByGroupIdOrderByTimestampAsc(groupId);
+
+        for (Message m : messages) {
             chatBotResponses.add(chatMapper.toResponse(m));
         }
         return chatBotResponses;
@@ -106,6 +113,7 @@ public class ChatBotServiceImpl implements ChatBotService {
 
     static String API_KEY = "AIzaSyC53a7Hl-WqvIX2nJQr77JIA5ZeLtTwAZ4";
     static String GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + API_KEY;
+
     public String askGemini(String prompt) throws IOException {
         OkHttpClient client = new OkHttpClient();
 

@@ -18,4 +18,7 @@ public interface ChatBotJpaRepository extends JpaRepository<Message, Long> {
     List<Message> findBySenderId(String senderId);
 
     List<Message> findByGroupId(int groupId);
+
+    List<Message> findByGroupIdOrderByTimestampAsc(int groupId);
+
 }
