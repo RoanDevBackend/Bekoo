@@ -6,6 +6,7 @@ import com.example.bookingserver.application.command.reponse.ChatBotResponse;
 import com.example.bookingserver.application.command.service.ChatBotService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ public class ChatBotController {
     ChatBotService chatBotService;
 
     @PostMapping
+    @SecurityRequirement(name="bearerAuth")
     public ApiResponse sendMessage(@RequestBody @Valid ChatMessageCommand request) throws IOException {
         String content = request.getContent();
         String senderId = request.getSenderId();
@@ -35,6 +37,7 @@ public class ChatBotController {
     }
 
     @GetMapping
+    @SecurityRequirement(name="bearerAuth")
     @Operation(summary = "Lấy dữ liệu tin nhắn của User và Bot", parameters = {
             @Parameter(name = "type", description = "0: Bot. 1: User")
     })
