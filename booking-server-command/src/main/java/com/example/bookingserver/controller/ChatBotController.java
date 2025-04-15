@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -29,7 +30,8 @@ public class ChatBotController {
     ChatBotService chatBotService;
     ChatBotHandler chatBotHandler;
     UserRepository userRepository;
-//
+
+    //
 //    @PostMapping
 //    @SecurityRequirement(name="bearerAuth")
 //    public ApiResponse sendMessage(@RequestBody @Valid ChatMessageCommand request) throws IOException {
@@ -43,14 +45,13 @@ public class ChatBotController {
 //    }
 //
     @GetMapping
-    @SecurityRequirement(name="bearerAuth")
+    @SecurityRequirement(name = "bearerAuth")
     @Operation(summary = "Lấy dữ liệu tin nhắn của User và Bot", parameters = {
             @Parameter(name = "type", description = "0: Bot. 1: User")
     })
-    public ApiResponse getMessage(@RequestParam(name = "senderId") String senderId){
-        if (!chatBotService.checkUserIdExits(senderId)){
-            String response = "Chưa có dữ liệu trước đây";
-            return ApiResponse.error(404, response);
+    public ApiResponse getMessage(@RequestParam(name = "senderId") String senderId) {
+        if (!chatBotService.checkUserIdExits(senderId)) {
+            return ApiResponse.success(200, "Lấy dữ liệu lần đầu chat", new ChatBotResponse("Xin chào! Tôi có thể giúp gì cho bạn?", 0, LocalDateTime.now()));
         }
         List<ChatBotResponse> responses = chatBotService.getMessages(chatBotService.takeGroupIdByUserId(senderId));
         return ApiResponse.success(200, "Lấy dữ liệu thành công", responses);

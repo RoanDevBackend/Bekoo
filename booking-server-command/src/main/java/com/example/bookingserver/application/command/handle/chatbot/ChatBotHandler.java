@@ -32,6 +32,7 @@ public class ChatBotHandler extends TextWebSocketHandler {
 
         if (userId.equals("751e02a8-658f-4ef3-a415-2089ff0819b0")){
             chatBotService.saveContent(null, content, false, chatBotService.takeGroupIdByUserId(userId));
+            session.sendMessage(new TextMessage(""));
             return;
         }
 
