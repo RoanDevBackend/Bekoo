@@ -1,72 +1,31 @@
 package com.example.bookingserver.controller;
 
-import com.example.bookingserver.application.command.command.chatbot.ChatMessageCommand;
-import com.example.bookingserver.application.command.handle.chatbot.ChatBotHandler;
 import com.example.bookingserver.application.command.reponse.ApiResponse;
-import com.example.bookingserver.application.command.reponse.ChatBotResponse;
+import com.example.bookingserver.application.command.reponse.ListUserChatResponse;
 import com.example.bookingserver.application.command.service.ChatBotService;
-import com.example.bookingserver.domain.repository.UserRepository;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 @RestController
-@RequestMapping("/api/chat")
-@RequiredArgsConstructor
+@RequestMapping("/chat/list-user")
+@SecurityRequirement(name="bearerAuth")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@RequiredArgsConstructor
 public class ChatBotController {
 
     ChatBotService chatBotService;
-    ChatBotHandler chatBotHandler;
-    UserRepository userRepository;
 
-    //
-//    @PostMapping
-//    @SecurityRequirement(name="bearerAuth")
-//    public ApiResponse sendMessage(@RequestBody @Valid ChatMessageCommand request) throws IOException {
-//        String content = request.getContent();
-//        String senderId = request.getSenderId();
-//        String botResponse = "";
-//        if (chatBotService.addUserChat(senderId, content)){
-//            botResponse = chatBotService.askAI(content, senderId);
-//        }
-//        return ApiResponse.success(200, "Gửi tin nhắn thành công!", botResponse);
-//    }
-//
     @GetMapping
-    @SecurityRequirement(name = "bearerAuth")
-    @Operation(summary = "Lấy dữ liệu tin nhắn của User và Bot", parameters = {
-            @Parameter(name = "type", description = "0: Bot. 1: User")
-    })
-    public ApiResponse getMessage(@RequestParam(name = "senderId") String senderId) {
-        if (!chatBotService.checkUserIdExits(senderId)) {
-            return ApiResponse.success(200, "Lấy dữ liệu lần đầu chat", new ChatBotResponse("Xin chào! Tôi có thể giúp gì cho bạn?", 0, LocalDateTime.now()));
-        }
-        List<ChatBotResponse> responses = chatBotService.getMessages(chatBotService.takeGroupIdByUserId(senderId));
-        return ApiResponse.success(200, "Lấy dữ liệu thành công", responses);
+    public ApiResponse getListUser(@RequestParam("search-word") String word){
+        List<ListUserChatResponse> response = chatBotService.getListUserChat();
+        return ApiResponse.success(200, "Lay thanh cong", response);
     }
-
-//    ChatBotHandler chatBotHandler;
-//    @PostMapping("/send")
-//    public ResponseEntity<String> sendMessage(@RequestBody Map<String, String> req) throws IOException {
-//        String userId = req.get("userId");
-//        String message = req.get("message");
-//
-//        chatBotHandler.sendMessageToUser(userId, message);
-//
-//        return ResponseEntity.ok("Gửi thành công!");
-//    }
-
-
 }
