@@ -1,6 +1,7 @@
 package com.example.bookingserver.application.command.service;
 
 import com.example.bookingserver.application.command.reponse.ChatBotResponse;
+import com.example.bookingserver.application.command.reponse.ListUserChatResponse;
 import com.example.bookingserver.domain.Message;
 
 import java.io.IOException;
@@ -21,4 +22,6 @@ public interface ChatBotService {
     String askAI(String userMessage, String userID) throws IOException;
     // Lấy dữ liệu đoạn chat
     List<ChatBotResponse> getMessages(int groupId);
+
+    List<ListUserChatResponse> getListUserChat();
 }

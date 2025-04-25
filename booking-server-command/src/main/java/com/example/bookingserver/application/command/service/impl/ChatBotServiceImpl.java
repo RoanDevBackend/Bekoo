@@ -3,6 +3,7 @@ package com.example.bookingserver.application.command.service.impl;
 import com.example.bookingserver.application.command.handle.exception.BookingCareException;
 import com.example.bookingserver.application.command.handle.exception.ErrorDetail;
 import com.example.bookingserver.application.command.reponse.ChatBotResponse;
+import com.example.bookingserver.application.command.reponse.ListUserChatResponse;
 import com.example.bookingserver.application.command.service.ChatBotService;
 import com.example.bookingserver.domain.Message;
 import com.example.bookingserver.domain.repository.UserRepository;
@@ -47,13 +48,13 @@ public class ChatBotServiceImpl implements ChatBotService {
 
     @Override
     public boolean addNewChat(String id, String content, boolean isUser) {
-        saveContent(id, content, isUser ? true : false, chatBotRepository.findMaxGroupId() + 1);
+        saveContent(id, content, isUser, chatBotRepository.findMaxGroupId() + 1);
         return true;
     }
 
     @Override
     public boolean saveContent(String id, String content, boolean isUser, int groupId) {
-        Message chatMessage = new Message().builder()
+        Message chatMessage = Message.builder()
                 .groupId(groupId)
                 .content(content)
                 .senderId((isUser) ? id : null)
@@ -68,7 +69,7 @@ public class ChatBotServiceImpl implements ChatBotService {
         if (userRepository.findById(id).isEmpty()) {
             throw new BookingCareException(ErrorDetail.ERR_USER_NOT_EXISTED);
         }
-        int group = 0;
+        int group;
         if (checkUserIdExits(id)) {
             group = takeGroupIdByUserId(id);
             saveContent(id, content, true, group);
@@ -85,7 +86,7 @@ public class ChatBotServiceImpl implements ChatBotService {
         }
 
         String botResponse = askGemini(userMessage);
-        int group = 0;
+        int group;
 
         if (checkUserIdExits(userId)) {
             group = takeGroupIdByUserId(userId);
@@ -109,6 +110,19 @@ public class ChatBotServiceImpl implements ChatBotService {
             chatBotResponses.add(chatMapper.toResponse(m));
         }
         return chatBotResponses;
+    }
+
+    @Override
+    public List<ListUserChatResponse> getListUserChat() {
+        List<Object[]> results = chatBotRepository.findLatestSenderPerGroup();
+        List<ListUserChatResponse> listUserChatResponses = new ArrayList<>();
+        for(Object[] row : results){
+            int groupId = (int) row[0];
+            String senderId = (String) row[1];
+            LocalDateTime timestamp = (LocalDateTime) row[2];
+            listUserChatResponses.add(new ListUserChatResponse(senderId, groupId, timestamp));
+        }
+        return listUserChatResponses;
     }
 
     static String API_KEY = "AIzaSyC53a7Hl-WqvIX2nJQr77JIA5ZeLtTwAZ4";

@@ -1,6 +1,9 @@
 package com.example.bookingserver.application.command.reponse;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
@@ -9,9 +12,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ChatBotResponse {
+public class ListUserChatResponse {
     String userId;
-    String content;
-    int type;
-    LocalDateTime timestamp;
+    int groupId;
+    LocalDateTime time;
 }
