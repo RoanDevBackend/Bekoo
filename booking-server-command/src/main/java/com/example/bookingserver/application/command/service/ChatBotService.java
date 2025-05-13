@@ -2,7 +2,6 @@ package com.example.bookingserver.application.command.service;
 
 import com.example.bookingserver.application.command.reponse.ChatBotResponse;
 import com.example.bookingserver.application.command.reponse.ListUserChatResponse;
-import com.example.bookingserver.domain.Message;
 
 import java.io.IOException;
 import java.util.List;

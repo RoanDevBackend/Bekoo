@@ -24,7 +24,7 @@ public class ChatBotController {
     ChatBotService chatBotService;
 
     @GetMapping
-    public ApiResponse getListUser(@RequestParam("search-word") String word){
+    public ApiResponse getListUser(@RequestParam(value = "search-word", required = false) String word){
         List<ListUserChatResponse> response = chatBotService.getListUserChat();
         return ApiResponse.success(200, "Lay thanh cong", response);
     }

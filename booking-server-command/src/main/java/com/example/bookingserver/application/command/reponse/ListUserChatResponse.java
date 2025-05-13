@@ -13,7 +13,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ListUserChatResponse {
-    String userId;
+    UserResponse userResponse;
     int groupId;
+    String lastestMessage;
     LocalDateTime time;
+
 }
