@@ -17,6 +17,7 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,19 +74,21 @@ public class ChatBotHandler extends TextWebSocketHandler {
     private String getHistoryMessage(String userId) throws JsonProcessingException {
         List<ChatBotResponse> responses = chatBotService.getMessages(chatBotService.takeGroupIdByUserId(userId));
 
-        Map<String, Object> response = new HashMap<>();
+        List<Map<String, Object>> listResponse = new ArrayList<>();
 
-        for(ChatBotResponse c : responses){
-            response.put("content", c.getContent());
-            response.put("type", c.getType());
-            response.put("time", c.getTimestamp());
+        for (ChatBotResponse c : responses) {
+            Map<String, Object> item = new HashMap<>();
+            item.put("content", c.getContent());
+            item.put("type", c.getType());
+            item.put("time", c.getTimestamp());
+            listResponse.add(item);
         }
 
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.findAndRegisterModules();
 
         // Convert list to JSON string
-        String jsons = objectMapper.writeValueAsString(response);
+        String jsons = objectMapper.writeValueAsString(listResponse);
         return jsons;
     }
 
