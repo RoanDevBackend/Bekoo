@@ -100,6 +100,13 @@ services:
       SPRING_REDIS_HOST: redis
       SPRING_REDIS_PORT: 6379
       SPRING_REDIS_PASSWORD: root_admin
+
+  ai:
+    platform: linux/amd64
+    image: datj114/bekoo-ai:v2.0.0
+    container_name: bekoo-ai
+    ports:
+      - "5501:5501"
 volumes:
   mysql_data:
   redis_data:
