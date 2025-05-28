@@ -1,11 +1,14 @@
 package com.example.bookingserver.infrastructure.persistence.repository;
 
 import com.example.bookingserver.domain.Message;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ChatBotJpaRepository extends JpaRepository<Message, Long> {
@@ -19,31 +22,23 @@ public interface ChatBotJpaRepository extends JpaRepository<Message, Long> {
 
     List<Message> findByGroupId(int groupId);
 
-    List<Message> findByGroupIdOrderByTimestampAsc(int groupId);
+    @Query(value = "SELECT m.groupId " +
+            "FROM Message m " +
+            "WHERE m.sender.id = :senderId ")
+    Integer findFirstBySenderId(String senderId);
 
-    @Query(value = """
-    SELECT
-        m.group_id,
-        COALESCE(m.sender_id, (
-            SELECT m2.sender_id
-            FROM messages m2
-            WHERE m2.group_id = m.group_id
-              AND m2.sender_id IS NOT NULL
-              AND m2.timestamp < m.timestamp
-            ORDER BY m2.timestamp DESC
-            LIMIT 1
-        )) AS resolved_sender_id,
-        m.content,
-        m.timestamp
-    FROM messages m
-    JOIN (
-        SELECT group_id, MAX(timestamp) AS latest_time
-        FROM messages
-        GROUP BY group_id
-    ) latest
-    ON m.group_id = latest.group_id AND m.timestamp = latest.latest_time
-    ORDER BY m.timestamp DESC
-    """, nativeQuery = true)
-    List<Object[]> findLatestSenderPerGroup();
+    @Query("FROM Message m " +
+            "WHERE ( (:isSenderNotNull = false OR m.sender IS NOT NULL) )" +
+            "AND m.groupId = :groupId " +
+            "ORDER BY m.id desc")
+    Page<Message> getMessageByGroupId(int groupId, boolean isSenderNotNull, Pageable pageable);
 
+    @Query("FROM Message m " +
+            "    WHERE m.id IN (" +
+            "        SELECT MAX(m2.id) " +
+            "        FROM Message m2 " +
+            "        GROUP BY m2.groupId " +
+            "    ) " +
+            "    ORDER BY m.id DESC")
+    List<Message> getAllChat();
 }

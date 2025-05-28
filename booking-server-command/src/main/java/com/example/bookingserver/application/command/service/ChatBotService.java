@@ -1,13 +1,24 @@
 package com.example.bookingserver.application.command.service;
 
 import com.example.bookingserver.application.command.reponse.ChatBotResponse;
+import com.example.bookingserver.application.command.reponse.GetAllChatResponse;
 import com.example.bookingserver.application.command.reponse.ListUserChatResponse;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
+@Service
 public interface ChatBotService {
-    // Kiểm tra xem người dùng đã từng chat hay chưa
+
+    /**
+     *
+     * @param data client's request
+     * @return Response chatbot
+     */
+    String chat(Map<String, String> data);
+
     boolean checkUserIdExits(String id);
     // Lấy groupId của User hiện tại
     int takeGroupIdByUserId(String id);
@@ -17,10 +28,9 @@ public interface ChatBotService {
     boolean saveContent(String id, String content, boolean isUser, int groupId);
     // Thêm đoạn chat
     boolean addUserChat(String id, String content);
-    // AI
-    String askAI(String userMessage, String userID) throws IOException;
     // Lấy dữ liệu đoạn chat
-    List<ChatBotResponse> getMessages(int groupId);
+    List<ChatBotResponse> getMessages(int userId);
 
-    List<ListUserChatResponse> getListUserChat();
+    List<GetAllChatResponse> getAllChat(String name);
+    List<ChatBotResponse> getChatHistory(String userId);
 }

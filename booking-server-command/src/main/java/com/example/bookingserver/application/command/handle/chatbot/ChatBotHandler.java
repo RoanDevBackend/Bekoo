@@ -1,14 +1,19 @@
 package com.example.bookingserver.application.command.handle.chatbot;
 
 
+import com.example.bookingserver.application.command.command.chatbot.ChatMessageCommand;
+import com.example.bookingserver.application.command.reponse.ApiResponse;
 import com.example.bookingserver.application.command.reponse.ChatBotResponse;
 import com.example.bookingserver.application.command.service.ChatBotService;
+import com.example.bookingserver.domain.Message;
+import com.example.bookingserver.domain.User;
+import com.example.bookingserver.domain.repository.UserRepository;
+import com.example.bookingserver.infrastructure.persistence.repository.ChatBotJpaRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -27,69 +32,34 @@ import java.util.Map;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ChatBotHandler extends TextWebSocketHandler {
     ChatBotService chatBotService;
+    ObjectMapper objectMapper;
+    UserRepository userRepository;
+    ChatBotJpaRepository chatBotJpaRepository;
+
 
     @Override
-    public void handleTextMessage(WebSocketSession session, TextMessage message) throws IOException {
-        JSONObject json = new JSONObject(message.getPayload());
-        String userId = json.getString("senderId");
-        String content = json.getString("content");
-//        String adminStatus = json.getString("admin_status");
-
-        System.out.println("Receive content: " + content);
-
-        if (userId.equals("751e02a8-658f-4ef3-a415-2089ff0819b0")){
-            chatBotService.saveContent(null, content, false, chatBotService.takeGroupIdByUserId(userId));
-            String response = String.format("{\"userId\": \"%s\", \"content\": \"%s\"}", userId, "");
-            session.sendMessage(new TextMessage(response));
-            System.out.println("ADMIN_ON");
+    public void handleTextMessage(WebSocketSession session, TextMessage TextMessage) throws IOException {
+        String payload = TextMessage.getPayload();
+        ChatMessageCommand command;
+        try {
+            command = objectMapper.readValue(payload, ChatMessageCommand.class);
+        } catch (JsonProcessingException e) {
+            ApiResponse apiResponse = ApiResponse.error(400, "Có lỗi trong quá trình chuyển đổi dữ liệu từ Client");
+            session.sendMessage(new TextMessage(objectMapper.writeValueAsString(apiResponse)));
             return;
         }
-
-        // GET HISTORY OF MESSAGE
-        if (content.equals("GET MESSAGE")){
-            session.sendMessage(new TextMessage(getHistoryMessage(userId)));
-            System.out.println("GET HISTORY MESSAGE SUCCESS");
-            return;
+        if(command.getRequestType().equals("Chat")){
+            String responseFromAI = chatBotService.chat(command.getData());
+            ApiResponse response = ApiResponse.success(200, "Success", responseFromAI);
+            session.sendMessage(new TextMessage(objectMapper.writeValueAsString(response)));
+        }else if(command.getRequestType().equals("Get-All-Chat")){
+            ApiResponse response = ApiResponse.success(200, "Success", chatBotService.getAllChat(command.getData().get("name")));
+            session.sendMessage(new TextMessage(objectMapper.writeValueAsString(response)));
+        }else if(command.getRequestType().equals("Get-Chat-History")){
+            String userId = command.getData().get("userId");
+            ApiResponse response = ApiResponse.success(200, "Success", chatBotService.getChatHistory(userId));
+            session.sendMessage(new TextMessage(objectMapper.writeValueAsString(response)));
         }
-
-        chatBotService.addUserChat(userId, content);
-
-        // Check xem AI có khả năng trả lời hay không
-
-        session.sendMessage(new TextMessage(botResponse(content, userId)));
-    }
-
-
-    // Phản hồi từ AI
-    private String botResponse(String content, String userId) throws IOException {
-        String botMessage = chatBotService.askAI(content, userId);
-        String time = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-        // PARSE TO JSON
-        String safeBotResponse = botMessage.replace("\"", "\\\"");
-        String message = String.format("{\"userId\": \"%s\", \"botResponse\": \"%s\", \"time\": \"%s\"}",userId, safeBotResponse, time);
-        System.out.println("Bot response: " + botMessage);
-        return message;
-    }
-
-    private String getHistoryMessage(String userId) throws JsonProcessingException {
-        List<ChatBotResponse> responses = chatBotService.getMessages(chatBotService.takeGroupIdByUserId(userId));
-
-        List<Map<String, Object>> listResponse = new ArrayList<>();
-
-        for (ChatBotResponse c : responses) {
-            Map<String, Object> item = new HashMap<>();
-            item.put("content", c.getContent());
-            item.put("type", c.getType());
-            item.put("time", c.getTimestamp());
-            listResponse.add(item);
-        }
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.findAndRegisterModules();
-
-        // Convert list to JSON string
-        String jsons = objectMapper.writeValueAsString(listResponse);
-        return jsons;
     }
 
 }

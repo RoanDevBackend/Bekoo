@@ -61,7 +61,6 @@ services:
       - "9200:9200"
       - "9300:9300"
 
-
   booking-care-command:
     platform: linux/amd64
     image: presidentquyen/booking-care-command:v1.0.0
@@ -83,6 +82,7 @@ services:
       SPRING_REDIS_PORT: 6379
       SPRING_REDIS_PASSWORD: root_admin
       WEB_URL: localhost:8082/home
+      AI_URL: http://bekoo-ai:5501/ask
   booking-care-query:
     platform: linux/amd64
     image: presidentquyen/booking-care-query:v1.0.0
@@ -100,6 +100,11 @@ services:
       SPRING_REDIS_HOST: redis
       SPRING_REDIS_PORT: 6379
       SPRING_REDIS_PASSWORD: root_admin
+  bekoo-ai:
+    container_name: bekoo-ai
+    image: datj114/bekoo-ai:v2.0.0
+    ports:
+      - 5501:5501
 volumes:
   mysql_data:
   redis_data:

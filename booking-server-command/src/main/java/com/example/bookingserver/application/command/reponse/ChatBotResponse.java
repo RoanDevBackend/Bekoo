@@ -10,8 +10,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ChatBotResponse {
-    String userId;
     String content;
-    int type;
-    LocalDateTime timestamp;
+    String createdBy;
+    String createdAt;
 }

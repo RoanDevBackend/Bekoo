@@ -3,36 +3,143 @@ package com.example.bookingserver.application.command.service.impl;
 import com.example.bookingserver.application.command.handle.exception.BookingCareException;
 import com.example.bookingserver.application.command.handle.exception.ErrorDetail;
 import com.example.bookingserver.application.command.reponse.ChatBotResponse;
+import com.example.bookingserver.application.command.reponse.GetAllChatResponse;
 import com.example.bookingserver.application.command.reponse.ListUserChatResponse;
 import com.example.bookingserver.application.command.reponse.UserResponse;
 import com.example.bookingserver.application.command.service.ChatBotService;
+import com.example.bookingserver.application.command.service.MessageService;
 import com.example.bookingserver.domain.Message;
 import com.example.bookingserver.domain.User;
 import com.example.bookingserver.domain.repository.UserRepository;
 import com.example.bookingserver.infrastructure.mapper.ChatMapper;
 import com.example.bookingserver.infrastructure.mapper.UserMapper;
 import com.example.bookingserver.infrastructure.persistence.repository.ChatBotJpaRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
 import okhttp3.*;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
+import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
-@Service
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@AllArgsConstructor
+@Component
+@FieldDefaults(level = AccessLevel.PRIVATE)
+@RequiredArgsConstructor
 public class ChatBotServiceImpl implements ChatBotService {
-    ChatBotJpaRepository chatBotRepository;
-    UserRepository userRepository;
-    ChatMapper chatMapper;
-    UserMapper userMapper;
+    final ChatBotJpaRepository chatBotRepository;
+    final UserRepository userRepository;
+    final ObjectMapper objectMapper;
+    private final MessageService messageService;
+    @Value("${ai.url}")
+    String URL;
+
+    @Override
+    public String chat(Map<String, String> data) {
+        String senderId = data.get("senderId");
+        User user = userRepository.findById(senderId == null ? "" : senderId).orElse(null);
+        String content = data.get("content");
+        String messageResponseFromAI = this.askAI(content);
+        if(user != null){
+            int groupId = this.getGroupId(senderId);
+
+            //save message
+            Message messageUser = new Message();
+            messageUser.setContent(content);
+            messageUser.setSender(user);
+            messageUser.setGroupId(groupId);
+
+            Message messageBot = new Message();
+            messageBot.setSender(null);
+            messageBot.setGroupId(groupId);
+            messageBot.setContent(messageResponseFromAI);
+            chatBotRepository.save(messageUser);
+            chatBotRepository.save(messageBot);
+        }
+        return messageResponseFromAI;
+    }
+
+    private int getGroupId(String senderId){
+        Integer groupId = chatBotRepository.findFirstBySenderId(senderId);
+        return groupId == null ? chatBotRepository.findMaxGroupId() + 1 : groupId;
+    }
+
+    @Override
+    public List<GetAllChatResponse> getAllChat(String name) {
+        if (name == null) {
+            name = "";
+        }
+        final String finalName = name;
+
+        return chatBotRepository.getAllChat().stream().map(t -> {
+            List<Message> messages = chatBotRepository.getMessageByGroupId(t.getGroupId(), true, PageRequest.of(0, 1)).getContent();
+            if(!messages.isEmpty() && (finalName.isEmpty() || messages.get(0).getSender().getName().contains(finalName))){
+                GetAllChatResponse getAllChatResponse = new GetAllChatResponse();
+                getAllChatResponse.setContent(t.getContent());
+                getAllChatResponse.setTime(this.convertDateToString(t.getCreatedAt()));
+                getAllChatResponse.setName(messages.get(0).getSender().getName());
+                getAllChatResponse.setUserId(messages.get(0).getSender().getId());
+                getAllChatResponse.setSenderId(t.getSender() == null ? null : t.getSender().getId());
+                return getAllChatResponse;
+            }
+            return null;
+        }).filter(Objects::nonNull).toList();
+    }
+
+    private String convertDateToString(LocalDateTime time) {
+        LocalDateTime now = LocalDateTime.now();
+        Duration duration = Duration.between(time, now);
+
+        long seconds = duration.getSeconds();
+        long minutes = duration.toMinutes();
+        long hours = duration.toHours();
+        long days = duration.toDays();
+
+        if (seconds < 60) {
+            return "Vài giây trước";
+        } else if (minutes < 60) {
+            return minutes + " phút trước";
+        } else if (hours < 24) {
+            return hours + " giờ trước";
+        } else if (days <= 5) {
+            return days + " ngày trước";
+        } else {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            return time.format(formatter);
+        }
+    }
+
+    @Override
+    public List<ChatBotResponse> getChatHistory(String userId) {
+        int groupId = this.getGroupId(userId);
+        List<Message> messages = chatBotRepository.getMessageByGroupId(groupId, false,Pageable.unpaged()).getContent();
+        return messages.stream().map(t-> {
+            ChatBotResponse chatBotResponse = new ChatBotResponse();
+            chatBotResponse.setContent(t.getContent());
+            chatBotResponse.setCreatedBy(t.getSender() == null ? "Hệ thống" : "Người dùng");
+            chatBotResponse.setCreatedAt(this.convertDateToString(t.getCreatedAt()));
+            return chatBotResponse;
+        }).toList();
+    }
 
     @Override
     public boolean checkUserIdExits(String id) {
@@ -59,13 +166,13 @@ public class ChatBotServiceImpl implements ChatBotService {
 
     @Override
     public boolean saveContent(String id, String content, boolean isUser, int groupId) {
-        Message chatMessage = Message.builder()
-                .groupId(groupId)
-                .content(content)
-                .senderId((isUser) ? id : null)
-                .timestamp(LocalDateTime.now())
-                .build();
-        chatBotRepository.save(chatMessage);
+//        Message chatMessage = Message.builder()
+//                .groupId(groupId)
+//                .content(content)
+//                .senderId((isUser) ? id : null)
+//                .timestamp(LocalDateTime.now())
+//                .build();
+//        chatBotRepository.save(chatMessage);
         return true;
     }
 
@@ -85,68 +192,30 @@ public class ChatBotServiceImpl implements ChatBotService {
     }
 
     @Override
-    public String askAI(String userMessage, String userId) throws IOException {
-        if (userRepository.findById(userId).isEmpty()) {
-            throw new BookingCareException(ErrorDetail.ERR_USER_NOT_EXISTED);
-        }
-
-        String botResponse = askAI(userMessage);
-        int group;
-
-        if (checkUserIdExits(userId)) {
-            group = takeGroupIdByUserId(userId);
-            saveContent(userId, botResponse, false, group);
-        } else {
-            addNewChat(userId, botResponse, false);
-        }
-        return botResponse;
-    }
-
-    @Override
     public List<ChatBotResponse> getMessages(int groupId) {
         if (chatBotRepository.findByGroupId(groupId) == null) {
             throw new BookingCareException(ErrorDetail.ERR_GROUP_NOT_EXISTED);
         }
         List<ChatBotResponse> chatBotResponses = new ArrayList<>();
 
-        List<Message> messages = chatBotRepository.findByGroupIdOrderByTimestampAsc(groupId);
+//        List<Message> messages = chatBotRepository.findByGroupIdOrderByTimestampAsc(groupId);
 
-        for (Message m : messages) {
-            chatBotResponses.add(chatMapper.toResponse(m));
-        }
+//        for (Message m : messages) {
+//            chatBotResponses.add(chatMapper.toResponse(m));
+//        }
         return chatBotResponses;
     }
 
-    @Override
-    public List<ListUserChatResponse> getListUserChat() {
-        List<Object[]> results = chatBotRepository.findLatestSenderPerGroup();
-        List<ListUserChatResponse> listUserChatResponses = new ArrayList<>();
-        for (Object[] row : results) {
-            int groupId = (int) row[0];
-            String senderId = (String) row[1];
-            String content = (String) row[2];
-            Timestamp timestamp = (Timestamp) row[3];
 
-            User user = userRepository.findById(senderId)
-                            .orElseThrow(() -> new BookingCareException(ErrorDetail.ERR_USER_NOT_EXISTED));
 
-            UserResponse userResponse = userMapper.toResponse(user);
-
-            listUserChatResponses.add(new ListUserChatResponse(userResponse, groupId, content, timestamp.toLocalDateTime()));
-        }
-        return listUserChatResponses;
-    }
-
-    static String URL = "";
-
-    public String askAI(String prompt) throws IOException {
+    @SneakyThrows
+    private String askAI(String prompt){
         OkHttpClient client = new OkHttpClient();
-
-        String requestBody = "{ \"question\": \"" + prompt + "\" }";
-
+        String encodedPrompt = URLEncoder.encode(prompt, StandardCharsets.UTF_8);
+        String fullUrl = URL + "?text=" + encodedPrompt;
         Request request = new Request.Builder()
-                .url(URL)
-                .post(RequestBody.create(requestBody, MediaType.get("application/json")))
+                .url(fullUrl)
+                .get()
                 .build();
 
         try (Response response = client.newCall(request).execute()) {
@@ -154,9 +223,8 @@ public class ChatBotServiceImpl implements ChatBotService {
                 return "Request failed: " + response;
             }
 
-            String responseBody = response.body().string();
-            JSONObject json = new JSONObject(responseBody);
-            return json.getString("answer");
+            String responseBody = Objects.requireNonNull(response.body()).string();
+            return objectMapper.readValue(responseBody, Map.class).get("response") + "";
         }
     }
 }
