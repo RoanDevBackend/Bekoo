@@ -2,10 +2,8 @@ package com.example.bookingserver.application.command.service;
 
 import com.example.bookingserver.application.command.reponse.ChatBotResponse;
 import com.example.bookingserver.application.command.reponse.GetAllChatResponse;
-import com.example.bookingserver.application.command.reponse.ListUserChatResponse;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +16,7 @@ public interface ChatBotService {
      * @return Response chatbot
      */
     String chat(Map<String, String> data);
+    void adminChat(Map<String, String> data);
 
     boolean checkUserIdExits(String id);
     // Lấy groupId của User hiện tại

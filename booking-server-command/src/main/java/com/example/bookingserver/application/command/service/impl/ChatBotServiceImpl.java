@@ -14,6 +14,7 @@ import com.example.bookingserver.domain.repository.UserRepository;
 import com.example.bookingserver.infrastructure.mapper.ChatMapper;
 import com.example.bookingserver.infrastructure.mapper.UserMapper;
 import com.example.bookingserver.infrastructure.persistence.repository.ChatBotJpaRepository;
+import com.example.bookingserver.infrastructure.persistence.repository.RedisRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -49,7 +50,8 @@ public class ChatBotServiceImpl implements ChatBotService {
     final ChatBotJpaRepository chatBotRepository;
     final UserRepository userRepository;
     final ObjectMapper objectMapper;
-    private final MessageService messageService;
+    final RedisRepository redisRepository;
+
     @Value("${ai.url}")
     String URL;
 
@@ -99,10 +101,26 @@ public class ChatBotServiceImpl implements ChatBotService {
                 getAllChatResponse.setName(messages.get(0).getSender().getName());
                 getAllChatResponse.setUserId(messages.get(0).getSender().getId());
                 getAllChatResponse.setSenderId(t.getSender() == null ? null : t.getSender().getId());
+                getAllChatResponse.setUrlImage(messages.get(0).getSender().getLinkAvatar());
+                getAllChatResponse.setOnline(this.getOnline(messages.get(0).getSender().getId()));
                 return getAllChatResponse;
             }
             return null;
         }).filter(Objects::nonNull).toList();
+    }
+
+    private String getOnline(String userId){
+        Object lastedOnline = redisRepository.get("WS" + userId);
+        if(lastedOnline != null && lastedOnline.toString().equals("Online")){
+            return "Online";
+        }else{
+            if(lastedOnline != null) {
+                LocalDateTime timeOnline = LocalDateTime.parse(lastedOnline.toString());
+                return this.convertDateToString(timeOnline);
+            }else{
+                return "Undefined";
+            }
+        }
     }
 
     private String convertDateToString(LocalDateTime time) {
@@ -139,6 +157,24 @@ public class ChatBotServiceImpl implements ChatBotService {
             chatBotResponse.setCreatedAt(this.convertDateToString(t.getCreatedAt()));
             return chatBotResponse;
         }).toList();
+    }
+
+
+    @Override
+    public void adminChat(Map<String, String> data) {
+        String toUserId = data.get("toUserId");
+        User user = userRepository.findById(toUserId == null ? "" : toUserId).orElse(null);
+        String content = data.get("content");
+        if(user != null){
+            int groupId = this.getGroupId(toUserId);
+            //save message
+            Message messageAdmin = new Message();
+            messageAdmin.setContent(content);
+            messageAdmin.setSender(null);
+            messageAdmin.setGroupId(groupId);
+
+            chatBotRepository.save(messageAdmin);
+        }
     }
 
     @Override
