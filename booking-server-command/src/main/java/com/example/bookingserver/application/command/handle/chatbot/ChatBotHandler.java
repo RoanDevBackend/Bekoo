@@ -14,8 +14,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -26,6 +28,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 @Component
 @RequiredArgsConstructor
@@ -88,16 +91,7 @@ public class ChatBotHandler extends TextWebSocketHandler {
             String responseFromAI = chatBotService.chat(command.getData());
             ApiResponse response = ApiResponse.success(200, "Chat", responseFromAI);
             session.sendMessage(new TextMessage(objectMapper.writeValueAsString(response)));
-
-            User userAdmin = userRepository.findByUserName("bekoo.admin@gmail.com");
-            if(userAdmin != null){
-                WebSocketSession sessionAdmin = sessionMap.get(userAdmin.getId());
-                if(sessionAdmin != null){
-                    ApiResponse responseGetAllChat = ApiResponse.success(200, "Get-All-Chat", chatBotService.getAllChat(null));
-                    sessionAdmin.sendMessage(new TextMessage(objectMapper.writeValueAsString(responseGetAllChat)));
-                }
-            }
-
+            this.sendToAdmin();
 
         }else if(command.getRequestType().equals("Get-All-Chat")){
             ApiResponse response = ApiResponse.success(200, "Get-All-Chat", chatBotService.getAllChat(command.getData().get("name")));
@@ -126,6 +120,23 @@ public class ChatBotHandler extends TextWebSocketHandler {
                     ApiResponse responseGetChatHistory = ApiResponse.success(200, "Get-Chat-History", chatBotService.getChatHistory(userClient.getId()));
                     sessionAdmin.sendMessage(new TextMessage(objectMapper.writeValueAsString(responseGetChatHistory)));
                 }
+            }
+        }
+    }
+
+    @Scheduled(fixedRate = 10, timeUnit = TimeUnit.MINUTES)
+    public void updateOnline(){
+        this.sendToAdmin();
+    }
+
+    @SneakyThrows
+    private void sendToAdmin(){
+        User userAdmin = userRepository.findByUserName("bekoo.admin@gmail.com");
+        if(userAdmin != null){
+            WebSocketSession sessionAdmin = sessionMap.get(userAdmin.getId());
+            if(sessionAdmin != null){
+                ApiResponse responseGetAllChat = ApiResponse.success(200, "Get-All-Chat", chatBotService.getAllChat(null));
+                sessionAdmin.sendMessage(new TextMessage(objectMapper.writeValueAsString(responseGetAllChat)));
             }
         }
     }
