@@ -35,6 +35,9 @@ public class WebSecurity {
             , "/swagger-ui.html"
             , "specialize/department/**"
             , "/payment/result/**"
+            // WARN: DONT PERMIT ALL
+            , "/chat/**"
+            , "api/chat/**"
     };
 
     final String[] getMappings={

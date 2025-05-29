@@ -25,7 +25,7 @@ public class MessageProducer {
     }
 
     @SneakyThrows
-    public void sendMessage(String topic, String eventType, Object event, String aggregateId,String aggregateType){
+    public boolean sendMessage(String topic, String eventType, Object event, String aggregateId,String aggregateType){
 
         final String content= objectMapper.writeValueAsString(event);
 
@@ -46,7 +46,9 @@ public class MessageProducer {
         }catch (Exception e){
             String contentLog = "SEND EVENT ERROR WITH TOPIC: '" + topic + "' VALUE: " + content;
             log.info(contentLog);
+            return false;
         }
         outboxEventRepository.save(outboxEvent);
+        return true;
     }
 }

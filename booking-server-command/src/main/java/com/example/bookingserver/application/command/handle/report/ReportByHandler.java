@@ -27,39 +27,54 @@ public class ReportByHandler {
     final DepartmentJpaRepository departmentJpaRepository;
 
     public List<ReportChartTemplateResponse> executeByDoctor(String doctorId, LocalDate from, LocalDate to, int groupType) {
-        List<ReportChartTemplateResponse> responses= new ArrayList<>();
+        List<ReportChartTemplateResponse> responses = new ArrayList<>();
         from = this.nextTo(from, groupType);
         to = this.nextTo(to, groupType);
-        while (from.isBefore(to)){
-            LocalDateTime start= from.atStartOfDay();
-            LocalDateTime end= this.nextTo(from, groupType).atStartOfDay();
-            int value= scheduleJpaRepository.getCountByDoctorAndCreatedAt(doctorId, start, end);
-            responses.add(new ReportChartTemplateResponse(from, value));
-            from = nextTo(from, groupType);
-        }
-        return responses;
-    }
-    public List<ReportChartTemplateResponse> executeTotal(LocalDate from, LocalDate to, int groupType) {
-        List<ReportChartTemplateResponse> responses= new ArrayList<>();
-        from = this.nextTo(from, groupType);
-        to = this.nextTo(to, groupType);
-        while (from.isBefore(to)){
-            LocalDateTime start= from.atStartOfDay();
-            LocalDateTime end= this.nextTo(from, groupType).atStartOfDay();
-            int value= scheduleJpaRepository.getTotalValue(start, end);
+        while (from.isBefore(to)) {
+            LocalDateTime start = from.atStartOfDay();
+            LocalDateTime end = this.nextTo(from, groupType).atStartOfDay();
+            int value = scheduleJpaRepository.getCountByDoctorAndCreatedAt(doctorId, start, end);
             responses.add(new ReportChartTemplateResponse(from, value));
             from = nextTo(from, groupType);
         }
         return responses;
     }
 
-    public List<PieChartTemplateResponse> getByAge(){
-        int from1to15= userJpaRepository.countByDob(LocalDate.of(LocalDate.now().getYear()-15, 1, 1), LocalDate.of(LocalDate.now().getYear() + 1, 1, 1));
-        int from16to30= userJpaRepository.countByDob(LocalDate.of(LocalDate.now().getYear()-30, 1, 1), LocalDate.of(LocalDate.now().getYear() - 16 + 1 , 1, 1));
-        int from31to45= userJpaRepository.countByDob(LocalDate.of(LocalDate.now().getYear()-45, 1, 1), LocalDate.of(LocalDate.now().getYear() - 31  + 1, 1, 1));
-        int from46to60= userJpaRepository.countByDob(LocalDate.of(LocalDate.now().getYear()-60, 1, 1), LocalDate.of(LocalDate.now().getYear() - 46  + 1 , 1, 1));
-        int over60= userJpaRepository.countByDob(LocalDate.of(LocalDate.now().getYear()-150, 1, 1), LocalDate.of(LocalDate.now().getYear() - 61  + 1, 1, 1));
-        List<PieChartTemplateResponse> responses= new ArrayList<>();
+    public List<ReportChartTemplateResponse> executeTotal(LocalDate from, LocalDate to, int groupType) {
+        List<ReportChartTemplateResponse> responses = new ArrayList<>();
+        from = this.nextTo(from, groupType);
+        to = this.nextTo(to, groupType);
+        while (from.isBefore(to)) {
+            LocalDateTime start = from.atStartOfDay();
+            LocalDateTime end = this.nextTo(from, groupType).atStartOfDay();
+            int value = (scheduleJpaRepository.getTotalValue(start, end) == null) ? 0 : scheduleJpaRepository.getTotalValue(start, end);
+            responses.add(new ReportChartTemplateResponse(from, value));
+            from = nextTo(from, groupType);
+        }
+        return responses;
+    }
+
+    public List<ReportChartTemplateResponse> excuteTotalPrice(LocalDate from, LocalDate to, int groupType) {
+        List<ReportChartTemplateResponse> responses = new ArrayList<>();
+        from = this.nextTo(from, groupType);
+        to = this.nextTo(to, groupType);
+        while (from.isBefore(to)) {
+            LocalDateTime start = from.atStartOfDay();
+            LocalDateTime end = this.nextTo(from, groupType).atStartOfDay();
+            int value = (scheduleJpaRepository.getTotalPrice(start, end) == null) ? 0 : scheduleJpaRepository.getTotalPrice(start, end);
+            responses.add(new ReportChartTemplateResponse(from, value));
+            from = nextTo(from, groupType);
+        }
+        return responses;
+    }
+
+    public List<PieChartTemplateResponse> getByAge() {
+        int from1to15 = userJpaRepository.countByDob(LocalDate.of(LocalDate.now().getYear() - 15, 1, 1), LocalDate.of(LocalDate.now().getYear() + 1, 1, 1));
+        int from16to30 = userJpaRepository.countByDob(LocalDate.of(LocalDate.now().getYear() - 30, 1, 1), LocalDate.of(LocalDate.now().getYear() - 16 + 1, 1, 1));
+        int from31to45 = userJpaRepository.countByDob(LocalDate.of(LocalDate.now().getYear() - 45, 1, 1), LocalDate.of(LocalDate.now().getYear() - 31 + 1, 1, 1));
+        int from46to60 = userJpaRepository.countByDob(LocalDate.of(LocalDate.now().getYear() - 60, 1, 1), LocalDate.of(LocalDate.now().getYear() - 46 + 1, 1, 1));
+        int over60 = userJpaRepository.countByDob(LocalDate.of(LocalDate.now().getYear() - 150, 1, 1), LocalDate.of(LocalDate.now().getYear() - 61 + 1, 1, 1));
+        List<PieChartTemplateResponse> responses = new ArrayList<>();
         responses.add(new PieChartTemplateResponse("1-15", from1to15));
         responses.add(new PieChartTemplateResponse("16-30", from16to30));
         responses.add(new PieChartTemplateResponse("31-45", from31to45));
@@ -69,12 +84,12 @@ public class ReportByHandler {
     }
 
 
-    public TotalReportResponse execute(){
-        long totalDoctor= doctorJpaRepository.count();
-        long totalPatient= patientJpaRepository.count();
-        long totalSpecialize= specializeJpaRepository.count();
-        long totalDepartment= departmentJpaRepository.count();
-        long totalSchedule= scheduleJpaRepository.count();
+    public TotalReportResponse execute() {
+        long totalDoctor = doctorJpaRepository.count();
+        long totalPatient = patientJpaRepository.count();
+        long totalSpecialize = specializeJpaRepository.count();
+        long totalDepartment = departmentJpaRepository.count();
+        long totalSchedule = scheduleJpaRepository.count();
         return TotalReportResponse.builder()
                 .totalDoctor(totalDoctor)
                 .totalPatient(totalPatient)
@@ -84,14 +99,14 @@ public class ReportByHandler {
                 .build();
     }
 
-    private LocalDate nextTo(LocalDate from, int groupType){
-        if(groupType == (ApplicationConstant.DateType.DAY))
+    private LocalDate nextTo(LocalDate from, int groupType) {
+        if (groupType == (ApplicationConstant.DateType.DAY))
             return from.plusDays(1);
-        else if(groupType == (ApplicationConstant.DateType.WEEK)){
+        else if (groupType == (ApplicationConstant.DateType.WEEK)) {
             return from.plusWeeks(1);
-        }else if(groupType == (ApplicationConstant.DateType.MONTH)){
+        } else if (groupType == (ApplicationConstant.DateType.MONTH)) {
             return from.plusMonths(1);
-        }else{
+        } else {
             return from.plusYears(1);
         }
     }
