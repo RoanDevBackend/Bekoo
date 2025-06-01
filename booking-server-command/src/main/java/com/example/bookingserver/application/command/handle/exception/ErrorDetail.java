@@ -23,8 +23,10 @@ public enum ErrorDetail {
 
     , ERR_SCHEDULE_DATE(400, "Ngày đặt không hợp lệ")
     ,ERR_INVALID_FILE_TYPE(400, "Chỉ được phép là hình ảnh")
-    ;
 
+    , ERR_GROUP_NOT_EXISTED(400, "Group không hợp lệ")
+    , ERR_CHAT_MESSAGE_NOT_EXISTED(404, "Không tìm thấy dữ liệu đoạn chat")
+    ;
     private final int code;
     private final String message;
 

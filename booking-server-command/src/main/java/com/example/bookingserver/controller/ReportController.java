@@ -24,7 +24,7 @@ import java.time.format.DateTimeParseException;
 @RestController
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@SecurityRequirement(name="bearerAuth")
+@SecurityRequirement(name = "bearerAuth")
 public class ReportController {
 
     ReportByHandler reportByHandler;
@@ -37,7 +37,7 @@ public class ReportController {
                                 @RequestParam LocalDate fromDate,
                                 @RequestParam LocalDate toDate,
                                 @RequestParam int groupType) {
-        var response= reportByHandler.executeByDoctor(doctorId, fromDate, toDate, groupType);
+        var response = reportByHandler.executeByDoctor(doctorId, fromDate, toDate, groupType);
         return ApiResponse.success(200, "Báo cáo số người đặt khám của bác sĩ", response);
     }
 
@@ -50,21 +50,34 @@ public class ReportController {
                              @RequestParam int groupType) {
         LocalDate from = LocalDate.parse(fromDate);
         LocalDate to = LocalDate.parse(toDate);
-        var response= reportByHandler.executeTotal(from, to, groupType);
+        var response = reportByHandler.executeTotal(from, to, groupType);
         return ApiResponse.success(200, "Báo cáo số người đặt khám của toàn hệ thống", response);
+    }
+
+    @GetMapping("/price")
+    @Operation(summary = "Báo cáo thống kê doanh thu đặt đặt khám", parameters = {
+            @Parameter(name = "groupType", description = "1-Theo ngày, 2-Theo tuần, 3-Theo tháng, 4-Theo năm")
+    })
+    public ApiResponse totalPrice(@RequestParam String fromDate,
+                             @RequestParam String toDate,
+                             @RequestParam int groupType) {
+        LocalDate from = LocalDate.parse(fromDate);
+        LocalDate to = LocalDate.parse(toDate);
+        var response = reportByHandler.excuteTotalPrice(from, to, groupType);
+        return ApiResponse.success(200, "Báo cáo doanh thu đặt khám của toàn hệ thống", response);
     }
 
     @GetMapping("/by-age")
     @Operation(summary = "Báo cáo thống kê độ tuổi theo biểu đồ tròn")
-    public ApiResponse byAge(){
-        var response= reportByHandler.getByAge();
+    public ApiResponse byAge() {
+        var response = reportByHandler.getByAge();
         return ApiResponse.success(200, "Thống kê theo số tuổi dưới dạng biểu đồ tròn", response);
     }
 
     @GetMapping("/total")
     @Operation(summary = "Báo cáo số lượng tổng thể của toàn hệ thống")
-    public ApiResponse total(){
-        var response= reportByHandler.execute();
+    public ApiResponse total() {
+        var response = reportByHandler.execute();
         return ApiResponse.success(200, "Báo cáo số lượng tổng thể của toàn hệ thống", response);
     }
 }

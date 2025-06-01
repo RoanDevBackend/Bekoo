@@ -39,7 +39,15 @@ public interface ScheduleJpaRepository extends JpaRepository<Schedule, String> {
             "WHERE s.createdAt >= :start " +
             "AND s.createdAt < :end " +
             "AND s.statusId= 1 ")
-    int getTotalValue(LocalDateTime start, LocalDateTime end);
+    Integer getTotalValue(LocalDateTime start, LocalDateTime end);
+
+    @Query("SELECT SUM(s.specialize.price) " +
+            "FROM Schedule s " +
+            "WHERE s.createdAt >= :start " +
+            "AND s.createdAt < :end " +
+            "AND s.statusId= 3 "
+     )
+    Integer getTotalPrice(LocalDateTime start, LocalDateTime end);
 
     @Query("SELECT COUNT(*) " +
             "FROM Schedule s " +
