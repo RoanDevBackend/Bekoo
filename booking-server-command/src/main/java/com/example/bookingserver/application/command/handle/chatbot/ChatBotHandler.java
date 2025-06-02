@@ -88,11 +88,15 @@ public class ChatBotHandler extends TextWebSocketHandler {
                 session.sendMessage(new TextMessage(objectMapper.writeValueAsString(apiResponse)));
                 return;
             }
-            String responseFromAI = chatBotService.chat(command.getData());
-            ApiResponse response = ApiResponse.success(200, "Chat", responseFromAI);
-            session.sendMessage(new TextMessage(objectMapper.writeValueAsString(response)));
-            this.sendToAdmin();
-
+            String responseFromAI = chatBotService.chat(getAdminSession(), command.getData());
+            if(!responseFromAI.equals("null")){
+                ApiResponse response = ApiResponse.success(200, "Chat", responseFromAI);
+                session.sendMessage(new TextMessage(objectMapper.writeValueAsString(response))); // Gửi dữ liệu tin nhắn về cho client
+                this.sendToAdmin();
+            }else{
+                ApiResponse response = ApiResponse.success(400, "Chat", "");
+                session.sendMessage(new TextMessage(objectMapper.writeValueAsString(response))); // Gửi dữ liệu tin nhắn về cho client
+            }
         }else if(command.getRequestType().equals("Get-All-Chat")){
             ApiResponse response = ApiResponse.success(200, "Get-All-Chat", chatBotService.getAllChat(command.getData().get("name")));
             session.sendMessage(new TextMessage(objectMapper.writeValueAsString(response)));
@@ -124,21 +128,26 @@ public class ChatBotHandler extends TextWebSocketHandler {
         }
     }
 
-    @Scheduled(fixedRate = 10, timeUnit = TimeUnit.MINUTES)
+    @Scheduled(fixedRate = 2, timeUnit = TimeUnit.MINUTES)
     public void updateOnline(){
         this.sendToAdmin();
     }
 
     @SneakyThrows
     private void sendToAdmin(){
-        User userAdmin = userRepository.findByUserName("bekoo.admin@gmail.com");
-        if(userAdmin != null){
-            WebSocketSession sessionAdmin = sessionMap.get(userAdmin.getId());
-            if(sessionAdmin != null){
-                ApiResponse responseGetAllChat = ApiResponse.success(200, "Get-All-Chat", chatBotService.getAllChat(null));
-                sessionAdmin.sendMessage(new TextMessage(objectMapper.writeValueAsString(responseGetAllChat)));
-            }
+        WebSocketSession adminSession = this.getAdminSession();
+        if(adminSession != null){
+            ApiResponse responseGetAllChat = ApiResponse.success(200, "Get-All-Chat", chatBotService.getAllChat(null));
+            adminSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(responseGetAllChat)));
         }
+    }
+
+    private WebSocketSession getAdminSession(){
+        User userAdmin = userRepository.findByUserName("bekoo.admin@gmail.com");
+        if(userAdmin != null) {
+            return sessionMap.get(userAdmin.getId());
+        }
+        return null;
     }
 
     private String validateData(ChatMessageCommand command){

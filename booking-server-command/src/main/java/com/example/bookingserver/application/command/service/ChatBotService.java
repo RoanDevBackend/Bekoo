@@ -3,6 +3,7 @@ package com.example.bookingserver.application.command.service;
 import com.example.bookingserver.application.command.reponse.ChatBotResponse;
 import com.example.bookingserver.application.command.reponse.GetAllChatResponse;
 import org.springframework.stereotype.Service;
+import org.springframework.web.socket.WebSocketSession;
 
 import java.util.List;
 import java.util.Map;
@@ -15,7 +16,7 @@ public interface ChatBotService {
      * @param data client's request
      * @return Response chatbot
      */
-    String chat(Map<String, String> data);
+    String chat(WebSocketSession adminSession, Map<String, String> data);
     void adminChat(Map<String, String> data);
 
     boolean checkUserIdExits(String id);

@@ -2,10 +2,7 @@ package com.example.bookingserver.application.command.service.impl;
 
 import com.example.bookingserver.application.command.handle.exception.BookingCareException;
 import com.example.bookingserver.application.command.handle.exception.ErrorDetail;
-import com.example.bookingserver.application.command.reponse.ChatBotResponse;
-import com.example.bookingserver.application.command.reponse.GetAllChatResponse;
-import com.example.bookingserver.application.command.reponse.ListUserChatResponse;
-import com.example.bookingserver.application.command.reponse.UserResponse;
+import com.example.bookingserver.application.command.reponse.*;
 import com.example.bookingserver.application.command.service.ChatBotService;
 import com.example.bookingserver.application.command.service.MessageService;
 import com.example.bookingserver.domain.Message;
@@ -30,6 +27,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketSession;
 
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -58,28 +57,45 @@ public class ChatBotServiceImpl implements ChatBotService {
     String URL;
 
     @Override
-    public String chat(Map<String, String> data) {
+    public String chat(WebSocketSession adminSession, Map<String, String> data) {
         String senderId = data.get("senderId");
         User user = userRepository.findById(senderId == null ? "" : senderId).orElse(null);
         String content = data.get("content");
-        String messageResponseFromAI = this.askAI(content);
+        String messageResponseFromAI = "";
+        if(user == null){
+            messageResponseFromAI = this.askAI(content, false);
+        }
         if(user != null){
-            int groupId = this.getGroupId(senderId);
+            messageResponseFromAI = this.askAI(content, true);
 
+            System.out.println(messageResponseFromAI);
+            int groupId = this.getGroupId(senderId);
             //save message
             Message messageUser = new Message();
             messageUser.setContent(content);
             messageUser.setSender(user);
             messageUser.setGroupId(groupId);
-
-            Message messageBot = new Message();
-            messageBot.setSender(null);
-            messageBot.setGroupId(groupId);
-            messageBot.setContent(messageResponseFromAI);
             chatBotRepository.save(messageUser);
-            chatBotRepository.save(messageBot);
+
+            this.sendToAdmin(adminSession);
+
+            if(!messageResponseFromAI.equals("null")){
+                Message messageBot = new Message();
+                messageBot.setSender(null);
+                messageBot.setGroupId(groupId);
+                messageBot.setContent(messageResponseFromAI);
+                chatBotRepository.save(messageBot);
+            }
         }
         return messageResponseFromAI;
+    }
+
+    @SneakyThrows
+    private void sendToAdmin(WebSocketSession adminSession){
+        if(adminSession != null){
+            ApiResponse responseGetAllChat = ApiResponse.success(200, "Get-All-Chat", this.getAllChat(null));
+            adminSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(responseGetAllChat)));
+        }
     }
 
     private int getGroupId(String senderId){
@@ -247,10 +263,10 @@ public class ChatBotServiceImpl implements ChatBotService {
 
 
     @SneakyThrows
-    private String askAI(String prompt){
+    private String askAI(String prompt, boolean isLogin){
         OkHttpClient client = new OkHttpClient();
         String encodedPrompt = URLEncoder.encode(prompt, StandardCharsets.UTF_8);
-        String fullUrl = URL + "?text=" + encodedPrompt;
+        String fullUrl = URL + "?text=" + encodedPrompt + "&isloggedIn=" + isLogin;
         Request request = new Request.Builder()
                 .url(fullUrl)
                 .get()
