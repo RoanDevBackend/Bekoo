@@ -32,5 +32,5 @@ public interface ChatBotService {
     List<ChatBotResponse> getMessages(int userId);
 
     List<GetAllChatResponse> getAllChat(String name);
-    List<ChatBotResponse> getChatHistory(String userId);
+    List<ChatBotResponse> getChatHistory(Map<String, String> data);
 }

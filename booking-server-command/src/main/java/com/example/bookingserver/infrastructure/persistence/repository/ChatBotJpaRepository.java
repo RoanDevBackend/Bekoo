@@ -30,7 +30,7 @@ public interface ChatBotJpaRepository extends JpaRepository<Message, Long> {
     @Query("FROM Message m " +
             "WHERE ( (:isSenderNotNull = false OR m.sender IS NOT NULL) )" +
             "AND m.groupId = :groupId " +
-            "ORDER BY m.id ")
+            "ORDER BY m.id desc")
     Page<Message> getMessageByGroupId(int groupId, boolean isSenderNotNull, Pageable pageable);
 
     @Query("FROM Message m " +

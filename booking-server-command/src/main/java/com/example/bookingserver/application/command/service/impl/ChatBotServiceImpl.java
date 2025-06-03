@@ -38,10 +38,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Component
@@ -120,7 +117,7 @@ public class ChatBotServiceImpl implements ChatBotService {
                 getAllChatResponse.setUserId(messages.get(0).getSender().getId());
                 getAllChatResponse.setSenderId(t.getSender() == null ? null : t.getSender().getId());
                 getAllChatResponse.setUrlImage(messages.get(0).getSender().getLinkAvatar());
-                getAllChatResponse.setOnline(this.getOnline(messages.get(0).getSender().getId()));
+                getAllChatResponse.setOnline(this.getOnline(messages.get(0).getSender().getId()).toLowerCase());
                 return getAllChatResponse;
             }
             return null;
@@ -165,10 +162,14 @@ public class ChatBotServiceImpl implements ChatBotService {
     }
 
     @Override
-    public List<ChatBotResponse> getChatHistory(String userId) {
+    public List<ChatBotResponse> getChatHistory(Map<String, String> data) {
+        String userId = data.get("userId");
+        int pageIndex = data.containsKey("pageIndex") ? Integer.parseInt(data.get("pageIndex")) : 1;
+        int pageSize = data.containsKey("pageSize") ? Integer.parseInt(data.get("pageSize")) : 40;
         int groupId = this.getGroupId(userId);
-        List<Message> messages = chatBotRepository.getMessageByGroupId(groupId, false,Pageable.unpaged()).getContent();
-        return messages.stream().map(t-> {
+        List<Message> messageSorted = new ArrayList<>(chatBotRepository.getMessageByGroupId(groupId, false, PageRequest.of(pageIndex-1, pageSize)).getContent());
+        messageSorted.sort(Comparator.comparingLong(Message::getId));
+        return messageSorted.stream().map(t-> {
             ChatBotResponse chatBotResponse = new ChatBotResponse();
             chatBotResponse.setContent(t.getContent());
             chatBotResponse.setCreatedBy(t.getSender() == null ? "Hệ thống" : "Người dùng");

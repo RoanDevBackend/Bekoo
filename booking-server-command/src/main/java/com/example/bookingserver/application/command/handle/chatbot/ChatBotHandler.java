@@ -102,8 +102,7 @@ public class ChatBotHandler extends TextWebSocketHandler {
             session.sendMessage(new TextMessage(objectMapper.writeValueAsString(response)));
 
         }else if(command.getRequestType().equals("Get-Chat-History")){
-            String userId = command.getData().get("userId");
-            ApiResponse response = ApiResponse.success(200, "Get-Chat-History", chatBotService.getChatHistory(userId));
+            ApiResponse response = ApiResponse.success(200, "Get-Chat-History", chatBotService.getChatHistory(command.getData()));
             session.sendMessage(new TextMessage(objectMapper.writeValueAsString(response)));
 
         }else if(command.getRequestType().equals("Admin-Chat")){
@@ -116,12 +115,13 @@ public class ChatBotHandler extends TextWebSocketHandler {
             chatBotService.adminChat(command.getData());
             ApiResponse response = ApiResponse.success(200, "Admin-Chat");
             session.sendMessage(new TextMessage(objectMapper.writeValueAsString(response)));
-
             User userClient = userRepository.findById(command.getData().get("toUserId")).orElse(null);
             if(userClient != null){
                 WebSocketSession sessionAdmin = sessionMap.get(userClient.getId());
                 if(sessionAdmin != null){
-                    ApiResponse responseGetChatHistory = ApiResponse.success(200, "Get-Chat-History", chatBotService.getChatHistory(userClient.getId()));
+                    Map<String, String> dataClient = new HashMap<>();
+                    dataClient.put("userId", userClient.getId());
+                    ApiResponse responseGetChatHistory = ApiResponse.success(200, "Get-Chat-History", chatBotService.getChatHistory(dataClient));
                     sessionAdmin.sendMessage(new TextMessage(objectMapper.writeValueAsString(responseGetChatHistory)));
                 }
             }
