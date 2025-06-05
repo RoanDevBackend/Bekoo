@@ -54,6 +54,11 @@ public class ApiResponse {
         return new ApiResponse(code, message, null, HttpStatus.BAD_REQUEST);
     }
 
+
+    public static ApiResponse error(int code, String message, Object value){
+        return new ApiResponse(code, message, value, HttpStatus.BAD_REQUEST);
+    }
+
     public static ApiResponse error(String message, HttpStatus status){
         org.springframework.http.HttpHeaders httpHeaders= new org.springframework.http.HttpHeaders();
         return new ApiResponse(400, message, null, status);

@@ -63,9 +63,6 @@ public class ChatBotServiceImpl implements ChatBotService {
             messageResponseFromAI = this.askAI(content, false);
         }
         if(user != null){
-            messageResponseFromAI = this.askAI(content, true);
-
-            System.out.println(messageResponseFromAI);
             int groupId = this.getGroupId(senderId);
             //save message
             Message messageUser = new Message();
@@ -73,15 +70,18 @@ public class ChatBotServiceImpl implements ChatBotService {
             messageUser.setSender(user);
             messageUser.setGroupId(groupId);
             chatBotRepository.save(messageUser);
+            this.sendToAdmin(adminSession); // Gửi tin nhắn của ng dùng cho thg admin
 
-            this.sendToAdmin(adminSession);
-
-            if(!messageResponseFromAI.equals("null")){
-                Message messageBot = new Message();
-                messageBot.setSender(null);
-                messageBot.setGroupId(groupId);
-                messageBot.setContent(messageResponseFromAI);
-                chatBotRepository.save(messageBot);
+            Boolean isOn = (Boolean) redisRepository.get("SAC" + senderId);
+            if(isOn == null || !isOn) { // Cho phep chatbot tra loi
+                messageResponseFromAI = this.askAI(content, true);
+                if (!messageResponseFromAI.equals("null")) {
+                    Message messageBot = new Message();
+                    messageBot.setSender(null);
+                    messageBot.setGroupId(groupId);
+                    messageBot.setContent(messageResponseFromAI);
+                    chatBotRepository.save(messageBot);
+                }
             }
         }
         return messageResponseFromAI;

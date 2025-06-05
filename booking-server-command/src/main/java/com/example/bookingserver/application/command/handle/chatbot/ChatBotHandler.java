@@ -90,11 +90,15 @@ public class ChatBotHandler extends TextWebSocketHandler {
             }
             String responseFromAI = chatBotService.chat(getAdminSession(), command.getData());
             if(!responseFromAI.equals("null")){
+                if(responseFromAI.isBlank()){
+                    session.sendMessage(new TextMessage(objectMapper.writeValueAsString(ApiResponse.error(400, "Chat", "ADMIN ON"))));
+                    return;
+                }
                 ApiResponse response = ApiResponse.success(200, "Chat", responseFromAI);
                 session.sendMessage(new TextMessage(objectMapper.writeValueAsString(response))); // Gửi dữ liệu tin nhắn về cho client
                 this.sendToAdmin();
             }else{
-                ApiResponse response = ApiResponse.success(400, "Chat", "");
+                ApiResponse response = ApiResponse.success(400, "Chat", "AI can't response ");
                 session.sendMessage(new TextMessage(objectMapper.writeValueAsString(response))); // Gửi dữ liệu tin nhắn về cho client
             }
         }else if(command.getRequestType().equals("Get-All-Chat")){
@@ -125,7 +129,21 @@ public class ChatBotHandler extends TextWebSocketHandler {
                     sessionAdmin.sendMessage(new TextMessage(objectMapper.writeValueAsString(responseGetChatHistory)));
                 }
             }
+        }else if(command.getRequestType().equals("Admin-on")){
+            this.setStatusAdminChat(command.getData().get("toUserId"), true);
+            ApiResponse response = ApiResponse.success(200, "Admin-on");
+            session.sendMessage(new TextMessage(objectMapper.writeValueAsString(response)));
+        }else if(command.getRequestType().equals("Admin-off")){
+            this.setStatusAdminChat(command.getData().get("toUserId"), false);
+            ApiResponse response = ApiResponse.success(200, "Admin-off");
+            session.sendMessage(new TextMessage(objectMapper.writeValueAsString(response)));
+        }else{
+            session.sendMessage(new TextMessage(objectMapper.writeValueAsString(ApiResponse.error("Unknown request type"))));
         }
+    }
+
+    private void setStatusAdminChat(String toUserId, Boolean isOn){
+        redisRepository.set("SAC" + toUserId, isOn);
     }
 
     @Scheduled(fixedRate = 2, timeUnit = TimeUnit.MINUTES)
