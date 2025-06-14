@@ -3,8 +3,10 @@ package com.example.bookingserver.application.command.service;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+
 @Service
 public interface OnlinePayService {
     String payCart(String scheduleId, HttpServletRequest req);
-    void extractPay(String vnp_TxnRef);
+    String extractPay(Map<String, String> params, HttpServletRequest request);
 }

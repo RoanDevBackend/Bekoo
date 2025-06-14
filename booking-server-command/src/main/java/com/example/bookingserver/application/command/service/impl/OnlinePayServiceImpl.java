@@ -9,16 +9,19 @@ import document.constant.ApplicationConstant;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class OnlinePayServiceImpl implements OnlinePayService{
 
     final ScheduleRepository scheduleRepository;
@@ -46,7 +49,6 @@ public class OnlinePayServiceImpl implements OnlinePayService{
         vnp_Params.put("vnp_TmnCode", vnp_TmnCode);
         vnp_Params.put("vnp_Amount", String.valueOf(amount));
         vnp_Params.put("vnp_CurrCode", "VND");
-        vnp_Params.put("vnp_BankCode", "NCB");
         vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
         vnp_Params.put("vnp_OrderInfo", "Thanh toán gói khám " + schedule.getSpecialize().getName());
         vnp_Params.put("vnp_Locale", "vn");
@@ -98,12 +100,55 @@ public class OnlinePayServiceImpl implements OnlinePayService{
     }
 
 
+    @SneakyThrows
     @Override
-    public void extractPay(String vnp_TxnRef) {
-        String scheduleId= redisRepository.get(PREFIX + vnp_TxnRef).toString();
-        scheduleRepository.findById(scheduleId).ifPresent(schedule -> {
-            schedule.setPaymentStatus(ApplicationConstant.PaymentMethod.CREDIT);
-            scheduleRepository.save(schedule);
-        });
+    public String extractPay(Map<String, String> params, HttpServletRequest request) {
+        String value = "";
+        List<String> fieldNames = new ArrayList<>(params.keySet());
+        Collections.sort(fieldNames);
+        Map<String, String> hashData = new HashMap<>();
+        for(String fieldName : fieldNames) {
+            String fieldValue = params.get(fieldName);
+            if ((fieldValue != null) && (!fieldValue.isEmpty())) {
+                fieldName = URLEncoder.encode(fieldName, StandardCharsets.US_ASCII.toString());
+                fieldValue = URLEncoder.encode(fieldValue, StandardCharsets.UTF_8.toString());
+                hashData.put(fieldName, fieldValue);
+            }
+        }
+        hashData.remove("vnp_SecureHashType");
+        String receivedHash = hashData.remove("vnp_SecureHash");
+        String signValue = VNPayConfig.hashAllFields(hashData);
+        if (signValue.equals(receivedHash)) {
+            String scheduleId = redisRepository.get(PREFIX + params.get("vnp_TxnRef")).toString();
+            Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
+                    () -> new RuntimeException("Lỗi thanh toán")
+            );
+            String vnp_ResponseCode = params.get("vnp_ResponseCode");
+            if(vnp_ResponseCode.equals("00")){
+                schedule.setPaymentStatus(ApplicationConstant.PaymentMethod.CREDIT);
+                scheduleRepository.save(schedule);
+                value = "Thanh toán thành công!";
+            }
+            if(vnp_ResponseCode.equals("11"))
+                value = "Giao dịch không thành công do: Đã hết hạn chờ thanh toán. Xin quý khách vui lòng thực hiện lại giao dịch.";
+            if(vnp_ResponseCode.equals("12"))
+                value = "Giao dịch không thành công do: Thẻ/Tài khoản của khách hàng bị khóa.";
+            if(vnp_ResponseCode.equals("13"))
+                value = "Giao dịch không thành công do Quý khách nhập sai mật khẩu xác thực giao dịch (OTP). Xin quý khách vui lòng thực hiện lại giao dịch.";
+            if(vnp_ResponseCode.equals("24"))
+                value = "Giao dịch không thành công do: Khách hàng hủy giao dịch";
+            if(vnp_ResponseCode.equals("51"))
+                value = "Giao dịch không thành công do: Tài khoản của quý khách không đủ số dư để thực hiện giao dịch.";
+            if(vnp_ResponseCode.equals("65"))
+                value = "Giao dịch không thành công do: Tài khoản của Quý khách đã vượt quá hạn mức giao dịch trong ngày.";
+            if(vnp_ResponseCode.equals("75"))
+                value = "Ngân hàng thanh toán đang bảo trì.";
+            if(vnp_ResponseCode.equals("79"))
+                value = "Giao dịch không thành công do: KH nhập sai mật khẩu thanh toán quá số lần quy định. Xin quý khách vui lòng thực hiện lại giao dịch";
+        }else{
+            log.warn("Giao dịch giả mạo từ IP: {}", request.getRemoteAddr());
+            value = "Giao dịch không hợp lệ, vui lòng kết nối để biết thêm chi tiết";
+        }
+        return value;
     }
 }
