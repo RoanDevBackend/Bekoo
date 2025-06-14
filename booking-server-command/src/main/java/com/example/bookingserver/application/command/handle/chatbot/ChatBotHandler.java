@@ -137,7 +137,11 @@ public class ChatBotHandler extends TextWebSocketHandler {
             this.setStatusAdminChat(command.getData().get("toUserId"), false);
             ApiResponse response = ApiResponse.success(200, "Admin-off");
             session.sendMessage(new TextMessage(objectMapper.writeValueAsString(response)));
-        }else{
+        }else if(command.getRequestType().equals("get-admin-status")){
+            ApiResponse response = ApiResponse.success(200, "get-admin-status", redisRepository.get("SAC" + command.getData().get("toUserId")));
+            session.sendMessage(new TextMessage(objectMapper.writeValueAsString(response)));
+        }
+        else{
             session.sendMessage(new TextMessage(objectMapper.writeValueAsString(ApiResponse.error("Unknown request type"))));
         }
     }

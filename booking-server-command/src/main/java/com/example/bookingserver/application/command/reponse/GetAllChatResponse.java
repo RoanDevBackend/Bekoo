@@ -16,4 +16,5 @@ public class GetAllChatResponse {
     String time; //Thời gian tin nhắn gần nhất so với thời gian hiện tại
     String online; // Thời gian hoạt động so với thời gian hiện tại
     String urlImage;
+    int totalUnreadMessages;
 }

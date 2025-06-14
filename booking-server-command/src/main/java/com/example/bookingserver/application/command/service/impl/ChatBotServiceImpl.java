@@ -111,13 +111,14 @@ public class ChatBotServiceImpl implements ChatBotService {
             List<Message> messages = chatBotRepository.getMessageByGroupId(t.getGroupId(), true, PageRequest.of(0, 1)).getContent();
             if(!messages.isEmpty() && (finalName.isEmpty() || messages.get(0).getSender().getName().contains(finalName))){
                 GetAllChatResponse getAllChatResponse = new GetAllChatResponse();
-                getAllChatResponse.setContent(t.getContent());
-                getAllChatResponse.setTime(this.convertDateToString(t.getCreatedAt()));
-                getAllChatResponse.setName(messages.get(0).getSender().getName());
-                getAllChatResponse.setUserId(messages.get(0).getSender().getId());
-                getAllChatResponse.setSenderId(t.getSender() == null ? null : t.getSender().getId());
-                getAllChatResponse.setUrlImage(messages.get(0).getSender().getLinkAvatar());
-                getAllChatResponse.setOnline(this.getOnline(messages.get(0).getSender().getId()).toLowerCase());
+                getAllChatResponse.setContent(t.getContent()); // Noi dung tin nhan
+                getAllChatResponse.setTime(this.convertDateToString(t.getCreatedAt())); // Thoi gian chat
+                getAllChatResponse.setName(messages.get(0).getSender().getName()); // Ten nguoi dung
+                getAllChatResponse.setUserId(messages.get(0).getSender().getId()); // User id doan chat
+                getAllChatResponse.setSenderId(t.getSender() == null ? null : t.getSender().getId()); //
+                getAllChatResponse.setUrlImage(messages.get(0).getSender().getLinkAvatar()); // anh dai dien
+                getAllChatResponse.setOnline(this.getOnline(messages.get(0).getSender().getId()).toLowerCase()); // trang thai hoat dong
+                getAllChatResponse.setTotalUnreadMessages(this.getUnreadMessages(t.getGroupId()));
                 return getAllChatResponse;
             }
             return null;
@@ -136,6 +137,18 @@ public class ChatBotServiceImpl implements ChatBotService {
                 return "Undefined";
             }
         }
+    }
+
+    private int getUnreadMessages(int groupId){
+        int res = 0;
+        List<Message> messages = chatBotRepository.getMessageByGroupId(groupId, true, Pageable.unpaged()).getContent();
+        for(Message message : messages){
+            System.out.println(message.getContent());
+            if(redisRepository.get("seenDate" + message.getId()) == null){
+                res++;
+            }
+        }
+        return res;
     }
 
     private String convertDateToString(LocalDateTime time) {
@@ -174,6 +187,7 @@ public class ChatBotServiceImpl implements ChatBotService {
             chatBotResponse.setContent(t.getContent());
             chatBotResponse.setCreatedBy(t.getSender() == null ? "Hệ thống" : "Người dùng");
             chatBotResponse.setCreatedAt(this.convertDateToString(t.getCreatedAt()));
+            redisRepository.set("seenDate" + t.getId(), LocalDateTime.now().toString());
             return chatBotResponse;
         }).toList();
     }
