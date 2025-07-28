@@ -21,6 +21,7 @@ spring:
       auto-offset-reset: earliest
 server:
   port: ${server.port}
+  address: ${server.address}
   error:
     include-message: always
 
