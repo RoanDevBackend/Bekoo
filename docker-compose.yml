@@ -3,7 +3,7 @@
 services:
   kafka:
     container_name: kafka
-    image: bitnami/kafka:latest
+    image: bitnamilegacy/kafka:3.3.2
     ports:
       - "9092:9092"
       - "9093:9093"
@@ -21,6 +21,7 @@ services:
   mysql:
     image: mysql:8.0
     container_name: mysql
+    platform: linux/amd64
     environment:
       MYSQL_DATABASE: root
       MYSQL_ROOT_PASSWORD: root_admin
@@ -32,10 +33,9 @@ services:
 
   redis:
     image: redis:latest
+    platform: linux/amd64
     container_name: redis
     command: [ "redis-server", "--requirepass", "root_admin" ]
-    environment:
-      REDIS_PASSWORD: root_admin
     ports:
       - "6379:6379"
     volumes:
@@ -81,7 +81,7 @@ services:
       SPRING_REDIS_HOST: redis
       SPRING_REDIS_PORT: 6379
       SPRING_REDIS_PASSWORD: root_admin
-      WEB_URL: localhost:8082/home
+      WEB_URL: localhost:8083/home
       AI_URL: http://bekoo-ai:5501/ask
   booking-care-query:
     platform: linux/amd64
@@ -90,6 +90,7 @@ services:
     depends_on:
       - kafka
       - redis
+      - elasticsearch
     restart: on-failure
     ports:
       - "8084:8081"
