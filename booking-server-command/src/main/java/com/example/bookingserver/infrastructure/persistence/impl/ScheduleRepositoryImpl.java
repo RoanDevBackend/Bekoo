@@ -66,7 +66,9 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
     }
 
     @Override
-    public boolean existsByCheckInAndCreatedAt(LocalDateTime checkIn, LocalDateTime createdAt) {
-        return  scheduleJpaRepository.existsByCheckInAndCreatedAt(checkIn, createdAt);
+    public Boolean existsById(String id) {
+        return scheduleJpaRepository.existsById(id);
     }
+
+
 }

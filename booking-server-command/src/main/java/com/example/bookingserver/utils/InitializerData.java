@@ -59,7 +59,7 @@ public class InitializerData implements CommandLineRunner {
             LocalDateTime checkIn = parseDateTime(cmd.getCheckIn());
             LocalDateTime createdAt = parseDateTime(cmd.getCreateAt());
 
-            if (scheduleRepository.existsByCheckInAndCreatedAt(checkIn, createdAt)) {
+            if (scheduleRepository.existsById(cmd.getId())) {
                 log.info("Bản ghi đã tồn tại (CheckIn: {}, CreatedAt: {}). Bỏ qua.", checkIn, createdAt);
                 countSkip++;
                 continue;

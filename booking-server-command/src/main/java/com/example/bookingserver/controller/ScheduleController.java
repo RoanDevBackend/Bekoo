@@ -6,6 +6,7 @@ import com.example.bookingserver.application.command.handle.schedule.CreateSched
 import com.example.bookingserver.application.command.handle.schedule.DeleteScheduleHandler;
 import com.example.bookingserver.application.command.reponse.ScheduleResponse;
 import com.example.bookingserver.application.command.service.OnlinePayService;
+import com.example.bookingserver.application.command.service.RateLimiterService;
 import com.example.bookingserver.application.query.handler.response.FindByPatientResponse;
 import com.example.bookingserver.application.query.handler.schedule.FindAllScheduleHandler;
 import com.example.bookingserver.application.query.handler.schedule.FindHistoryScheduleByDoctorHandler;
@@ -14,6 +15,7 @@ import com.example.bookingserver.application.query.QueryBase;
 import com.example.bookingserver.application.command.reponse.ApiResponse;
 import com.example.bookingserver.application.query.handler.schedule.GetAvailableTimeByDoctorHandler;
 import com.example.bookingserver.infrastructure.constant.ApplicationConstant;
+import io.github.bucket4j.Bucket;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -24,6 +26,9 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -33,7 +38,7 @@ import java.time.LocalDateTime;
 @RestController
 @FieldDefaults(makeFinal = true)
 @RequiredArgsConstructor
-@SecurityRequirement(name="bearerAuth")
+@SecurityRequirement(name = "bearerAuth")
 public class ScheduleController {
     CreateScheduleHandler createScheduleHandler;
     DeleteScheduleHandler deleteScheduleHandler;
@@ -42,6 +47,7 @@ public class ScheduleController {
     FindAllScheduleHandler findAllScheduleHandler;
     OnlinePayService onlinePayService;
     GetAvailableTimeByDoctorHandler getAvailableTimeByDoctorHandler;
+    RateLimiterService rateLimiterService;
 
     @Operation(summary = "Đặt lịch khám", parameters = {
             @Parameter(name = "paymentMethod", description = "1 Thanh toán khi tới khám. 2 Thanh toán bằng thẻ tín dụng")
@@ -54,21 +60,32 @@ public class ScheduleController {
 
     @Operation(summary = "Xoá lịch đặt khám")
     @DeleteMapping(value = "/{id}")
-    public ApiResponse delete(@PathVariable String id){
+    public ApiResponse delete(@PathVariable String id) {
         deleteScheduleHandler.execute(id);
         return ApiResponse.success(200, "Đã xác nhận huỷ khám");
     }
 
     @Operation(summary = "Lấy ra danh sách tất cả lịch khám")
     @GetMapping()
-    public ApiResponse getAll(@RequestParam(required = false, defaultValue = "1") int pageIndex
-            , @RequestParam(required = false, defaultValue = "10000") int pageSize ){
-        QueryBase<ScheduleResponse> queryBase= QueryBase.<ScheduleResponse>builder()
-                .pageIndex(pageIndex)
-                .pageSize(pageSize)
-                .build();
-        var response = findAllScheduleHandler.execute(queryBase);
-        return ApiResponse.success(200, "Tìm kiếm lịch sử lịch khám của bệnh nhân", response);
+    public ResponseEntity<?> getAll(@RequestParam(required = false, defaultValue = "1") int pageIndex
+            , @RequestParam(required = false, defaultValue = "10000") int pageSize
+            , Authentication authentication) {
+
+        Bucket bucket = rateLimiterService.resolveBucket(authentication.getName());
+
+        System.out.println("User: " + authentication.getName() + " | Token còn lại: " + bucket.getAvailableTokens());
+
+        if (bucket.tryConsume(1)) {
+            QueryBase<ScheduleResponse> queryBase = QueryBase.<ScheduleResponse>builder()
+                    .pageIndex(pageIndex)
+                    .pageSize(pageSize)
+                    .build();
+            var response = findAllScheduleHandler.execute(queryBase);
+            return ResponseEntity.ok(ApiResponse.success(200, "Tìm kiếm thành công", response));
+        } else {
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+                    .body(ApiResponse.error("Bạn đã gửi quá nhiều request.", HttpStatus.TOO_MANY_REQUESTS));
+        }
     }
 
 
@@ -79,8 +96,8 @@ public class ScheduleController {
     @GetMapping("/patient/{id}/{statusId}")
     public ApiResponse getPatientSchedule(@PathVariable String id, @PathVariable int statusId
             , @RequestParam(required = false, defaultValue = "1") int pageIndex
-            , @RequestParam(required = false, defaultValue = "10000") int pageSize ){
-        QueryBase<FindByPatientResponse> queryBase= QueryBase.<FindByPatientResponse>builder()
+            , @RequestParam(required = false, defaultValue = "10000") int pageSize) {
+        QueryBase<FindByPatientResponse> queryBase = QueryBase.<FindByPatientResponse>builder()
                 .pageIndex(pageIndex)
                 .pageSize(pageSize)
                 .build();
@@ -95,10 +112,10 @@ public class ScheduleController {
     @GetMapping("/doctor/{id}/{statusId}")
     public ApiResponse getDoctorSchedule(@PathVariable String id, @PathVariable int statusId
             , @RequestParam(required = false, defaultValue = "1") int pageIndex
-            , @RequestParam(required = false, defaultValue = "10000") int pageSize ){
-        Pageable pageable= PageRequest.of(pageIndex - 1,pageSize, Sort.by("checkIn").ascending());
-        LocalDateTime start= LocalDateTime.now().minusYears(200);
-        LocalDateTime end= LocalDateTime.now().plusYears(200);
+            , @RequestParam(required = false, defaultValue = "10000") int pageSize) {
+        Pageable pageable = PageRequest.of(pageIndex - 1, pageSize, Sort.by("checkIn").ascending());
+        LocalDateTime start = LocalDateTime.now().minusYears(200);
+        LocalDateTime end = LocalDateTime.now().plusYears(200);
         var response = findHistoryScheduleByDoctorHandler.execute(id, pageable, start, end, statusId);
         return ApiResponse.success(200, "Tìm kiếm thành công", response);
     }
@@ -109,25 +126,25 @@ public class ScheduleController {
     @GetMapping("/doctor/day/{id}")
     public ApiResponse getDoctorSchedulePerDay(@PathVariable String id
             , @RequestParam(required = false, defaultValue = "1") int pageIndex
-            , @RequestParam(required = false, defaultValue = "10000") int pageSize){
-        Pageable pageable= PageRequest.of(pageIndex - 1,pageSize, Sort.by("checkIn").ascending());
-        LocalDateTime start= LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
-        LocalDateTime end= start.plusDays(1).withHour(0).withMinute(0).withSecond(0).withNano(0);
+            , @RequestParam(required = false, defaultValue = "10000") int pageSize) {
+        Pageable pageable = PageRequest.of(pageIndex - 1, pageSize, Sort.by("checkIn").ascending());
+        LocalDateTime start = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime end = start.plusDays(1).withHour(0).withMinute(0).withSecond(0).withNano(0);
         var response = findHistoryScheduleByDoctorHandler.execute(id, pageable, start, end, ApplicationConstant.Status.CONFIRMED);
         return ApiResponse.success(200, "Tìm kiếm thành công", response);
     }
 
-    @Operation(summary = "Lấy ra trạng thái thời gian của bác sĩ", parameters = {@Parameter(name="date" , description = "yyyy-mm-dd") })
+    @Operation(summary = "Lấy ra trạng thái thời gian của bác sĩ", parameters = {@Parameter(name = "date", description = "yyyy-mm-dd")})
     @GetMapping("/doctor/time")
-    public ApiResponse getAvailableTime(@RequestParam String doctorId, @RequestParam String date){
+    public ApiResponse getAvailableTime(@RequestParam String doctorId, @RequestParam String date) {
         var response = getAvailableTimeByDoctorHandler.execute(doctorId, date);
-        return ApiResponse.success(200, "" , response);
+        return ApiResponse.success(200, "", response);
     }
 
     @Operation(summary = "Thanh toán lịch khám, trước đó chưa thanh toán")
     @PostMapping("/payment")
     public ApiResponse payment(@RequestParam String scheduleId, HttpServletRequest request) {
-        String url= onlinePayService.payCart(scheduleId, request);
+        String url = onlinePayService.payCart(scheduleId, request);
         return ApiResponse.success(200, "Thanh toán bằng thẻ tín dụng", url);
     }
 
