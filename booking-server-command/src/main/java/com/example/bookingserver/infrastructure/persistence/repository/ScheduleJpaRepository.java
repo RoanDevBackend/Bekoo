@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -99,4 +100,10 @@ public interface ScheduleJpaRepository extends JpaRepository<Schedule, String> {
             "AND s.checkIn = :checkIn " +
             "AND s.statusId = 1 ")
     int countScheduleByDoctorIdAndCheckIn(String doctorId, LocalDateTime checkIn);
+
+    @Query("SELECT CASE WHEN COUNT(s) > 0 THEN true ELSE false END " +
+            "FROM Schedule s " +
+            "WHERE s.checkIn = :checkIn AND s.createdAt = :createdAt")
+    boolean existsByCheckInAndCreatedAt(@Param("checkIn") LocalDateTime checkIn,
+                                        @Param("createdAt") LocalDateTime createdAt);
 }

@@ -64,4 +64,9 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
     public Page<Schedule> findAll(Pageable pageable) {
         return scheduleJpaRepository.findAll(pageable);
     }
+
+    @Override
+    public boolean existsByCheckInAndCreatedAt(LocalDateTime checkIn, LocalDateTime createdAt) {
+        return  scheduleJpaRepository.existsByCheckInAndCreatedAt(checkIn, createdAt);
+    }
 }

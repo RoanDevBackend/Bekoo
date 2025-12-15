@@ -45,6 +45,9 @@ public class InitializerData implements CommandLineRunner {
 
         if (commands.isEmpty()) return;
 
+        int countInsert = 0;
+        int countSkip = 0;
+
         for (InitScheduleCommand cmd : commands) {
             Patient patient = patientRepository.findById(cmd.getPatientId())
                     .orElseThrow(() -> new BookingCareException(ErrorDetail.ERR_PATIENT_NOT_EXISTED));
@@ -54,7 +57,13 @@ public class InitializerData implements CommandLineRunner {
                     .orElseThrow(() -> new BookingCareException(ErrorDetail.ERR_SPECIALIZE_NOT_EXISTED));
 
             LocalDateTime checkIn = parseDateTime(cmd.getCheckIn());
+            LocalDateTime createdAt = parseDateTime(cmd.getCreateAt());
 
+            if (scheduleRepository.existsByCheckInAndCreatedAt(checkIn, createdAt)) {
+                log.info("Bản ghi đã tồn tại (CheckIn: {}, CreatedAt: {}). Bỏ qua.", checkIn, createdAt);
+                countSkip++;
+                continue;
+            }
 //            if (checkIn.isBefore(LocalDateTime.now())) {
 //                throw new BookingCareException(ErrorDetail.ERR_SCHEDULE_DATE);
 //            }
@@ -65,6 +74,7 @@ public class InitializerData implements CommandLineRunner {
 //            if (personPerDay + 1 > doctor.getMaximumPeoplePerDay()) {
 //                throw new BookingCareException(ErrorDetail.ERR_DOCTOR_PERSON);
 //            }
+
 
             Schedule newSchedule = Schedule.builder()
                     .id(cmd.getId())
@@ -80,9 +90,11 @@ public class InitializerData implements CommandLineRunner {
                     .build();
 
             scheduleRepository.save(newSchedule);
+
+            countInsert++;
         }
 
-        log.info("Đã khởi tạo thành công {} bản ghi.", commands.size());
+        log.info("Kết thúc khởi tạo: Thêm mới {} | Bỏ qua {} | Tổng xử lý {}", countInsert, countSkip, commands.size());
     }
 
     private List<InitScheduleCommand> readCsv(String fileName) {

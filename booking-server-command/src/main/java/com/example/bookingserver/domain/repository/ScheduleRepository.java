@@ -22,4 +22,6 @@ public interface ScheduleRepository {
     Page<Schedule> findByPatient(String patientId, Pageable pageable, int statusId);
     Page<Schedule> findByDoctor(String doctorId, int statusId, Pageable pageable, LocalDateTime start, LocalDateTime end);
     Page<Schedule> findAll(Pageable pageable);
+
+    boolean existsByCheckInAndCreatedAt(LocalDateTime checkIn, LocalDateTime createdAt);
 }
