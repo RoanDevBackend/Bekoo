@@ -1,0 +1,55 @@
+#version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    environment:
+      MYSQL_DATABASE: root
+      MYSQL_ROOT_PASSWORD: root_admin
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+  kafka:
+    image: bitnamilegacy/kafka:3.3.2
+    ports:
+      - "9092:9092"
+      - "9093:9093"
+    environment:
+      - KAFKA_CFG_NODE_ID=0
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@localhost:9093
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - ALLOW_PLAINTEXT_LISTENER=yes
+    volumes:
+      - kafka_data:/var/lib/kafka
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    command: [ "redis-server", "--requirepass", "root_admin" ]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+  app:
+    build:
+      context: ..
+      dockerfile: booking-server-command/Dockerfile
+    platform: linux/amd64
+    container_name: booking-care-command
+    depends_on:
+      - redis
+      - kafka
+      - mysql
+    restart: on-failure
+    ports:
+      - "8083:8080"
+volumes:
+  redis_data:
+  kafka_data:
+  mysql_data:
